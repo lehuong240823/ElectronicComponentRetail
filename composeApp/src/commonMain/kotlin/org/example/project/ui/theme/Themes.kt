@@ -1,4 +1,7 @@
 package org.example.project.ui.theme
 
-class Themes {
+object Themes {
+    object Light {
+
+    }
 }

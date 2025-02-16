@@ -5,6 +5,7 @@ import androidx.compose.ui.unit.dp
 object Size {
     object Blur {
         val Blur100 = 4.dp;
+        val c = Colors.Default.Light.Text.DefaultDefault
     }
     object Depth {
         val Depth0 = 0.dp

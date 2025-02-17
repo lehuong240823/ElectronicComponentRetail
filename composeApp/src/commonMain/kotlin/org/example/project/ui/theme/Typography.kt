@@ -1,12 +1,44 @@
 package org.example.project.ui.theme
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import electroniccomponentretail.composeapp.generated.resources.*
+import electroniccomponentretail.composeapp.generated.resources.Res
+import electroniccomponentretail.composeapp.generated.resources.inter_regular
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.Font
 
 object Typography {
+    @Composable
+    fun loadInterFontFamily(): FontFamily {
+        return FontFamily(
+            Font(resource = Res.font.inter_thin, weight = FontWeight.Thin),
+            Font(resource = Res.font.inter_thinitalic, weight = FontWeight.Thin, style = FontStyle.Italic),
+            Font(resource = Res.font.inter_extralight, weight = FontWeight.ExtraLight),
+            Font(resource = Res.font.inter_extralightitalic, weight = FontWeight.ExtraLight, style = FontStyle.Italic),
+            Font(resource = Res.font.inter_light, weight = FontWeight.Light),
+            Font(resource = Res.font.inter_lightitalic, weight = FontWeight.Light, style = FontStyle.Italic),
+            Font(resource = Res.font.inter_regular, weight = FontWeight.Normal),
+            Font(resource = Res.font.inter_italic, weight = FontWeight.Normal, style = FontStyle.Italic),
+            Font(resource = Res.font.inter_medium, weight = FontWeight.Medium),
+            Font(resource = Res.font.inter_mediumitalic, weight = FontWeight.Medium, style = FontStyle.Italic),
+            Font(resource = Res.font.inter_semibold, weight = FontWeight.SemiBold),
+            Font(resource = Res.font.inter_semibolditalic, weight = FontWeight.SemiBold, style = FontStyle.Italic),
+            Font(resource = Res.font.inter_bold, weight = FontWeight.Bold),
+            Font(resource = Res.font.inter_bolditalic, weight = FontWeight.Bold, style = FontStyle.Italic),
+            Font(resource = Res.font.inter_extrabold, weight = FontWeight.ExtraBold),
+            Font(resource = Res.font.inter_extrabolditalic, weight = FontWeight.ExtraBold, style = FontStyle.Italic),
+            Font(resource = Res.font.inter_black, weight = FontWeight.Black),
+            Font(resource = Res.font.inter_blackitalic, weight = FontWeight.Black, style = FontStyle.Italic)
+        )
+    }
+
     object Primitive {
+
         object Family {
             val Mono = FontFamily.Monospace
             val Sans = FontFamily.SansSerif
@@ -109,97 +141,97 @@ object Typography {
 
     object Style {
         val TitleHero = TextStyle(
-            fontFamily = Default.Title.Hero.FontFamily,
+            //fontFamily = Default.Title.Hero.FontFamily,
             fontWeight = Default.Title.Hero.FontWeight,
             fontSize = Default.Title.Hero.FontSize
         )
 
         val TitlePage = TextStyle(
-            fontFamily = Default.Title.Page.FontFamily,
+            //fontFamily = Default.Title.Page.FontFamily,
             fontWeight = Default.Title.Page.FontWeight,
             fontSize = Default.Title.Page.FontSizeBase
         )
 
         val Subtitle = TextStyle(
-            fontFamily = Default.Subtitle.FontFamily,
+            //fontFamily = Default.Subtitle.FontFamily,
             fontWeight = Default.Subtitle.FontWeight,
             fontSize = Default.Subtitle.FontSizeBase
         )
 
         val Heading = TextStyle(
-            fontFamily = Default.Heading.FontFamily,
+            //fontFamily = Default.Heading.FontFamily,
             fontWeight = Default.Heading.FontWeight,
             fontSize = Default.Heading.FontSizeBase
         )
 
         val Subheading = TextStyle(
-            fontFamily = Default.Subheading.FontFamily,
+            //fontFamily = Default.Subheading.FontFamily,
             fontWeight = Default.Subheading.FontWeight,
             fontSize = Default.Subheading.FontSizeMedium
         )
 
         val BodyBase = TextStyle(
-            fontFamily = Default.Body.FontFamily,
+            //fontFamily = Default.Body.FontFamily,
             fontWeight = Default.Body.FontWeightRegular,
             fontSize = Default.Body.FontSizeMedium
         )
 
         val BodyStrong = TextStyle(
-            fontFamily = Default.Body.FontFamily,
+            //fontFamily = Default.Body.FontFamily,
             fontWeight = Default.Body.FontWeightStrong,
             fontSize = Default.Body.FontSizeMedium
         )
 
         val BodyEmphasis = TextStyle(
-            fontFamily = Default.Body.FontFamily,
+            //fontFamily = Default.Body.FontFamily,
             fontWeight = Default.Body.FontWeightRegular,
             fontSize = Default.Body.FontSizeMedium
         )
 
         val BodyLink = TextStyle(
-            fontFamily = Default.Body.FontFamily,
+            //fontFamily = Default.Body.FontFamily,
             fontWeight = Default.Body.FontWeightRegular,
             fontSize = Default.Body.FontSizeMedium
         )
 
         val BodySmall = TextStyle(
-            fontFamily = Default.Body.FontFamily,
+            //fontFamily = Default.Body.FontFamily,
             fontWeight = Default.Body.FontWeightRegular,
             fontSize = Default.Body.FontSizeSmall
         )
 
         val BodySmallStrong = TextStyle(
-            fontFamily = Default.Body.FontFamily,
+            //fontFamily = Default.Body.FontFamily,
             fontWeight = Default.Body.FontWeightStrong,
             fontSize = Default.Body.FontSizeSmall
         )
 
         val SingleLineBodyBase = TextStyle(
-            fontFamily = Default.Body.FontFamily,
+            //fontFamily = Default.Body.FontFamily,
             fontWeight = Default.Body.FontWeightRegular,
             fontSize = Default.Body.FontSizeMedium
         )
 
         val BodyCode = TextStyle(
-            fontFamily = Default.Code.FontFamily,
+            //fontFamily = Default.Code.FontFamily,
             fontWeight = Default.Code.FontWeight,
             fontSize = Default.Code.FontSizeBase
         )
 
         val SingleLineBodySmallStrong = TextStyle(
-            fontFamily = Default.Body.FontFamily,
+            //fontFamily = Default.Body.FontFamily,
             fontWeight = Default.Body.FontWeightStrong,
             fontSize = Default.Body.FontSizeSmall
         )
 
         val UtilitiesComponentNotesRegular = TextStyle(
-            fontFamily = Default.Code.FontFamily,
+            //fontFamily = Default.Code.FontFamily,
             fontWeight = Primitive.Weight.Regular,
             fontSize = Primitive.Scale.S03
         )
 
         val UtilitiesComponentNotesBold = TextStyle(
-            fontFamily = Default.Code.FontFamily,
+            //fontFamily = Default.Code.FontFamily,
             fontWeight = Primitive.Weight.Bold,
             fontSize = Primitive.Scale.S03
         )

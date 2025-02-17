@@ -33,7 +33,7 @@ object Themes {
             ),
 
             text = TextColors(
-                onBrand = Colors.Default.Light.Text.BrandDefault,
+                onBrand = Colors.Default.Light.Text.BrandOnBrand,
                 onBrandSecondary = Colors.Default.Light.Text.BrandSecondary,
                 onBrandTertiary = Colors.Default.Light.Text.BrandTertiary
             ),

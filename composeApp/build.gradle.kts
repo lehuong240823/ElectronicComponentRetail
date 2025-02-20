@@ -91,8 +91,18 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
+android {
+    compileSdk = 34
 
+    defaultConfig {
+        minSdk = 24
+        targetSdk = 34
+    }
+}
 dependencies {
+    implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.tv.material)
+    implementation(libs.androidx.compose.material)
     debugImplementation(compose.uiTooling)
 }
 

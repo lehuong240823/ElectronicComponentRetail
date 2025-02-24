@@ -2,6 +2,16 @@ package org.example.project.ui.theme
 
 object Themes {
     object Light {
+        val primaryButton = ButtonColor(
+            background = Colors.Default.Light.Background.BrandDefault,
+            border = Colors.Default.Light.Border.BrandDefault,
+            text = Colors.Default.Light.Text.BrandOnBrand
+        )
+        val textField = ButtonColor(
+            background = Colors.Default.Light.Background.DefaultDefault,
+            border = Colors.Default.Light.Border.DefaultDefault,
+            text = Colors.Default.Light.Text.DefaultDefault
+        )
         val default = ThemeColors(
             background = BackgroundColors(
                 default = Colors.Default.Light.Background.DefaultDefault,

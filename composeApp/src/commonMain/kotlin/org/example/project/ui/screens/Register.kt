@@ -1,110 +1,74 @@
 package org.example.project.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
-import org.example.project.ui.theme.Colors
-import org.example.project.ui.theme.Size
-import org.example.project.ui.theme.ThemeColors
-import org.example.project.ui.theme.Themes
-import org.example.project.ui.theme.Typography
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import electroniccomponentretail.composeapp.generated.resources.Res
+import electroniccomponentretail.composeapp.generated.resources.ic_google
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.example.project.data.api.AccountApi
+import org.example.project.data.repository.AccountRepository
+import org.example.project.domain.model.Account
+import org.example.project.pushWithLimitScreen
+import org.example.project.ui.components.Button
+import org.example.project.ui.components.Form
+import org.example.project.ui.components.Hyperlink
+import org.example.project.ui.components.IconButton
+import org.example.project.ui.components.InputField
+import org.example.project.ui.viewmodel.AccountViewModel
 
-@Composable
-@Preview
-fun Register() {
-    MaterialTheme(
-        colors = lightColors().copy(background = Color.Black),
-        typography = Typography(defaultFontFamily = Typography.loadInterFontFamily(),
-            button = Typography.Style.BodyBase
-        )
-    ) {
-        var email by remember {
-            mutableStateOf(value = "")
-        }
-
-        var password by remember {
-            mutableStateOf(value = "")
-        }
-
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+class Register : Screen {
+    @Composable
+    override fun Content() {
+        val navigator = LocalNavigator.current
+        val viewModel: AccountViewModel = AccountViewModel(accountRepository = AccountRepository(AccountApi()))
+        val operationStatus by viewModel.operationStatus
+        MaterialTheme(
+            typography = Typography(
+                //defaultFontFamily = Typography.loadInterFontFamily(),
+            )
         ) {
-            Column(
-                modifier = Modifier.wrapContentSize()
-                    .width(320.dp)
-                    .padding(Size.Space.S600),
-                verticalArrangement = Arrangement.spacedBy(Size.Space.S600),
-                horizontalAlignment = Alignment.CenterHorizontally
+            var email by remember {
+                mutableStateOf(value = "")
+            }
+
+            var password by remember {
+                mutableStateOf(value = "")
+            }
+
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-
-                InputField("Email", email, onValueChange = { email = it })
-                InputField("Password", password, onValueChange = { password = it })
-
-                ButtonGroup(
-                    colors = Themes.Light.brand, onClick = { }, text = "Register"
-                )
+                Form {
+                    InputField("Email", email, onValueChange = { email = it })
+                    InputField("Password", password, onValueChange = { password = it })
+                    Hyperlink(text = "Already got an account?",
+                        onClick = {
+                            pushWithLimitScreen(navigator = navigator, screen = SignIn())
+                        })
+                    Button(text = "Register",
+                        onClick = {
+                            if (!email.isNullOrBlank() && !password.isNullOrBlank()) {
+                                CoroutineScope(Dispatchers.Default).launch {
+                                    //if (email.isNullOrBlank() && password.isNullOrBlank()) {
+                                    viewModel.createAccount(Account(email = email, role = "User"))
+                                    print(operationStatus)
+                                    //}
+                                }
+                            }
+                        }
+                    )
+                    Text("Or sign up with")
+                    IconButton(res = Res.drawable.ic_google)
+                }
             }
         }
-    }
-}
-
-@Composable
-fun AppTheme(
-    colors: ThemeColors = Themes.Light.default,
-    typography: androidx.compose.material.Typography = Typography(defaultFontFamily = Typography.loadInterFontFamily()),
-    content: @Composable () -> Unit
-) {
-
-    content()
-}
-
-@Composable
-fun InputField(
-    label: String,
-    value: String,
-    onValueChange: (String) -> Unit
-) {
-    MaterialTheme {
-
-    }
-    Column(
-        modifier = Modifier.wrapContentSize(),
-        verticalArrangement = Arrangement.spacedBy(Size.Space.S200),
-
-        ) {
-        Text(text = label,
-            )
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            singleLine = true,
-            textStyle = Typography.Style.SingleLineBodyBase.copy()
-        )
-    }
-}
-
-@Composable
-fun ButtonGroup(
-    colors: ThemeColors,
-    text: String,
-    onClick: () -> Unit,
-) {
-    Button(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = Colors.Default.Light.Background.BrandDefault,
-            contentColor = Colors.Default.Light.Text.BrandOnBrand),
-        shape = RoundedCornerShape(Size.Radius.R200)
-    ) {
-        Text(text = text, color = colors.text!!.onBrand!!)
     }
 }

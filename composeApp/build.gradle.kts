@@ -18,9 +18,9 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     jvm("desktop")
-    
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "composeApp"
@@ -40,14 +40,20 @@ kotlin {
         }
         binaries.executable()
     }
-    
+
     sourceSets {
-        val desktopMain by getting
-        
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.androidx.navigation.compose)
+                implementation(compose.preview)
+                implementation(libs.androidx.activity.compose)
+                implementation(libs.androidx.material.icons.extended)
+                implementation(libs.androidx.ui.android)
+            }
         }
+
+        val desktopMain by getting
+
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -57,6 +63,7 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.navigation.compose)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -91,18 +98,12 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
-android {
-    compileSdk = 34
-
-    defaultConfig {
-        minSdk = 24
-        targetSdk = 34
-    }
-}
 dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.tv.material)
     implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.ui.android)
+    implementation(libs.androidx.ui.text.android)
     debugImplementation(compose.uiTooling)
 }
 

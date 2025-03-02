@@ -9,7 +9,7 @@ import org.example.project.ui.screens.ManageSuppliers
 @Composable
 fun app() {
     // Gọi ManageSuppliers để hiển thị giao diện
-    ManageSuppliers()
+    App()
 }
 
 fun main() = application {

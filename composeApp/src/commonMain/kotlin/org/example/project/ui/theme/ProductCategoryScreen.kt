@@ -7,13 +7,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material.Text
-import androidx.compose.material3.CardDefaults
+//import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.tv.material3.CardDefaults
-import androidx.wear.compose.material.CardDefaults
+//import androidx.tv.material3.CardDefaults
+//import androidx.wear.compose.material.CardDefaults
 
 @Composable
 fun ProductCategoryScreen(onCategoryClick: (String) -> Unit) {
@@ -37,7 +37,7 @@ fun categoryItem(category: String, onClick: (String) -> Unit) {
             .fillMaxWidth()
             .padding(8.dp)
             .clickable { onClick(category) },
-        elevation = extracted().cardElevation(defaultElevation = 4.dp)
+//        elevation = extracted().cardElevation(defaultElevation = 4.dp)
     ) {
         Text(
             text = category,
@@ -48,5 +48,5 @@ fun categoryItem(category: String, onClick: (String) -> Unit) {
 }
 
 private fun extracted() {
-    CagrdDefaults
+//    return CardDefaults()
 }

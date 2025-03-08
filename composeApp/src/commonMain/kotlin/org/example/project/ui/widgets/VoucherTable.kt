@@ -15,13 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.example.project.model.Supplier
+import org.example.project.model.Voucher
 import org.example.project.ui.theme.Colors
 
 @Composable
-fun SupplierTable(
+fun VoucherTable(
     actions: List<@Composable (String) -> Unit>? = null,
-    data: List<Supplier> = listOf(),
+    data: List<Voucher> = listOf(),
     headers: List<String>,
 ) {
     LazyColumn(Modifier.fillMaxWidth().padding(16.dp)) {
@@ -52,8 +52,13 @@ fun SupplierTable(
                 ) {
                     TableCell(text = item.id)
                     TableCell(text = item.name)
-                    TableCell(text = item.address)
-                    TableCell(text = item.phone)
+                    TableCell(text = "${item.value * 100}%")
+                    TableCell(text = item.startDate.toString())
+                    TableCell(text = item.endDate.toString())
+
+                    var productStr = ""
+                    item.products.map { product -> productStr += product.name + "\n" }
+                    TableCell(text = productStr)
                     if (!actions.isNullOrEmpty())
                         TableCell {
                             Column(
@@ -66,3 +71,4 @@ fun SupplierTable(
         }
     }
 }
+

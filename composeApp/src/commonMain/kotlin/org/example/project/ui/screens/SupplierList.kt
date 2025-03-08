@@ -2,12 +2,9 @@ package org.example.project.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,13 +12,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 import org.example.project.model.Supplier
 import org.example.project.ui.theme.Colors
+import org.example.project.ui.widgets.CustomAppBar
 import org.example.project.ui.widgets.SupplierTable
 
 @Composable
-fun ManageSuppliers() {
+fun ManageSuppliers(navController: NavController) {
 //    Data
     var suppliers by remember { mutableStateOf(
         listOf(
@@ -37,43 +36,7 @@ fun ManageSuppliers() {
     var selectedId: String? by remember { mutableStateOf(null) }
 
     Scaffold(
-        topBar = { TopAppBar(
-            // Nút thêm nhà cung cấp
-            actions = {
-                Button(
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                    elevation = ButtonDefaults.elevation(0.dp),
-                    onClick = {}
-                ) { Text("Products", fontWeight = FontWeight.Normal) }
-                Button(
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                    elevation = ButtonDefaults.elevation(0.dp),
-                    onClick = {}
-                ) { Text("Solutions", fontWeight = FontWeight.Normal) }
-                Button(
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                    elevation = ButtonDefaults.elevation(0.dp),
-                    onClick = {}
-                ) { Text("Community", fontWeight = FontWeight.Normal) }
-                Button(
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                    elevation = ButtonDefaults.elevation(0.dp),
-                    onClick = {}
-                ) { Text("Resources", fontWeight = FontWeight.Normal) }
-                Button(
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                    elevation = ButtonDefaults.elevation(0.dp),
-                    onClick = {}
-                ) { Text("Pricing", fontWeight = FontWeight.Normal) }
-                Button(
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                    elevation = ButtonDefaults.elevation(0.dp),
-                    onClick = {}
-                ) { Text("Contacts", fontWeight = FontWeight.Normal) }
-            },
-            backgroundColor = Color.White,
-            title = {}
-        )},
+        topBar = { CustomAppBar(navController) },
         content = { Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.background(Colors.Primitive.Green1300).fillMaxSize().padding(16.dp)

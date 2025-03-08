@@ -55,6 +55,9 @@ kotlin {
         val desktopMain by getting
 
         commonMain.dependencies {
+            implementation(libs.kotlinx.datetime.v061)
+            implementation(libs.kotlin.stdlib.jdk8)
+            implementation(libs.material3)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
@@ -94,16 +97,21 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
+
 dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    implementation(libs.kotlinx.datetime.v061)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.tv.material)
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.ui.android)
     implementation(libs.androidx.ui.text.android)
+    implementation(libs.places)
     debugImplementation(compose.uiTooling)
 }
 

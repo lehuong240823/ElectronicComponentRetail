@@ -40,6 +40,7 @@ object Colors {
         val Green1100 = Color(0xFF006954)
         val Green1200 = Color(0xFF00796B)
         val Green1300 = Color(0xFFE0F7FA)
+        val Green1400 = Color(0xFFCFF7D3)
         val Green200 = Color(0xFFCFF7D3)
         val Green300 = Color(0xFFAFF4C6)
         val Green400 = Color(0xFF85E0A3)

@@ -2,7 +2,6 @@ package org.example.project.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,9 +25,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -60,14 +57,14 @@ import org.example.project.ui.widgets.VoucherTable
 fun ManageVouchers(navController: NavController) {
     val products by remember { mutableStateOf(
         listOf(
-            Product("P001", "Sản phẩm 1"),
-            Product("P002", "Sản phẩm 2"),
-            Product("P003", "Sản phẩm 3"),
-            Product("P004", "Sản phẩm 4"),
-            Product("P005", "Sản phẩm 5"),
-            Product("P006", "Sản phẩm 6"),
-            Product("P007", "Sản phẩm 7"),
-            Product("P008", "Sản phẩm 8"),
+            Product("P001", "Sản phẩm 1", "Tag", 50.0, "", ""),
+            Product("P002", "Sản phẩm 2", "Tag", 50.0, "", ""),
+            Product("P003", "Sản phẩm 3", "Tag", 50.0, "", ""),
+            Product("P004", "Sản phẩm 4", "Tag", 50.0, "", ""),
+            Product("P005", "Sản phẩm 5", "Tag", 50.0, "", ""),
+            Product("P006", "Sản phẩm 6", "Tag", 50.0, "", ""),
+            Product("P007", "Sản phẩm 7", "Tag", 50.0, "", ""),
+            Product("P008", "Sản phẩm 8", "Tag", 50.0, "", ""),
         )
     ) }
     var vouchers by remember { mutableStateOf(
@@ -172,8 +169,8 @@ fun VoucherFormDialog(
     var value by remember { mutableStateOf(0.0) }
     var startDate by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date) }
     var endDate by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date) }
-    var productList = remember { mutableStateListOf<Product>().apply { addAll(products) } }
-    var selectedProducts = remember { mutableStateListOf<Product>() }
+    val productList = remember { mutableStateListOf<Product>().apply { addAll(products) } }
+    val selectedProducts = remember { mutableStateListOf<Product>() }
 
     var showDateRangeDialog by remember { mutableStateOf(false) }
 

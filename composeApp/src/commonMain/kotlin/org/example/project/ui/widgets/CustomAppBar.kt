@@ -9,7 +9,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun CustomAppBar(navController: NavController) {
@@ -28,8 +27,8 @@ fun CustomAppBar(navController: NavController) {
             Button(
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                 elevation = ButtonDefaults.elevation(0.dp),
-                onClick = {}
-            ) { Text("Community", fontWeight = FontWeight.Normal) }
+                onClick = { navController.navigate("review") }
+            ) { Text("Review", fontWeight = FontWeight.Normal) }
             Button(
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                 elevation = ButtonDefaults.elevation(0.dp),

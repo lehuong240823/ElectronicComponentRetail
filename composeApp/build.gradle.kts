@@ -105,6 +105,8 @@ android {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.kotlinx.datetime.v061)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.tv.material)

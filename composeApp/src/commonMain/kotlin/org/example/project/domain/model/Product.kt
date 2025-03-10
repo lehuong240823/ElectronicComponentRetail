@@ -1,17 +1,21 @@
 package org.example.project.domain.model
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonIgnoreUnknownKeys
+import kotlinx.datetime.Instant
+import com.ionspin.kotlin.bignum.decimal.BigDecimal
+import org.example.project.core.BigDecimalSerializer
 
 @Serializable
+@JsonIgnoreUnknownKeys
 data class Product(
-    val id: Int,
-    val category: Category,
-    val provider: Provider,
+    val id: Int? = null,
+    val category: Category? = null,
+    val provider: Provider? = null,
     val name: String? = null,
     val description: String? = null,
-    val price: Int? = null,
-    val quantity: Int,
-    val brand: String? = null,
-    val origin: String? = null,
-    val picture: Map<String, List<String>>? = null
+    @Serializable(with = BigDecimalSerializer::class)
+    var price: BigDecimal? = null,
+    val stock: Int? = null,
+    val productStatus: ProductStatus? = null
 )

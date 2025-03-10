@@ -1,24 +1,25 @@
 package org.example.project.data.repository
 
-import org.example.project.data.api.AdministratorApi
 import org.example.project.domain.model.Administrator
+import org.example.project.domain.model.PaginatedResponse
+import org.example.project.data.api.AdministratorApi
 
 class AdministratorRepository(private val administratorApi: AdministratorApi) {
 
+    suspend fun getAllAdministrators(): PaginatedResponse<Administrator>? {
+        return try {
+            administratorApi.getAllAdministrators()
+        } catch (e: Exception) {
+            println("Error fetching administrators: ${e.message}")
+            null
+        }
+    }
+    
     suspend fun getAdministrator(userId: Int): Administrator? {
         return try {
             administratorApi.getAdministrator(userId)
         } catch (e: Exception) {
-            println("Error fetching administrator: \${e.message}")
-            null
-        }
-    }
-
-    suspend fun getAllAdministrators(): List<Administrator>? {
-        return try {
-            administratorApi.getAllAdministrators()
-        } catch (e: Exception) {
-            println("Error fetching administrators: \${e.message}")
+            println("Error fetching administrator: ${e.message}")
             null
         }
     }
@@ -27,7 +28,7 @@ class AdministratorRepository(private val administratorApi: AdministratorApi) {
         return try {
             administratorApi.createAdministrator(administrator)
         } catch (e: Exception) {
-            println("Error creating administrator: \${e.message}")
+            println("Error creating administrator: ${e.message}")
             null
         }
     }
@@ -36,7 +37,7 @@ class AdministratorRepository(private val administratorApi: AdministratorApi) {
         return try {
             administratorApi.updateAdministrator(administratorId, administrator)
         } catch (e: Exception) {
-            println("Error updating administrator: \${e.message}")
+            println("Error updating administrator: ${e.message}")
             null
         }
     }
@@ -45,7 +46,7 @@ class AdministratorRepository(private val administratorApi: AdministratorApi) {
         return try {
             administratorApi.deleteAdministrator(administratorId)
         } catch (e: Exception) {
-            println("Error deleting administrator: \${e.message}")
+            println("Error deleting administrator: ${e.message}")
             false
         }
     }

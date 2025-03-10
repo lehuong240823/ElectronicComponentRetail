@@ -1,24 +1,25 @@
 package org.example.project.data.repository
 
-import org.example.project.data.api.OrderApi
 import org.example.project.domain.model.Order
+import org.example.project.domain.model.PaginatedResponse
+import org.example.project.data.api.OrderApi
 
 class OrderRepository(private val orderApi: OrderApi) {
 
+    suspend fun getAllOrders(): PaginatedResponse<Order>? {
+        return try {
+            orderApi.getAllOrders()
+        } catch (e: Exception) {
+            println("Error fetching orders: ${e.message}")
+            null
+        }
+    }
+    
     suspend fun getOrder(userId: Int): Order? {
         return try {
             orderApi.getOrder(userId)
         } catch (e: Exception) {
-            println("Error fetching order: \${e.message}")
-            null
-        }
-    }
-
-    suspend fun getAllOrders(): List<Order>? {
-        return try {
-            orderApi.getAllOrders()
-        } catch (e: Exception) {
-            println("Error fetching orders: \${e.message}")
+            println("Error fetching order: ${e.message}")
             null
         }
     }
@@ -27,7 +28,7 @@ class OrderRepository(private val orderApi: OrderApi) {
         return try {
             orderApi.createOrder(order)
         } catch (e: Exception) {
-            println("Error creating order: \${e.message}")
+            println("Error creating order: ${e.message}")
             null
         }
     }
@@ -36,7 +37,7 @@ class OrderRepository(private val orderApi: OrderApi) {
         return try {
             orderApi.updateOrder(orderId, order)
         } catch (e: Exception) {
-            println("Error updating order: \${e.message}")
+            println("Error updating order: ${e.message}")
             null
         }
     }
@@ -45,7 +46,7 @@ class OrderRepository(private val orderApi: OrderApi) {
         return try {
             orderApi.deleteOrder(orderId)
         } catch (e: Exception) {
-            println("Error deleting order: \${e.message}")
+            println("Error deleting order: ${e.message}")
             false
         }
     }

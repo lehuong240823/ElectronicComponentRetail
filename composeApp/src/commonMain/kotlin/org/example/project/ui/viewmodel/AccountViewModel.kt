@@ -53,11 +53,11 @@ class AccountViewModel(private val accountRepository: AccountRepository) {
 
     suspend fun getAllAccounts() {
         val result = accountRepository.getAllAccounts()
-        _accountsList.value = result ?: emptyList()
+        _accountsList.value = result?.content ?: emptyList()
     }
 
-    suspend fun findAccountByEmail(email: String) {
-        val result = accountRepository.findAccountByEmail(email)
+    suspend fun getAccountByEmail(email: String) {
+        val result = accountRepository.getAccountByEmail(email)
         if (result != null) {
             _account.value = result
         } else {

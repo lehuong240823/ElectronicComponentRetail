@@ -10,11 +10,20 @@ import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
 import org.example.project.core.HttpClient
 import org.example.project.core.getUrl
+import org.example.project.domain.model.PaginatedResponse
 import org.example.project.domain.model.Administrator
 
 class AdministratorApi {
     val endPoint = "/api/administrators"
 
+    suspend fun getAllAdministrators(): PaginatedResponse<Administrator> {
+        return HttpClient.client.get(urlString = getUrl(endPoint)).body<PaginatedResponse<Administrator>>()
+    }
+
+    suspend fun getAdministrator(administratorId: Int): Administrator {
+        return Json.decodeFromString<Administrator>(HttpClient.client.get(urlString = getUrl("${endPoint}/$administratorId")).body())
+    }
+    
     suspend fun createAdministrator(administrator: Administrator): Administrator {
         return HttpClient.client.post(getUrl(endPoint)) {
             contentType(io.ktor.http.ContentType.Application.Json)
@@ -22,18 +31,8 @@ class AdministratorApi {
         }.body()
     }
 
-    suspend fun getAllAdministrators(): List<Administrator> {
-        return HttpClient.client.get(urlString = getUrl(endPoint)).body<List<Administrator>>()
-    }
-
-    suspend fun getAdministrator(administratorId: Int): Administrator {
-        return Json.decodeFromString<Administrator>(
-            HttpClient.client.get(urlString = getUrl("\$endPt/$administratorId")).body()
-        )
-    }
-
     suspend fun updateAdministrator(administratorId: Int, administrator: Administrator): Administrator {
-        return HttpClient.client.put(getUrl("\$endPt/$administratorId")) {
+        return HttpClient.client.put(getUrl("${endPoint}/$administratorId")) {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(administrator)
         }.body()
@@ -41,10 +40,10 @@ class AdministratorApi {
 
     suspend fun deleteAdministrator(administratorId: Int): Boolean {
         return try {
-            HttpClient.client.delete(urlString = getUrl("\$endPt/$administratorId"))
+            HttpClient.client.delete(urlString = getUrl("${endPoint}/$administratorId"))
             true
         } catch (e: Exception) {
-            println("Error deleting administrator: errorMessage")
+            println("Error deleting administrator: ${e.message}")
             false
         }
     }

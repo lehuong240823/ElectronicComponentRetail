@@ -10,11 +10,20 @@ import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
 import org.example.project.core.HttpClient
 import org.example.project.core.getUrl
+import org.example.project.domain.model.PaginatedResponse
 import org.example.project.domain.model.Product
 
 class ProductApi {
     val endPoint = "/api/products"
 
+    suspend fun getAllProducts(): PaginatedResponse<Product> {
+        return HttpClient.client.get(urlString = getUrl(endPoint)).body<PaginatedResponse<Product>>()
+    }
+
+    suspend fun getProduct(productId: Int): Product {
+        return Json.decodeFromString<Product>(HttpClient.client.get(urlString = getUrl("${endPoint}/$productId")).body())
+    }
+    
     suspend fun createProduct(product: Product): Product {
         return HttpClient.client.post(getUrl(endPoint)) {
             contentType(io.ktor.http.ContentType.Application.Json)
@@ -22,16 +31,8 @@ class ProductApi {
         }.body()
     }
 
-    suspend fun getAllProducts(): List<Product> {
-        return HttpClient.client.get(urlString = getUrl(endPoint)).body<List<Product>>()
-    }
-
-    suspend fun getProduct(productId: Int): Product {
-        return Json.decodeFromString<Product>(HttpClient.client.get(urlString = getUrl("\$endPt/$productId")).body())
-    }
-
     suspend fun updateProduct(productId: Int, product: Product): Product {
-        return HttpClient.client.put(getUrl("\$endPt/$productId")) {
+        return HttpClient.client.put(getUrl("${endPoint}/$productId")) {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(product)
         }.body()
@@ -39,10 +40,10 @@ class ProductApi {
 
     suspend fun deleteProduct(productId: Int): Boolean {
         return try {
-            HttpClient.client.delete(urlString = getUrl("\$endPt/$productId"))
+            HttpClient.client.delete(urlString = getUrl("${endPoint}/$productId"))
             true
         } catch (e: Exception) {
-            println("Error deleting product: errorMessage")
+            println("Error deleting product: ${e.message}")
             false
         }
     }

@@ -1,17 +1,82 @@
 package org.example.project.ui.theme
 
+import androidx.compose.ui.graphics.Color
+
 object Themes {
     object Light {
         val primaryButton = ButtonColor(
-            background = Colors.Default.Light.Background.BrandDefault,
+            defaultBackground = Colors.Default.Light.Background.BrandDefault,
+            hoverBackground = Colors.Default.Light.Background.BrandHover,
             border = Colors.Default.Light.Border.BrandDefault,
-            text = Colors.Default.Light.Text.BrandOnBrand
+            primaryText = Colors.Default.Light.Text.BrandOnBrand,
+            icon = Colors.Default.Light.Icon.BrandOnBrand
         )
-        val textField = ButtonColor(
-            background = Colors.Default.Light.Background.DefaultDefault,
+
+        val neutralButton = ButtonColor(
+            defaultBackground = Colors.Default.Light.Background.NeutralTertiary,
+            hoverBackground = Colors.Default.Light.Background.NeutralTertiaryHover,
+            border = Colors.Default.Light.Border.NeutralSecondary,
+            primaryText = Colors.Default.Light.Text.DefaultDefault,
+            icon = Colors.Default.Light.Icon.DefaultDefault
+        )
+
+        val subtleButton = ButtonColor(
+            defaultBackground = Color.Transparent,
             border = Colors.Default.Light.Border.DefaultDefault,
-            text = Colors.Default.Light.Text.DefaultDefault
+            primaryText = Colors.Default.Light.Text.DefaultDefault,
+            icon = Colors.Default.Light.Icon.DefaultDefault
         )
+
+        val navigationPill = ButtonColor(
+            defaultBackground = Color.Transparent,
+            hoverBackground = Colors.Default.Light.Background.DefaultDefaultHover,
+            border = Color.Transparent,
+            primaryText = Colors.Default.Light.Text.DefaultDefault,
+            icon = Colors.Default.Light.Icon.DefaultDefault
+        )
+
+
+        val secondaryBrandTag = ButtonColor(
+            defaultBackground = Colors.Default.Light.Background.BrandTertiary,
+            hoverBackground = Colors.Default.Light.Background.BrandTertiaryHover,
+            border = Color.Transparent,
+            primaryText = Colors.Default.Light.Text.BrandOnBrandTertiary,
+            icon = Colors.Default.Light.Icon.BrandOnBrandTertiary
+        )
+
+        val primaryLayout = ButtonColor(
+            defaultBackground = Colors.Default.Light.Background.DefaultDefault,
+            border = Colors.Default.Light.Border.DefaultDefault,
+            primaryText = Colors.Default.Light.Text.DefaultDefault,
+            secondaryText = Colors.Default.Light.Text.DefaultSecondary,
+        )
+
+        val secondaryLayout = ButtonColor(
+            defaultBackground = Colors.Default.Light.Background.DefaultSecondary,
+            border = Colors.Default.Light.Border.DefaultSecondary,
+            primaryText = Colors.Default.Light.Text.DefaultSecondary,
+        )
+
+        val textField = ButtonColor(
+            defaultBackground = Colors.Default.Light.Background.DefaultDefault,
+            border = Colors.Default.Light.Border.DefaultDefault,
+            primaryText = Colors.Default.Light.Text.DefaultDefault,
+        )
+
+        val voucherItem = ButtonColor(
+            defaultBackground = Colors.Default.Light.Background.DefaultDefault,
+            border = Colors.Default.Light.Border.DefaultDefault,
+            primaryText = Colors.Default.Light.Text.DefaultDefault,
+            secondaryText = Colors.Default.Light.Text.DefaultSecondary
+        )
+
+        val tab = ButtonColor(
+            defaultBackground = Colors.Default.Light.Background.DefaultDefault,
+            border = Colors.Default.Light.Border.BrandDefault,
+            primaryText = Colors.Default.Light.Text.DefaultDefault,
+            secondaryText = Colors.Default.Light.Text.DefaultSecondary
+        )
+
         val default = ThemeColors(
             background = BackgroundColors(
                 default = Colors.Default.Light.Background.DefaultDefault,

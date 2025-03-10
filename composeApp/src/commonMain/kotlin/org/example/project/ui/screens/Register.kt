@@ -1,7 +1,11 @@
 package org.example.project.ui.screens
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.Typography
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,11 +20,7 @@ import org.example.project.data.api.AccountApi
 import org.example.project.data.repository.AccountRepository
 import org.example.project.domain.model.Account
 import org.example.project.pushWithLimitScreen
-import org.example.project.ui.components.Button
-import org.example.project.ui.components.Form
-import org.example.project.ui.components.Hyperlink
-import org.example.project.ui.components.IconButton
-import org.example.project.ui.components.InputField
+import org.example.project.ui.components.*
 import org.example.project.ui.viewmodel.AccountViewModel
 
 class Register : Screen {
@@ -47,18 +47,28 @@ class Register : Screen {
                 contentAlignment = Alignment.Center
             ) {
                 Form {
-                    InputField("Email", email, onValueChange = { email = it })
-                    InputField("Password", password, onValueChange = { password = it })
+                    InputField(
+                        label = "Email",
+                        value = email,
+                        onValueChange = { email = it }
+                    )
+                    InputField(
+                        label = "Password",
+                        value = password,
+                        onValueChange = { password = it }
+                    )
                     Hyperlink(text = "Already got an account?",
                         onClick = {
                             pushWithLimitScreen(navigator = navigator, screen = SignIn())
                         })
-                    Button(text = "Register",
+                    TextButton(
+                        text = "Register",
+                        modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             if (!email.isNullOrBlank() && !password.isNullOrBlank()) {
                                 CoroutineScope(Dispatchers.Default).launch {
                                     //if (email.isNullOrBlank() && password.isNullOrBlank()) {
-                                    viewModel.createAccount(Account(email = email, role = "User"))
+                                    //viewModel.createAccount(Account(email = email, role = "User"))
                                     print(operationStatus)
                                     //}
                                 }
@@ -66,7 +76,7 @@ class Register : Screen {
                         }
                     )
                     Text("Or sign up with")
-                    IconButton(res = Res.drawable.ic_google)
+                    RoundIconButton(res = Res.drawable.ic_google)
                 }
             }
         }

@@ -10,11 +10,20 @@ import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
 import org.example.project.core.HttpClient
 import org.example.project.core.getUrl
+import org.example.project.domain.model.PaginatedResponse
 import org.example.project.domain.model.Provider
 
 class ProviderApi {
     val endPoint = "/api/providers"
 
+    suspend fun getAllProviders(): PaginatedResponse<Provider> {
+        return HttpClient.client.get(urlString = getUrl(endPoint)).body<PaginatedResponse<Provider>>()
+    }
+
+    suspend fun getProvider(providerId: Int): Provider {
+        return Json.decodeFromString<Provider>(HttpClient.client.get(urlString = getUrl("${endPoint}/$providerId")).body())
+    }
+    
     suspend fun createProvider(provider: Provider): Provider {
         return HttpClient.client.post(getUrl(endPoint)) {
             contentType(io.ktor.http.ContentType.Application.Json)
@@ -22,16 +31,8 @@ class ProviderApi {
         }.body()
     }
 
-    suspend fun getAllProviders(): List<Provider> {
-        return HttpClient.client.get(urlString = getUrl(endPoint)).body<List<Provider>>()
-    }
-
-    suspend fun getProvider(providerId: Int): Provider {
-        return Json.decodeFromString<Provider>(HttpClient.client.get(urlString = getUrl("\$endPt/$providerId")).body())
-    }
-
     suspend fun updateProvider(providerId: Int, provider: Provider): Provider {
-        return HttpClient.client.put(getUrl("\$endPt/$providerId")) {
+        return HttpClient.client.put(getUrl("${endPoint}/$providerId")) {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(provider)
         }.body()
@@ -39,10 +40,10 @@ class ProviderApi {
 
     suspend fun deleteProvider(providerId: Int): Boolean {
         return try {
-            HttpClient.client.delete(urlString = getUrl("\$endPt/$providerId"))
+            HttpClient.client.delete(urlString = getUrl("${endPoint}/$providerId"))
             true
         } catch (e: Exception) {
-            println("Error deleting provider: errorMessage")
+            println("Error deleting provider: ${e.message}")
             false
         }
     }

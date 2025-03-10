@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    kotlin("plugin.serialization") version "2.1.0"
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -48,7 +48,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-            implementation("io.ktor:ktor-client-android:3.1.0")
+            implementation(libs.ktor.client.android)
         }
 
         commonMain.dependencies {
@@ -57,31 +57,30 @@ kotlin {
             implementation(compose.material)
             implementation(compose.ui)
             implementation(compose.components.resources)
+            implementation(compose.materialIconsExtended)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-            //implementation(libs.kotlinx.serialization.json)
-
-
-            implementation("cafe.adriel.voyager:voyager-navigator:1.1.0-alpha03")
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
-            implementation("io.ktor:ktor-client-core:3.1.0")
-            implementation("io.ktor:ktor-client-content-negotiation:3.1.0")
-            implementation("io.ktor:ktor-serialization-kotlinx-json:3.1.0")
-            //implementation("io.ktor:ktor-client-logging:3.1.0")
-            //implementation("io.ktor:ktor-client-js:3.1.0")
-            implementation("org.slf4j:slf4j-api:2.0.0")
-            implementation("org.slf4j:slf4j-simple:2.0.0")
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.voyager.navigator)
+            implementation(libs.slf4j.api)
+            implementation(libs.slf4j.simple)
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+            implementation("com.ionspin.kotlin:bignum:0.3.10")
+            //runtimeOnly("io.github.kevinnzou:compose-webview-multiplatform:1.9.40")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
-            implementation("io.ktor:ktor-client-cio:3.1.0")
+            implementation(libs.ktor.client.cio)
         }
 
         wasmJsMain {
             dependencies {
-                implementation("io.ktor:ktor-client-js:3.1.0")
+                implementation(libs.ktor.client.js)
             }
         }
     }

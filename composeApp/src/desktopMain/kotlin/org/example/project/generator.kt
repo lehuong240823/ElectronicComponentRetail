@@ -25,19 +25,12 @@ import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
-import org.example.project.domain.model.${Entity}
 import org.example.project.core.HttpClient
 import org.example.project.core.getUrl
+import org.example.project.domain.model.${Entity}
 
 class ${Entity}Api {
     val endPoint = "/api/${entity}s"
-
-    suspend fun create${Entity}(${entity}: ${Entity}): ${Entity} {
-        return HttpClient.client.post(getUrl(endPoint)) {
-            contentType(io.ktor.http.ContentType.Application.Json)
-            setBody(${entity})
-        }.body()
-    }
 
     suspend fun getAll${Entity}s(): List<${Entity}> {
         return HttpClient.client.get(urlString = getUrl(endPoint)).body<List<${Entity}>>()
@@ -45,6 +38,13 @@ class ${Entity}Api {
 
     suspend fun get${Entity}(${entity}Id: Int): ${Entity} {
         return Json.decodeFromString<${Entity}>(HttpClient.client.get(urlString = getUrl("$endPt/${'$'}${entity}Id")).body())
+    }
+    
+    suspend fun create${Entity}(${entity}: ${Entity}): ${Entity} {
+        return HttpClient.client.post(getUrl(endPoint)) {
+            contentType(io.ktor.http.ContentType.Application.Json)
+            setBody(${entity})
+        }.body()
     }
 
     suspend fun update${Entity}(${entity}Id: Int, ${entity}: ${Entity}): ${Entity} {

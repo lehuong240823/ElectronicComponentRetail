@@ -1,24 +1,25 @@
 package org.example.project.data.repository
 
-import org.example.project.data.api.AccountApi
 import org.example.project.domain.model.Account
+import org.example.project.domain.model.PaginatedResponse
+import org.example.project.data.api.AccountApi
 
 class AccountRepository(private val accountApi: AccountApi) {
 
+    suspend fun getAllAccounts(): PaginatedResponse<Account>? {
+        return try {
+            accountApi.getAllAccounts()
+        } catch (e: Exception) {
+            println("Error fetching accounts: ${e.message}")
+            null
+        }
+    }
+    
     suspend fun getAccount(userId: Int): Account? {
         return try {
             accountApi.getAccount(userId)
         } catch (e: Exception) {
             println("Error fetching account: ${e.message}")
-            null
-        }
-    }
-
-    suspend fun getAllAccounts(): List<Account>? {
-        return try {
-            accountApi.getAllAccounts()
-        } catch (e: Exception) {
-            println("Error fetching accounts: ${e.message}")
             null
         }
     }
@@ -50,11 +51,11 @@ class AccountRepository(private val accountApi: AccountApi) {
         }
     }
 
-    suspend fun findAccountByEmail(email: String): Account? {
+    suspend fun getAccountByEmail(email: String): Account? {
         return try {
-            accountApi.findAccountByEmail(email)
+            accountApi.getAccountByEmail(email)
         } catch (e: Exception) {
-            println("Error finding account: ${e.message}")
+            println("Error fetching account by email: ${e.message}")
             null
         }
     }

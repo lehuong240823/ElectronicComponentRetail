@@ -10,9 +10,13 @@ data class ThemeColors(
 )
 
 data class ButtonColor(
-    val background: Color? = null,
+    val defaultBackground: Color? = null,
+    val hoverBackground: Color? = null,
+    val disabledBackground: Color? = null,
     val border: Color? = null,
-    val text: Color? = null
+    val primaryText: Color? = null,
+    val secondaryText: Color? = null,
+    val icon: Color? = null,
 )
 
 data class BackgroundColors(

@@ -1,24 +1,25 @@
 package org.example.project.data.repository
 
-import org.example.project.data.api.ReviewApi
 import org.example.project.domain.model.Review
+import org.example.project.domain.model.PaginatedResponse
+import org.example.project.data.api.ReviewApi
 
 class ReviewRepository(private val reviewApi: ReviewApi) {
 
+    suspend fun getAllReviews(): PaginatedResponse<Review>? {
+        return try {
+            reviewApi.getAllReviews()
+        } catch (e: Exception) {
+            println("Error fetching reviews: ${e.message}")
+            null
+        }
+    }
+    
     suspend fun getReview(userId: Int): Review? {
         return try {
             reviewApi.getReview(userId)
         } catch (e: Exception) {
-            println("Error fetching review: \${e.message}")
-            null
-        }
-    }
-
-    suspend fun getAllReviews(): List<Review>? {
-        return try {
-            reviewApi.getAllReviews()
-        } catch (e: Exception) {
-            println("Error fetching reviews: \${e.message}")
+            println("Error fetching review: ${e.message}")
             null
         }
     }
@@ -27,7 +28,7 @@ class ReviewRepository(private val reviewApi: ReviewApi) {
         return try {
             reviewApi.createReview(review)
         } catch (e: Exception) {
-            println("Error creating review: \${e.message}")
+            println("Error creating review: ${e.message}")
             null
         }
     }
@@ -36,7 +37,7 @@ class ReviewRepository(private val reviewApi: ReviewApi) {
         return try {
             reviewApi.updateReview(reviewId, review)
         } catch (e: Exception) {
-            println("Error updating review: \${e.message}")
+            println("Error updating review: ${e.message}")
             null
         }
     }
@@ -45,7 +46,7 @@ class ReviewRepository(private val reviewApi: ReviewApi) {
         return try {
             reviewApi.deleteReview(reviewId)
         } catch (e: Exception) {
-            println("Error deleting review: \${e.message}")
+            println("Error deleting review: ${e.message}")
             false
         }
     }

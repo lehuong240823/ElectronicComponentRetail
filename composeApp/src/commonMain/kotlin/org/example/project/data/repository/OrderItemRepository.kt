@@ -1,24 +1,25 @@
 package org.example.project.data.repository
 
-import org.example.project.data.api.OrderItemApi
 import org.example.project.domain.model.OrderItem
+import org.example.project.domain.model.PaginatedResponse
+import org.example.project.data.api.OrderItemApi
 
 class OrderItemRepository(private val orderItemApi: OrderItemApi) {
 
+    suspend fun getAllOrderItems(): PaginatedResponse<OrderItem>? {
+        return try {
+            orderItemApi.getAllOrderItems()
+        } catch (e: Exception) {
+            println("Error fetching orderItems: ${e.message}")
+            null
+        }
+    }
+    
     suspend fun getOrderItem(userId: Int): OrderItem? {
         return try {
             orderItemApi.getOrderItem(userId)
         } catch (e: Exception) {
-            println("Error fetching orderItem: \${e.message}")
-            null
-        }
-    }
-
-    suspend fun getAllOrderItems(): List<OrderItem>? {
-        return try {
-            orderItemApi.getAllOrderItems()
-        } catch (e: Exception) {
-            println("Error fetching orderItems: \${e.message}")
+            println("Error fetching orderItem: ${e.message}")
             null
         }
     }
@@ -27,7 +28,7 @@ class OrderItemRepository(private val orderItemApi: OrderItemApi) {
         return try {
             orderItemApi.createOrderItem(orderItem)
         } catch (e: Exception) {
-            println("Error creating orderItem: \${e.message}")
+            println("Error creating orderItem: ${e.message}")
             null
         }
     }
@@ -36,7 +37,7 @@ class OrderItemRepository(private val orderItemApi: OrderItemApi) {
         return try {
             orderItemApi.updateOrderItem(orderItemId, orderItem)
         } catch (e: Exception) {
-            println("Error updating orderItem: \${e.message}")
+            println("Error updating orderItem: ${e.message}")
             null
         }
     }
@@ -45,7 +46,7 @@ class OrderItemRepository(private val orderItemApi: OrderItemApi) {
         return try {
             orderItemApi.deleteOrderItem(orderItemId)
         } catch (e: Exception) {
-            println("Error deleting orderItem: \${e.message}")
+            println("Error deleting orderItem: ${e.message}")
             false
         }
     }

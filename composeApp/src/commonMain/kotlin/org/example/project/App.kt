@@ -4,15 +4,19 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.ui.screens.CreateOrder
 import org.example.project.ui.screens.SignIn
+import org.example.project.ui.screens.TransactionView
+import org.example.project.ui.screens.UserViewOrder
 
 @Composable
-@androidx.compose.desktop.ui.tooling.preview.Preview
+
 fun App() {
 
-
     MaterialTheme {
-        Navigator(SignIn())
+        //Navigator(SignIn())
+        Navigator(TransactionView())
+
     }
 }
 

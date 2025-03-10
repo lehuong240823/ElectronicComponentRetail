@@ -139,62 +139,6 @@ object Typography {
     }
 
     object Style {
-        val Heading1 = TextStyle(
-            fontWeight = FontWeight.Bold,
-            fontSize = 40.sp
-        )
-
-        val Heading2 = TextStyle(
-            fontWeight = FontWeight.Bold,
-            fontSize = 32.sp
-        )
-
-        val Heading3 = TextStyle(
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 28.sp
-        )
-
-        val Heading4 = TextStyle(
-            fontWeight = FontWeight.Medium,
-            fontSize = 24.sp
-        )
-
-        val Heading5 = TextStyle(
-            fontWeight = FontWeight.Medium,
-            fontSize = 20.sp
-        )
-
-        val Heading6 = TextStyle(
-            fontWeight = FontWeight.Medium,
-            fontSize = 18.sp
-        )
-
-        val BodyText = TextStyle(
-            fontWeight = FontWeight.Normal,
-            fontSize = 16.sp
-        )
-
-        val ButtonText = TextStyle(
-            fontWeight = FontWeight.Medium,
-            fontSize = 16.sp
-        )
-
-        val InputField = TextStyle(
-            fontWeight = FontWeight.Normal,
-            fontSize = 16.sp
-        )
-
-        val Caption = TextStyle(
-            fontWeight = FontWeight.Light,
-            fontSize = 16.sp
-        )
-
-        val Label = TextStyle(
-            fontWeight = FontWeight.Normal,
-            fontSize = 16.sp
-        )
-
-
         val TitleHero = TextStyle(
             //fontFamily = Default.Title.Hero.FontFamily,
             fontWeight = Default.Title.Hero.FontWeight,
@@ -290,5 +234,51 @@ object Typography {
             fontWeight = Primitive.Weight.Bold,
             fontSize = Primitive.Scale.S03
         )
+
+
+        val Heading1 = TextStyle(
+            fontWeight = FontWeight.Bold,
+            fontSize = 40.sp
+        )
+
+        val Heading2 = TextStyle(
+            fontWeight = FontWeight.Bold,
+            fontSize = 32.sp
+        )
+
+        val Heading3 = TextStyle(
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 28.sp
+        )
+
+        val Heading4 = TextStyle(
+            fontWeight = FontWeight.Medium,
+            fontSize = 24.sp
+        )
+
+        val Heading5 = TextStyle(
+            fontWeight = FontWeight.Medium,
+            fontSize = 20.sp
+        )
+
+        val Heading6 = TextStyle(
+            fontWeight = FontWeight.Medium,
+            fontSize = 18.sp
+        )
+
+        val BodyText = BodyBase
+
+        val ButtonText = SingleLineBodyBase
+
+        val InputField = SingleLineBodyBase
+
+        val Caption = TextStyle(
+            fontWeight = FontWeight.Light,
+            fontSize = 16.sp
+        )
+
+        val Label = BodyBase
+
+        val Hyperlink = BodyLink
     }
 }

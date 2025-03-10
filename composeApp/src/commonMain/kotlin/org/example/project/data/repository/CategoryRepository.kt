@@ -1,24 +1,25 @@
 package org.example.project.data.repository
 
-import org.example.project.data.api.CategoryApi
 import org.example.project.domain.model.Category
+import org.example.project.domain.model.PaginatedResponse
+import org.example.project.data.api.CategoryApi
 
 class CategoryRepository(private val categoryApi: CategoryApi) {
 
+    suspend fun getAllCategorys(): PaginatedResponse<Category>? {
+        return try {
+            categoryApi.getAllCategorys()
+        } catch (e: Exception) {
+            println("Error fetching categorys: ${e.message}")
+            null
+        }
+    }
+    
     suspend fun getCategory(userId: Int): Category? {
         return try {
             categoryApi.getCategory(userId)
         } catch (e: Exception) {
-            println("Error fetching category: \${e.message}")
-            null
-        }
-    }
-
-    suspend fun getAllCategorys(): List<Category>? {
-        return try {
-            categoryApi.getAllCategorys()
-        } catch (e: Exception) {
-            println("Error fetching categorys: \${e.message}")
+            println("Error fetching category: ${e.message}")
             null
         }
     }
@@ -27,7 +28,7 @@ class CategoryRepository(private val categoryApi: CategoryApi) {
         return try {
             categoryApi.createCategory(category)
         } catch (e: Exception) {
-            println("Error creating category: \${e.message}")
+            println("Error creating category: ${e.message}")
             null
         }
     }
@@ -36,7 +37,7 @@ class CategoryRepository(private val categoryApi: CategoryApi) {
         return try {
             categoryApi.updateCategory(categoryId, category)
         } catch (e: Exception) {
-            println("Error updating category: \${e.message}")
+            println("Error updating category: ${e.message}")
             null
         }
     }
@@ -45,7 +46,7 @@ class CategoryRepository(private val categoryApi: CategoryApi) {
         return try {
             categoryApi.deleteCategory(categoryId)
         } catch (e: Exception) {
-            println("Error deleting category: \${e.message}")
+            println("Error deleting category: ${e.message}")
             false
         }
     }

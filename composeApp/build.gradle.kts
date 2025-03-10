@@ -54,6 +54,24 @@ kotlin {
 
         val desktopMain by getting
 
+        // Configure wasmJsMain with appropriate dependencies
+        val wasmJsMain by getting {
+            dependencies {
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material)
+                implementation(compose.ui)
+                implementation(compose.components.resources)
+
+                // Update Kotlin stdlib for Wasm
+                implementation("org.jetbrains.kotlin:kotlin-stdlib-wasm-js:2.1.0")
+
+                // Update coroutines for Wasm to a newer version
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-RC2-wasm0")
+//                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-wasm-js:1.8.0")
+            }
+        }
+
         commonMain.dependencies {
             implementation(libs.kotlinx.datetime.v061)
             implementation(libs.kotlin.stdlib.jdk8)
@@ -68,11 +86,18 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.navigation.compose)
         }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
         }
     }
+}
+
+// Add repositories section to ensure Kotlin Wasm dependencies are found
+repositories {
+    mavenCentral()
+    google()
 }
 
 android {

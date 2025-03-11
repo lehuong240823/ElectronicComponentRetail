@@ -27,8 +27,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.Card
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
@@ -84,7 +83,7 @@ fun ProductInformation(product: Product) {
         Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max)) {
             Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = Colors.Primitive.Gray100),
+                    backgroundColor = Colors.Primitive.Gray100,
                     modifier = Modifier.fillMaxSize()
                 ) {}
                 IconButton(

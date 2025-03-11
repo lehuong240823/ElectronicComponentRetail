@@ -2,6 +2,7 @@ package org.example.project.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,7 +26,6 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -49,8 +48,9 @@ import org.example.project.model.Product
 import org.example.project.model.Voucher
 import org.example.project.ui.theme.Colors
 import org.example.project.ui.widgets.CustomAppBar
-import org.example.project.ui.widgets.CustomDateRangePickerDialog
 import org.example.project.ui.widgets.CustomDropdown
+import org.example.project.ui.widgets.DateRange
+import org.example.project.ui.widgets.DateRangePicker
 import org.example.project.ui.widgets.VoucherTable
 
 @Composable
@@ -95,9 +95,9 @@ fun ManageVouchers(navController: NavController) {
                             showForm = false
                         },
                         onUpdate = {
-                            newVoucher -> vouchers = vouchers.map{
+                                newVoucher -> vouchers = vouchers.map{
                                 oldVoucher -> if (oldVoucher.id == newVoucher.id) newVoucher else oldVoucher
-                            }
+                        }
                             selectedId = null
                             showForm = false
                         },
@@ -155,7 +155,6 @@ fun ManageVouchers(navController: NavController) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VoucherFormDialog(
     onDismiss: () -> Unit,
@@ -167,10 +166,9 @@ fun VoucherFormDialog(
     var id by remember { mutableStateOf(voucher?.id ?: "") }
     var name by remember { mutableStateOf("") }
     var value by remember { mutableStateOf(0.0) }
-    var startDate by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date) }
-    var endDate by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date) }
-    val productList = remember { mutableStateListOf<Product>().apply { addAll(products) } }
-    val selectedProducts = remember { mutableStateListOf<Product>() }
+    var selectedDateRange by remember { mutableStateOf(DateRange()) }
+    var productList = remember { mutableStateListOf<Product>().apply { addAll(products) } }
+    var selectedProducts = remember { mutableStateListOf<Product>() }
 
     var showDateRangeDialog by remember { mutableStateOf(false) }
 
@@ -187,16 +185,10 @@ fun VoucherFormDialog(
         )},
         text = {
             Column(modifier = Modifier.padding(16.dp)) {
-                if (showDateRangeDialog) CustomDateRangePickerDialog(
-                    onDismiss = { showDateRangeDialog = false },
-                    onDateSelected = { startDateRes, endDateRes ->
-                        if (startDateRes != null && endDateRes != null) {
-                            startDate = Instant.fromEpochMilliseconds(startDateRes)
-                                .toLocalDateTime(TimeZone.currentSystemDefault()).date
-                            endDate = Instant.fromEpochMilliseconds(endDateRes)
-                                .toLocalDateTime(TimeZone.currentSystemDefault()).date
-                        }
-                    }
+                if (showDateRangeDialog) DateRangePicker(
+                    initialDateRange = selectedDateRange,
+                    onDateRangeSelected = { dateRange -> selectedDateRange = dateRange },
+                    onDismiss = { showDateRangeDialog = false }
                 )
                 Box(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
@@ -248,7 +240,7 @@ fun VoucherFormDialog(
                 )
                 Row() {
                     OutlinedTextField(
-                        value = "$startDate",
+                        value = "${selectedDateRange.startDate}",
                         onValueChange = { },
                         label = { Text("Ngày hiệu lực") },
                         modifier = Modifier.weight(1f),
@@ -263,7 +255,7 @@ fun VoucherFormDialog(
                     )
                     Box(modifier = Modifier.width(8.dp))
                     OutlinedTextField(
-                        value = "$endDate",
+                        value = "${selectedDateRange.endDate}",
                         onValueChange = { },
                         label = { Text("Ngày hết hạn") },
                         modifier = Modifier.weight(1f),
@@ -284,15 +276,15 @@ fun VoucherFormDialog(
                 Text("Thêm mã sản phẩm", fontSize = 14.sp)
                 Box(modifier = Modifier.height(6.dp))
                 selectedProducts.map {
-                    product -> Row {
-                        Text(product.toString())
-                        IconButton(onClick = {
-                            selectedProducts.remove(product)
-                            productList.add(product)
-                        }) {
-                            Icon(Icons.Default.Delete, contentDescription = null)
-                        }
+                        product -> Row {
+                    Text(product.toString())
+                    IconButton(onClick = {
+                        selectedProducts.remove(product)
+                        productList.add(product)
+                    }) {
+                        Icon(Icons.Default.Delete, contentDescription = null)
                     }
+                }
                 }
                 Row {
                     CustomDropdown(
@@ -317,9 +309,9 @@ fun VoucherFormDialog(
                 colors = ButtonDefaults.buttonColors(backgroundColor = Colors.Primitive.Green1100),
                 onClick = {
                     if (voucher == null) onSave(
-                        Voucher(id, name, value / 100, startDate, endDate, selectedProducts)
+                        Voucher(id, name, value / 100, selectedDateRange.startDate, selectedDateRange.endDate, selectedProducts)
                     ) else onUpdate(
-                        Voucher(id, name, value / 100, startDate, endDate, selectedProducts)
+                        Voucher(id, name, value / 100, selectedDateRange.startDate, selectedDateRange.endDate, selectedProducts)
                     )
 
                 }

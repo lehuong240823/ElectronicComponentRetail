@@ -54,28 +54,22 @@ kotlin {
 
         val desktopMain by getting
 
-        // Configure wasmJsMain with appropriate dependencies
-        val wasmJsMain by getting {
-            dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material)
-                implementation(compose.ui)
-                implementation(compose.components.resources)
-
-                // Update Kotlin stdlib for Wasm
-                implementation("org.jetbrains.kotlin:kotlin-stdlib-wasm-js:2.1.0")
-
-                // Update coroutines for Wasm to a newer version
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-RC2-wasm0")
-//                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-wasm-js:1.8.0")
-            }
-        }
+//        val wasmJsMain by getting {
+//            dependencies {
+//                implementation(compose.runtime)
+//                implementation(compose.foundation)
+//                implementation(compose.material)
+//                implementation(compose.ui)
+//                implementation(compose.components.resources)
+//                implementation("org.jetbrains.kotlin:kotlin-stdlib-wasm-js:2.1.0")
+//                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+//                // https://mvnrepository.com/artifact/org.jetbrains.skiko/skiko-wasm-js
+//                implementation("org.jetbrains.skiko:skiko-wasm-js:0.8.4")
+//            }
+//        }
 
         commonMain.dependencies {
             implementation(libs.kotlinx.datetime.v061)
-            implementation(libs.kotlin.stdlib.jdk8)
-            implementation(libs.material3)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
@@ -94,7 +88,6 @@ kotlin {
     }
 }
 
-// Add repositories section to ensure Kotlin Wasm dependencies are found
 repositories {
     mavenCentral()
     google()
@@ -122,14 +115,12 @@ android {
         }
     }
     compileOptions {
-        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.kotlinx.datetime.v061)
@@ -138,7 +129,7 @@ dependencies {
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.ui.android)
     implementation(libs.androidx.ui.text.android)
-    implementation(libs.places)
+    implementation(libs.androidx.foundation.layout.android)
     debugImplementation(compose.uiTooling)
 }
 

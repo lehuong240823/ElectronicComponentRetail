@@ -23,6 +23,7 @@ composeMaterial = "1.4.1"
 uiAndroid = "1.7.8"
 uiTextAndroid = "1.7.8"
 places = "4.1.0"
+foundationLayoutAndroid = "1.7.8"
 
 [libraries]
 androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleLivedata" }
@@ -43,6 +44,7 @@ kotlinx-datetime-v061 = { module = "org.jetbrains.kotlinx:kotlinx-datetime", ver
 material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "jetbrainsNavigationCompose" }
 places = { group = "com.google.android.libraries.places", name = "places", version.ref = "places" }
+androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroid" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

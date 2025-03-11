@@ -1,16 +1,16 @@
 package org.example.project.ui.widgets
 
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ExposedDropdownMenuBox
+import androidx.compose.material.ExposedDropdownMenuDefaults
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun <T> CustomDropdown(
     onChanged: (value: T) -> Unit,
@@ -32,7 +32,6 @@ fun <T> CustomDropdown(
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
             colors = ExposedDropdownMenuDefaults.textFieldColors(),
-            modifier = Modifier.menuAnchor()
         )
 
         ExposedDropdownMenu(
@@ -41,7 +40,7 @@ fun <T> CustomDropdown(
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(text = option.toString()) },
+                    content = { Text(text = option.toString()) },
                     onClick = {
                         selected = option
                         expanded = false

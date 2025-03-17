@@ -7,32 +7,32 @@ import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.contentType
-import kotlinx.serialization.json.Json
+import org.example.project.getPageSize
 import org.example.project.core.HttpClient
-import org.example.project.core.getUrl
+import org.example.project.core.BASE_URL
 import org.example.project.domain.model.PaginatedResponse
 import org.example.project.domain.model.UserPayment
 
 class UserPaymentApi {
-    val endPoint = "/api/userPayments"
+    val endPoint = "/api/user-payments"
 
-    suspend fun getAllUserPayments(): PaginatedResponse<UserPayment> {
-        return HttpClient.client.get(urlString = getUrl(endPoint)).body<PaginatedResponse<UserPayment>>()
+    suspend fun getAllUserPayments(currentPage: Int): PaginatedResponse<UserPayment> {
+        return HttpClient.client.get("${BASE_URL}${endPoint}?size=${getPageSize()}&page=${currentPage}").body()
     }
 
     suspend fun getUserPayment(userPaymentId: Int): UserPayment {
-        return Json.decodeFromString<UserPayment>(HttpClient.client.get(urlString = getUrl("${endPoint}/$userPaymentId")).body())
+        return HttpClient.client.get("${BASE_URL}${endPoint}/${userPaymentId}").body()
     }
     
     suspend fun createUserPayment(userPayment: UserPayment): UserPayment {
-        return HttpClient.client.post(getUrl(endPoint)) {
+        return HttpClient.client.post("${BASE_URL}${endPoint}") {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(userPayment)
         }.body()
     }
 
     suspend fun updateUserPayment(userPaymentId: Int, userPayment: UserPayment): UserPayment {
-        return HttpClient.client.put(getUrl("${endPoint}/$userPaymentId")) {
+        return HttpClient.client.put("${BASE_URL}${endPoint}/${userPaymentId}") {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(userPayment)
         }.body()
@@ -40,7 +40,7 @@ class UserPaymentApi {
 
     suspend fun deleteUserPayment(userPaymentId: Int): Boolean {
         return try {
-            HttpClient.client.delete(urlString = getUrl("${endPoint}/$userPaymentId"))
+            HttpClient.client.delete("${BASE_URL}${endPoint}/${userPaymentId}")
             true
         } catch (e: Exception) {
             println("Error deleting userPayment: ${e.message}")

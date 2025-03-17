@@ -6,9 +6,9 @@ import org.example.project.data.api.AccountApi
 
 class AccountRepository(private val accountApi: AccountApi) {
 
-    suspend fun getAllAccounts(): PaginatedResponse<Account>? {
+    suspend fun getAllAccounts(currentPage: Int): PaginatedResponse<Account>? {
         return try {
-            accountApi.getAllAccounts()
+            accountApi.getAllAccounts(currentPage)
         } catch (e: Exception) {
             println("Error fetching accounts: ${e.message}")
             null

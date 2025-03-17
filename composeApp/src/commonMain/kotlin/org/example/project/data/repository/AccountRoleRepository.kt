@@ -6,9 +6,9 @@ import org.example.project.data.api.AccountRoleApi
 
 class AccountRoleRepository(private val accountRoleApi: AccountRoleApi) {
 
-    suspend fun getAllAccountRoles(): PaginatedResponse<AccountRole>? {
+    suspend fun getAllAccountRoles(currentPage: Int): PaginatedResponse<AccountRole>? {
         return try {
-            accountRoleApi.getAllAccountRoles()
+            accountRoleApi.getAllAccountRoles(currentPage)
         } catch (e: Exception) {
             println("Error fetching accountRoles: ${e.message}")
             null

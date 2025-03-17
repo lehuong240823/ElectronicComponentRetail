@@ -6,9 +6,9 @@ import org.example.project.data.api.VoucherTypeApi
 
 class VoucherTypeRepository(private val voucherTypeApi: VoucherTypeApi) {
 
-    suspend fun getAllVoucherTypes(): PaginatedResponse<VoucherType>? {
+    suspend fun getAllVoucherTypes(currentPage: Int): PaginatedResponse<VoucherType>? {
         return try {
-            voucherTypeApi.getAllVoucherTypes()
+            voucherTypeApi.getAllVoucherTypes(currentPage)
         } catch (e: Exception) {
             println("Error fetching voucherTypes: ${e.message}")
             null

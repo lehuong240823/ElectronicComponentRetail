@@ -6,9 +6,9 @@ import org.example.project.data.api.ProductApi
 
 class ProductRepository(private val productApi: ProductApi) {
 
-    suspend fun getAllProducts(): PaginatedResponse<Product>? {
+    suspend fun getAllProducts(currentPage: Int): PaginatedResponse<Product>? {
         return try {
-            productApi.getAllProducts()
+            productApi.getAllProducts(currentPage)
         } catch (e: Exception) {
             println("Error fetching products: ${e.message}")
             null

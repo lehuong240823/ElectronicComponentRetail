@@ -7,6 +7,8 @@ import org.example.project.core.API_KEY
 import org.example.project.core.HttpClient
 import org.example.project.domain.model.FirebaseEmailAuthRequest
 import org.example.project.domain.model.FirebaseEmailAuthResponse
+import org.example.project.domain.model.FirebaseSendEmailRequest
+import org.example.project.domain.model.FirebaseSendEmailResponse
 
 class FirebaseEmailAuthApi {
     suspend fun signUp(firebaseEmailAuthRequest: FirebaseEmailAuthRequest): FirebaseEmailAuthResponse {
@@ -14,7 +16,7 @@ class FirebaseEmailAuthApi {
         return HttpClient.client.post(endPoint) {
             contentType(ContentType.Application.Json)
             setBody(firebaseEmailAuthRequest)
-        }.body<FirebaseEmailAuthResponse>()
+        }.body()
     }
 
     suspend fun signIn(firebaseEmailAuthRequest: FirebaseEmailAuthRequest): FirebaseEmailAuthResponse {
@@ -22,6 +24,14 @@ class FirebaseEmailAuthApi {
         return HttpClient.client.post(endPoint) {
             contentType(ContentType.Application.Json)
             setBody(firebaseEmailAuthRequest)
-        }.body<FirebaseEmailAuthResponse>()
+        }.body()
+    }
+
+    suspend fun sendResetPasswordEmail(firebaseSendEmailRequest: FirebaseSendEmailRequest): FirebaseSendEmailResponse {
+        val endPoint = "https://identitytoolkit.googleapis.com/v1/accounts:resetPassword?key=${API_KEY}"
+        return HttpClient.client.post(endPoint) {
+            contentType(ContentType.Application.Json)
+            setBody(firebaseSendEmailRequest)
+        }.body()
     }
 }

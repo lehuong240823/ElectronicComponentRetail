@@ -6,9 +6,9 @@ import org.example.project.data.api.ProductImageApi
 
 class ProductImageRepository(private val productImageApi: ProductImageApi) {
 
-    suspend fun getAllProductImages(): PaginatedResponse<ProductImage>? {
+    suspend fun getAllProductImages(currentPage: Int): PaginatedResponse<ProductImage>? {
         return try {
-            productImageApi.getAllProductImages()
+            productImageApi.getAllProductImages(currentPage)
         } catch (e: Exception) {
             println("Error fetching productImages: ${e.message}")
             null

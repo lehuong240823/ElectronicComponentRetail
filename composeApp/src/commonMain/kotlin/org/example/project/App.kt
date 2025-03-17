@@ -1,22 +1,19 @@
 package org.example.project
 
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.runtime.*
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
-import org.example.project.ui.screens.CreateOrder
-import org.example.project.ui.screens.SignIn
-import org.example.project.ui.screens.TransactionView
-import org.example.project.ui.screens.UserViewOrder
+import org.example.project.presentation.screens.*
+import org.example.project.presentation.theme.Typography
 
 @Composable
 
 fun App() {
-
-    MaterialTheme {
-        //Navigator(SignIn())
-        Navigator(TransactionView())
-
+    val inter = Typography.loadInterFontFamily()
+        CompositionLocalProvider(LocalTextStyle.provides(LocalTextStyle.current.merge(fontFamily = inter))) {
+            //Navigator(SignIn())
+            Navigator(CartView())
     }
 }
 

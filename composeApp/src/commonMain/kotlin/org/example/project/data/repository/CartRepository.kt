@@ -6,9 +6,9 @@ import org.example.project.data.api.CartApi
 
 class CartRepository(private val cartApi: CartApi) {
 
-    suspend fun getAllCarts(): PaginatedResponse<Cart>? {
+    suspend fun getAllCarts(currentPage: Int): PaginatedResponse<Cart>? {
         return try {
-            cartApi.getAllCarts()
+            cartApi.getAllCarts(currentPage)
         } catch (e: Exception) {
             println("Error fetching carts: ${e.message}")
             null

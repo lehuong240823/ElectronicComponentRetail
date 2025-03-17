@@ -6,7 +6,9 @@ interface Platform {
 
 expect fun getPlatform(): Platform
 
-expect fun signInwithGoogle()
+expect fun signInWithGoogle(): String
+
+expect fun getPageSize(): Int
 
 fun isWeb(): Boolean {
     return getPlatform().name.contains("Web")

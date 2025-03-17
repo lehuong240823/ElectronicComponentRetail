@@ -6,9 +6,9 @@ import org.example.project.data.api.CategoryApi
 
 class CategoryRepository(private val categoryApi: CategoryApi) {
 
-    suspend fun getAllCategorys(): PaginatedResponse<Category>? {
+    suspend fun getAllCategorys(currentPage: Int): PaginatedResponse<Category>? {
         return try {
-            categoryApi.getAllCategorys()
+            categoryApi.getAllCategorys(currentPage)
         } catch (e: Exception) {
             println("Error fetching categorys: ${e.message}")
             null

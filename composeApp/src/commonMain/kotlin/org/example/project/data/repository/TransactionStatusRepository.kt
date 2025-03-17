@@ -6,9 +6,9 @@ import org.example.project.data.api.TransactionStatusApi
 
 class TransactionStatusRepository(private val transactionStatusApi: TransactionStatusApi) {
 
-    suspend fun getAllTransactionStatuss(): PaginatedResponse<TransactionStatus>? {
+    suspend fun getAllTransactionStatuss(currentPage: Int): PaginatedResponse<TransactionStatus>? {
         return try {
-            transactionStatusApi.getAllTransactionStatuss()
+            transactionStatusApi.getAllTransactionStatuss(currentPage)
         } catch (e: Exception) {
             println("Error fetching transactionStatuss: ${e.message}")
             null

@@ -12,5 +12,5 @@ data class Review(
     val id: Int? = null,
     val orderItem: OrderItem? = null,
     val rating: Int? = null,
-    val content: String? = null
+    var content: String? = null
 )

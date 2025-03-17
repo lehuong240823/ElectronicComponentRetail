@@ -7,32 +7,32 @@ import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.contentType
-import kotlinx.serialization.json.Json
+import org.example.project.getPageSize
 import org.example.project.core.HttpClient
-import org.example.project.core.getUrl
+import org.example.project.core.BASE_URL
 import org.example.project.domain.model.PaginatedResponse
 import org.example.project.domain.model.AccountStatus
 
 class AccountStatusApi {
     val endPoint = "/api/accountStatuss"
 
-    suspend fun getAllAccountStatuss(): PaginatedResponse<AccountStatus> {
-        return HttpClient.client.get(urlString = getUrl(endPoint)).body<PaginatedResponse<AccountStatus>>()
+    suspend fun getAllAccountStatuss(currentPage: Int): PaginatedResponse<AccountStatus> {
+        return HttpClient.client.get("${BASE_URL}${endPoint}?size=${getPageSize()}&page=${currentPage}").body()
     }
 
     suspend fun getAccountStatus(accountStatusId: Int): AccountStatus {
-        return Json.decodeFromString<AccountStatus>(HttpClient.client.get(urlString = getUrl("${endPoint}/$accountStatusId")).body())
+        return HttpClient.client.get("${BASE_URL}${endPoint}/${accountStatusId}").body()
     }
     
     suspend fun createAccountStatus(accountStatus: AccountStatus): AccountStatus {
-        return HttpClient.client.post(getUrl(endPoint)) {
+        return HttpClient.client.post("${BASE_URL}${endPoint}") {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(accountStatus)
         }.body()
     }
 
     suspend fun updateAccountStatus(accountStatusId: Int, accountStatus: AccountStatus): AccountStatus {
-        return HttpClient.client.put(getUrl("${endPoint}/$accountStatusId")) {
+        return HttpClient.client.put("${BASE_URL}${endPoint}/${accountStatusId}") {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(accountStatus)
         }.body()
@@ -40,7 +40,7 @@ class AccountStatusApi {
 
     suspend fun deleteAccountStatus(accountStatusId: Int): Boolean {
         return try {
-            HttpClient.client.delete(urlString = getUrl("${endPoint}/$accountStatusId"))
+            HttpClient.client.delete("${BASE_URL}${endPoint}/${accountStatusId}")
             true
         } catch (e: Exception) {
             println("Error deleting accountStatus: ${e.message}")

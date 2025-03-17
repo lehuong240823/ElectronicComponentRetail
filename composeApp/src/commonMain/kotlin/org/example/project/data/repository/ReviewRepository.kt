@@ -6,9 +6,9 @@ import org.example.project.data.api.ReviewApi
 
 class ReviewRepository(private val reviewApi: ReviewApi) {
 
-    suspend fun getAllReviews(): PaginatedResponse<Review>? {
+    suspend fun getAllReviews(currentPage: Int): PaginatedResponse<Review>? {
         return try {
-            reviewApi.getAllReviews()
+            reviewApi.getAllReviews(currentPage)
         } catch (e: Exception) {
             println("Error fetching reviews: ${e.message}")
             null

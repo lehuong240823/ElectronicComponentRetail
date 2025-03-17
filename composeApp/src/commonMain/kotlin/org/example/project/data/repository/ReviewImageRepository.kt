@@ -6,9 +6,9 @@ import org.example.project.data.api.ReviewImageApi
 
 class ReviewImageRepository(private val reviewImageApi: ReviewImageApi) {
 
-    suspend fun getAllReviewImages(): PaginatedResponse<ReviewImage>? {
+    suspend fun getAllReviewImages(currentPage: Int): PaginatedResponse<ReviewImage>? {
         return try {
-            reviewImageApi.getAllReviewImages()
+            reviewImageApi.getAllReviewImages(currentPage)
         } catch (e: Exception) {
             println("Error fetching reviewImages: ${e.message}")
             null

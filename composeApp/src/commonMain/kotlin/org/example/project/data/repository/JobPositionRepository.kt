@@ -6,9 +6,9 @@ import org.example.project.data.api.JobPositionApi
 
 class JobPositionRepository(private val jobPositionApi: JobPositionApi) {
 
-    suspend fun getAllJobPositions(): PaginatedResponse<JobPosition>? {
+    suspend fun getAllJobPositions(currentPage: Int): PaginatedResponse<JobPosition>? {
         return try {
-            jobPositionApi.getAllJobPositions()
+            jobPositionApi.getAllJobPositions(currentPage)
         } catch (e: Exception) {
             println("Error fetching jobPositions: ${e.message}")
             null

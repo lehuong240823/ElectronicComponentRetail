@@ -23,9 +23,3 @@ object HttpClient {
         }
     }
 }
-
-fun getUrl(endPoint: String): String {
-    val LOCALHOST_URL = "http://localhost:10000"
-    val BASE_URL = "https://electroniccomponentretailserver-latest.onrender.com"
-    return "$BASE_URL$endPoint"
-}

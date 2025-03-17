@@ -6,9 +6,9 @@ import org.example.project.data.api.UserAddressApi
 
 class UserAddressRepository(private val userAddressApi: UserAddressApi) {
 
-    suspend fun getAllUserAddresss(): PaginatedResponse<UserAddress>? {
+    suspend fun getAllUserAddresss(currentPage: Int): PaginatedResponse<UserAddress>? {
         return try {
-            userAddressApi.getAllUserAddresss()
+            userAddressApi.getAllUserAddresss(currentPage)
         } catch (e: Exception) {
             println("Error fetching userAddresss: ${e.message}")
             null

@@ -1,0 +1,251 @@
+package org.example.project.presentation.theme
+
+import androidx.compose.ui.graphics.Color
+
+object Colors {
+    object Primitive {
+        val Black100 = Color(0x0C0C0D0D)
+        val Black1000 = Color(0xFF0C0C0D)
+        val Black200 = Color(0x0C0C0D1A)
+        val Black300 = Color(0x0C0C0D33)
+        val Black400 = Color(0x0C0C0D66)
+        val Black500 = Color(0x0C0C0DB2)
+        val Black600 = Color(0x0C0C0DCC)
+        val Black700 = Color(0x0C0C0DD9)
+        val Black800 = Color(0x0C0C0DE5)
+        val Black900 = Color(0x0C0C0DF2)
+        val Brand100 = Color(0xFFF5F5F5)
+        val Brand1000 = Color(0xFF111111)
+        val Brand200 = Color(0xFFE6E6E6)
+        val Brand300 = Color(0xFFD9D9D9)
+        val Brand400 = Color(0xFFB3B3B3)
+        val Brand500 = Color(0xFF757575)
+        val Brand600 = Color(0xFF444444)
+        val Brand700 = Color(0xFF383838)
+        val Brand800 = Color(0xFF2C2C2C)
+        val Brand900 = Color(0xFF1E1E1E)
+        val Gray100 = Color(0xFFF5F5F5)
+        val Gray1000 = Color(0xFF111111)
+        val Gray200 = Color(0xFFE6E6E6)
+        val Gray300 = Color(0xFFD9D9D9)
+        val Gray400 = Color(0xFFB3B3B3)
+        val Gray500 = Color(0xFF757575)
+        val Gray600 = Color(0xFF444444)
+        val Gray700 = Color(0xFF383838)
+        val Gray800 = Color(0xFF2C2C2C)
+        val Gray900 = Color(0xFF1E1E1E)
+        val Green100 = Color(0xFFEBFFEE)
+        val Green1000 = Color(0xFF062D1B)
+        val Green200 = Color(0xFFCFF7D3)
+        val Green300 = Color(0xFFAFF4C6)
+        val Green400 = Color(0xFF85E0A3)
+        val Green500 = Color(0xFF14AE5C)
+        val Green600 = Color(0xFF009951)
+        val Green700 = Color(0xFF008043)
+        val Green800 = Color(0xFF02542D)
+        val Green900 = Color(0xFF024023)
+        val Pink100 = Color(0xFFFCF1FD)
+        val Pink1000 = Color(0xFF3F1536)
+        val Pink200 = Color(0xFFFAE1FA)
+        val Pink300 = Color(0xFFF5C0EF)
+        val Pink400 = Color(0xFFF19EDC)
+        val Pink500 = Color(0xFFEA3FB8)
+        val Pink600 = Color(0xFFD732A8)
+        val Pink700 = Color(0xFFBA2A92)
+        val Pink800 = Color(0xFF8A226F)
+        val Pink900 = Color(0xFF57184A)
+        val Red100 = Color(0xFFFEE9E7)
+        val Red1000 = Color(0xFF300603)
+        val Red200 = Color(0xFFFDD3D0)
+        val Red300 = Color(0xFFFCB3AD)
+        val Red400 = Color(0xFFF4776A)
+        val Red500 = Color(0xFFEC221F)
+        val Red600 = Color(0xFFC00F0C)
+        val Red700 = Color(0xFF900B09)
+        val Red800 = Color(0xFF690807)
+        val Red900 = Color(0xFF4D0B0A)
+        val Slate100 = Color(0xFFF3F3F3)
+        val Slate1000 = Color(0xFF242424)
+        val Slate200 = Color(0xFFE3E3E3)
+        val Slate300 = Color(0xFFCDCDCD)
+        val Slate400 = Color(0xFFB2B2B2)
+        val Slate500 = Color(0xFF949494)
+        val Slate600 = Color(0xFF767676)
+        val Slate700 = Color(0xFF5A5A5A)
+        val Slate800 = Color(0xFF434343)
+        val Slate900 = Color(0xFF303030)
+        val White100 = Color(0xFFFFFF0D)
+        val White1000 = Color(0xFFFFFFFF)
+        val White200 = Color(0xFFFFFF1A)
+        val White300 = Color(0xFFFFFF33)
+        val White400 = Color(0xFFFFFF66)
+        val White500 = Color(0xFFFFFFB2)
+        val White600 = Color(0xFFFFFFCC)
+        val White700 = Color(0xFFFFFFD9)
+        val White800 = Color(0xFFFFFFE5)
+        val White900 = Color(0xFFFFFFF2)
+        val Yellow100 = Color(0xFFFFFBEB)
+        val Yellow1000 = Color(0xFF401B01)
+        val Yellow200 = Color(0xFFFFF1C2)
+        val Yellow300 = Color(0xFFFFE8A3)
+        val Yellow400 = Color(0xFFE8B931)
+        val Yellow500 = Color(0xFFE5A000)
+        val Yellow600 = Color(0xFFBF6A02)
+        val Yellow700 = Color(0xFF975102)
+        val Yellow800 = Color(0xFF682D03)
+        val Yellow900 = Color(0xFF522504)
+    }
+
+    object Default {
+        object Light {
+            object Background {
+                val BrandDefault = Primitive.Brand800
+                val BrandHover = Primitive.Brand900
+                val BrandSecondary = Primitive.Brand200
+                val BrandSecondaryHover = Primitive.Brand300
+                val BrandTertiary = Primitive.Brand100
+                val BrandTertiaryHover = Primitive.Brand200
+                val DangerDefault = Primitive.Red500
+                val DangerHover = Primitive.Red600
+                val DangerSecondary = Primitive.Red200
+                val DangerSecondaryHover = Primitive.Red300
+                val DangerTertiary = Primitive.Red100
+                val DangerTertiaryHover = Primitive.Red200
+                val DefaultDefault = Primitive.White1000
+                val DefaultDefaultHover = Primitive.Gray100
+                val DefaultSecondary = Primitive.Gray100
+                val DefaultSecondaryHover = Primitive.Gray200
+                val DefaultTertiary = Primitive.Gray300
+                val DefaultTertiaryHover = Primitive.Gray400
+                val DisabledDefault = Primitive.Brand300
+                val NeutralDefault = Primitive.Slate700
+                val NeutralHover = Primitive.Slate800
+                val NeutralSecondary = Primitive.Slate300
+                val NeutralSecondaryHover = Primitive.Slate400
+                val NeutralTertiary = Primitive.Slate200
+                val NeutralTertiaryHover = Primitive.Slate300
+                val PositiveDefault = Primitive.Green500
+                val PositiveHover = Primitive.Green600
+                val PositiveSecondary = Primitive.Green200
+                val PositiveSecondaryHover = Primitive.Green300
+                val PositiveTertiary = Primitive.Green100
+                val PositiveTertiaryHover = Primitive.Green200
+                val UtilitiesBlanket = Color(0x000000B2)
+                val UtilitiesMeasurement = Primitive.Pink200
+                val UtilitiesOverlay = Color(0x00000080)
+                val UtilitiesScrim = Color(0xFFFFFFCC)
+                val WarningDefault = Primitive.Yellow400
+                val WarningHover = Primitive.Yellow500
+                val WarningSecondary = Primitive.Yellow200
+                val WarningSecondaryHover = Primitive.Yellow300
+                val WarningTertiary = Primitive.Yellow100
+                val WarningTertiaryHover = Primitive.Yellow200
+            }
+
+            object Border {
+                val BrandDefault = Primitive.Brand800
+                val BrandSecondary = Primitive.Brand600
+                val BrandTertiary = Primitive.Brand500
+                val DangerDefault = Primitive.Red700
+                val DangerSecondary = Primitive.Red600
+                val DangerTertiary = Primitive.Red500
+                val DefaultDefault = Primitive.Gray300
+                val DefaultSecondary = Primitive.Gray500
+                val DefaultTertiary = Primitive.Gray700
+                val DisabledDefault = Primitive.Brand400
+                val DisabledSecondary = Primitive.Slate400
+                val NeutralDefault = Primitive.Slate900
+                val NeutralSecondary = Primitive.Slate600
+                val NeutralTertiary = Primitive.Slate400
+                val PositiveDefault = Primitive.Green800
+                val PositiveSecondary = Primitive.Green600
+                val PositiveTertiary = Primitive.Green500
+                val UtilitiesMeasurement = Primitive.Pink400
+                val UtilitiesSwatch = Color(0x0000003D)
+                val WarningDefault = Primitive.Yellow900
+                val WarningSecondary = Primitive.Yellow700
+                val WarningTertiary = Primitive.Yellow600
+            }
+
+            object Icon {
+                val BrandDefault = Primitive.Brand800
+                val BrandOnBrand = Primitive.Brand100
+                val BrandOnBrandSecondary = Primitive.Brand900
+                val BrandOnBrandTertiary = Primitive.Brand800
+                val BrandSecondary = Primitive.Brand600
+                val BrandTertiary = Primitive.Brand500
+                val DangerDefault = Primitive.Red700
+                val DangerOnDanger = Primitive.Red100
+                val DangerOnDangerSecondary = Primitive.Red700
+                val DangerOnDangerTertiary = Primitive.Red700
+                val DangerSecondary = Primitive.Red600
+                val DangerTertiary = Primitive.Red500
+                val DefaultDefault = Primitive.Gray900
+                val DefaultSecondary = Primitive.Gray500
+                val DefaultTertiary = Primitive.Gray400
+                val DisabledDefault = Primitive.Brand400
+                val DisabledOnDisabled = Primitive.Brand400
+                val NeutralDefault = Primitive.Slate900
+                val NeutralOnNeutral = Primitive.Slate100
+                val NeutralOnNeutralSecondary = Primitive.Slate900
+                val NeutralOnNeutralTertiary = Primitive.Slate800
+                val NeutralSecondary = Primitive.Slate700
+                val NeutralTertiary = Primitive.Slate600
+                val PositiveDefault = Primitive.Green800
+                val PositiveOnPositive = Primitive.Green100
+                val PositiveOnPositiveSecondary = Primitive.Green800
+                val PositiveOnPositiveTertiary = Primitive.Green900
+                val PositiveSecondary = Primitive.Green600
+                val PositiveTertiary = Primitive.Green500
+                val Utilities = Primitive.Pink600
+                val UtilitiesOnMeasurement = Primitive.Pink800
+                val WarningDefault = Primitive.Yellow900
+                val WarningOnWarning = Primitive.Yellow1000
+                val WarningOnWarningSecondary = Primitive.Yellow800
+                val WarningOnWarningTertiary = Primitive.Yellow900
+                val WarningSecondary = Primitive.Yellow700
+                val WarningTertiary = Primitive.Yellow600
+            }
+
+            object Text {
+                val BrandDefault = Primitive.Brand800
+                val BrandOnBrand = Primitive.Brand100
+                val BrandOnBrandSecondary = Primitive.Brand900
+                val BrandOnBrandTertiary = Primitive.Brand800
+                val BrandSecondary = Primitive.Brand600
+                val BrandTertiary = Primitive.Brand500
+                val DangerDefault = Primitive.Red700
+                val DangerOnDanger = Primitive.Red100
+                val DangerOnDangerSecondary = Primitive.Red700
+                val DangerOnDangerTertiary = Primitive.Red700
+                val DangerSecondary = Primitive.Red600
+                val DangerTertiary = Primitive.Red500
+                val DefaultDefault = Primitive.Gray900
+                val DefaultSecondary = Primitive.Gray500
+                val DefaultTertiary = Primitive.Gray400
+                val DisabledDefault = Primitive.Brand400
+                val DisabledOnDisabled = Primitive.Brand400
+                val NeutralDefault = Primitive.Slate900
+                val NeutralOnNeutral = Primitive.Slate100
+                val NeutralOnNeutralSecondary = Primitive.Slate900
+                val NeutralOnNeutralTertiary = Primitive.Slate800
+                val NeutralSecondary = Primitive.Slate700
+                val NeutralTertiary = Primitive.Slate600
+                val PositiveDefault = Primitive.Green800
+                val PositiveOnPositive = Primitive.Green100
+                val PositiveOnPositiveSecondary = Primitive.Green800
+                val PositiveOnPositiveTertiary = Primitive.Green800
+                val PositiveSecondary = Primitive.Green600
+                val PositiveTertiary = Primitive.Green500
+                val UtilitiesOnMeasurement = Primitive.Pink800
+                val UtilitiesOnOverlay = Primitive.Black1000
+                val WarningDefault = Primitive.Yellow900
+                val WarningOnWarning = Primitive.Yellow1000
+                val WarningOnWarningSecondary = Primitive.Yellow800
+                val WarningOnWarningTertiary = Primitive.Yellow900
+                val WarningSecondary = Primitive.Yellow700
+                val WarningTertiary = Primitive.Yellow600
+            }
+        }
+    }
+}

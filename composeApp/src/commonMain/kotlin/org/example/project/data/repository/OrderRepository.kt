@@ -6,9 +6,9 @@ import org.example.project.data.api.OrderApi
 
 class OrderRepository(private val orderApi: OrderApi) {
 
-    suspend fun getAllOrders(): PaginatedResponse<Order>? {
+    suspend fun getAllOrders(currentPage: Int): PaginatedResponse<Order>? {
         return try {
-            orderApi.getAllOrders()
+            orderApi.getAllOrders(currentPage)
         } catch (e: Exception) {
             println("Error fetching orders: ${e.message}")
             null

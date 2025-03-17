@@ -6,9 +6,9 @@ import org.example.project.data.api.ProviderApi
 
 class ProviderRepository(private val providerApi: ProviderApi) {
 
-    suspend fun getAllProviders(): PaginatedResponse<Provider>? {
+    suspend fun getAllProviders(currentPage: Int): PaginatedResponse<Provider>? {
         return try {
-            providerApi.getAllProviders()
+            providerApi.getAllProviders(currentPage)
         } catch (e: Exception) {
             println("Error fetching providers: ${e.message}")
             null

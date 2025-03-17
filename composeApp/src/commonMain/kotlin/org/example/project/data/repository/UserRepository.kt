@@ -6,9 +6,9 @@ import org.example.project.data.api.UserApi
 
 class UserRepository(private val userApi: UserApi) {
 
-    suspend fun getAllUsers(): PaginatedResponse<User>? {
+    suspend fun getAllUsers(currentPage: Int): PaginatedResponse<User>? {
         return try {
-            userApi.getAllUsers()
+            userApi.getAllUsers(currentPage)
         } catch (e: Exception) {
             println("Error fetching users: ${e.message}")
             null

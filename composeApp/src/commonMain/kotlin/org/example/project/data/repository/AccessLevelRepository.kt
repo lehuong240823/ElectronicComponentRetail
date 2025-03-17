@@ -6,9 +6,9 @@ import org.example.project.data.api.AccessLevelApi
 
 class AccessLevelRepository(private val accessLevelApi: AccessLevelApi) {
 
-    suspend fun getAllAccessLevels(): PaginatedResponse<AccessLevel>? {
+    suspend fun getAllAccessLevels(currentPage: Int): PaginatedResponse<AccessLevel>? {
         return try {
-            accessLevelApi.getAllAccessLevels()
+            accessLevelApi.getAllAccessLevels(currentPage)
         } catch (e: Exception) {
             println("Error fetching accessLevels: ${e.message}")
             null

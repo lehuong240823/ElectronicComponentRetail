@@ -6,9 +6,9 @@ import org.example.project.data.api.AdministratorApi
 
 class AdministratorRepository(private val administratorApi: AdministratorApi) {
 
-    suspend fun getAllAdministrators(): PaginatedResponse<Administrator>? {
+    suspend fun getAllAdministrators(currentPage: Int): PaginatedResponse<Administrator>? {
         return try {
-            administratorApi.getAllAdministrators()
+            administratorApi.getAllAdministrators(currentPage)
         } catch (e: Exception) {
             println("Error fetching administrators: ${e.message}")
             null

@@ -70,17 +70,27 @@ kotlin {
             implementation(libs.slf4j.simple)
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
             implementation("com.ionspin.kotlin:bignum:0.3.10")
-            //runtimeOnly("io.github.kevinnzou:compose-webview-multiplatform:1.9.40")
+            //implementation("io.github.kevinnzou:compose-webview-multiplatform:1.9.40")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.server.auth)
+            implementation(libs.ktor.server.auth.jwt)
+            implementation(libs.ktor.server.content.negotiation)
+            implementation(libs.ktor.server.core)
+            implementation(libs.ktor.server.netty)
+            implementation(libs.ktor.server.status.pages)
         }
 
         wasmJsMain {
             dependencies {
                 implementation(libs.ktor.client.js)
+                implementation(libs.ktor.server.auth)
+                implementation(libs.ktor.server.content.negotiation)
+                implementation(libs.ktor.server.core)
+                implementation(libs.ktor.server.status.pages)
             }
         }
     }
@@ -115,6 +125,8 @@ android {
 
 dependencies {
     implementation(libs.androidx.lifecycle.livedata.core)
+    implementation(libs.androidx.foundation.android)
+    implementation(libs.androidx.compose.testing)
     debugImplementation(compose.uiTooling)
 }
 

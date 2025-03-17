@@ -6,9 +6,9 @@ import org.example.project.data.api.UserPaymentApi
 
 class UserPaymentRepository(private val userPaymentApi: UserPaymentApi) {
 
-    suspend fun getAllUserPayments(): PaginatedResponse<UserPayment>? {
+    suspend fun getAllUserPayments(currentPage: Int): PaginatedResponse<UserPayment>? {
         return try {
-            userPaymentApi.getAllUserPayments()
+            userPaymentApi.getAllUserPayments(currentPage)
         } catch (e: Exception) {
             println("Error fetching userPayments: ${e.message}")
             null

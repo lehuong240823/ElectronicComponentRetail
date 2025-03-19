@@ -50,4 +50,22 @@ class VoucherRedemptionRepository(private val voucherRedemptionApi: VoucherRedem
             false
         }
     }
+
+    suspend fun getVoucherRedemptionsByVoucherId(currentPage: Int, voucher: Int): PaginatedResponse<VoucherRedemption>? {
+        return try {
+            voucherRedemptionApi.getVoucherRedemptionsByVoucherId(currentPage, voucher)
+        } catch (e: Exception) {
+            println("Error fetching voucherRedemptions: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getVoucherRedemptionsByUserId(currentPage: Int, user: Int): PaginatedResponse<VoucherRedemption>? {
+        return try {
+            voucherRedemptionApi.getVoucherRedemptionsByUserId(currentPage, user)
+        } catch (e: Exception) {
+            println("Error fetching voucherRedemptions: ${e.message}")
+            null
+        }
+    }
 }

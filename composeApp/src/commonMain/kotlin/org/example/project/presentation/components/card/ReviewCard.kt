@@ -16,7 +16,7 @@ import org.example.project.presentation.screens.AvatarBlock
 fun ReviewCard(
     modifier: Modifier = Modifier,
     editable: Boolean = false,
-    showMoreActionButton: Boolean = true,
+    showMoreActionButton: Boolean = editable,
     review: Review? = null,
     editableReview: MutableState<Review>? = mutableStateOf(Review())
 ) {

@@ -30,7 +30,7 @@ fun RatingToggleGroup(
             Icon(
                 modifier = Modifier.size(32.dp)
                     .clickable(
-                        enabled = true,
+                        enabled = enabled,
                         onClick = {
                             if (rate.value == i) {
                                 rate.value = 0

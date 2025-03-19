@@ -50,4 +50,13 @@ class ProductImageRepository(private val productImageApi: ProductImageApi) {
             false
         }
     }
+
+    suspend fun getProductImagesByProductId(currentPage: Int, product: Int): PaginatedResponse<ProductImage>? {
+        return try {
+            productImageApi.getProductImagesByProductId(currentPage, product)
+        } catch (e: Exception) {
+            println("Error fetching productImages: ${e.message}")
+            null
+        }
+    }
 }

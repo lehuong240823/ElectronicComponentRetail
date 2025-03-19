@@ -50,4 +50,22 @@ class OrderItemRepository(private val orderItemApi: OrderItemApi) {
             false
         }
     }
+
+    suspend fun getOrderItemsByOrderId(currentPage: Int, order: Int): PaginatedResponse<OrderItem>? {
+        return try {
+            orderItemApi.getOrderItemsByOrderId(currentPage, order)
+        } catch (e: Exception) {
+            println("Error fetching orderItems: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getOrderItemsByProductId(currentPage: Int, product: Int): PaginatedResponse<OrderItem>? {
+        return try {
+            orderItemApi.getOrderItemsByProductId(currentPage, product)
+        } catch (e: Exception) {
+            println("Error fetching orderItems: ${e.message}")
+            null
+        }
+    }
 }

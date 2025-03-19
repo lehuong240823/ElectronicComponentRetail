@@ -14,11 +14,13 @@ import org.example.project.presentation.theme.Typography
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ExposedDropdownMenuButton(
+    modifier: Modifier = Modifier,
     icon: ImageVector,
     content: @Composable ColumnScope.() -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
+        modifier = modifier,
         expanded = expanded,
         onExpandedChange = { expanded = it },
     ) {

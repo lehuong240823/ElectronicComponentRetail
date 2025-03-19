@@ -9,8 +9,14 @@ class OrderStatusViewModel(private val orderStatusRepository: OrderStatusReposit
     private val _totalPage = mutableStateOf<Int>(0)
     val totalPage: State<Int?> get() = _totalPage
 
+    private val _createdOrderStatus = mutableStateOf<OrderStatus?>(null)
+    val createdOrderStatus: State<OrderStatus?> get() = _createdOrderStatus
+    
     private val _orderStatus = mutableStateOf<OrderStatus?>(null)
     val orderStatus: State<OrderStatus?> get() = _orderStatus
+    
+    private val _updatedOrderStatus = mutableStateOf<OrderStatus?>(null)
+    val updatedOrderStatus: State<OrderStatus?> get() = _updatedOrderStatus
 
     private val _orderStatussList = mutableStateOf<List<OrderStatus>>(emptyList())
     val orderStatussList: State<List<OrderStatus>> get() = _orderStatussList
@@ -21,6 +27,7 @@ class OrderStatusViewModel(private val orderStatusRepository: OrderStatusReposit
     suspend fun createOrderStatus(orderStatus: OrderStatus) {
         val result = orderStatusRepository.createOrderStatus(orderStatus)
         if (result != null) {
+            _createdOrderStatus.value = result
             _operationStatus.value = "OrderStatus Created Successfully"
         } else {
             _operationStatus.value = "Failed to Create OrderStatus"
@@ -31,14 +38,16 @@ class OrderStatusViewModel(private val orderStatusRepository: OrderStatusReposit
         val result = orderStatusRepository.getOrderStatus(orderStatusId)
         if (result != null) {
             _orderStatus.value = result
+            _operationStatus.value = "OrderStatus Get Successfully"
         } else {
-            _operationStatus.value = "OrderStatus Not Found"
+            _operationStatus.value = "Failed to Get OrderStatus or OrderStatus Not Found"
         }
     }
 
     suspend fun updateOrderStatus(orderStatusId: Int, orderStatus: OrderStatus) {
         val result = orderStatusRepository.updateOrderStatus(orderStatusId, orderStatus)
         if (result != null) {
+            _updatedOrderStatus.value = result
             _operationStatus.value = "OrderStatus Updated Successfully"
         } else {
             _operationStatus.value = "Failed to Update OrderStatus"
@@ -56,7 +65,12 @@ class OrderStatusViewModel(private val orderStatusRepository: OrderStatusReposit
 
     suspend fun getAllOrderStatuss(currentPage: Int) {
         val result = orderStatusRepository.getAllOrderStatuss(currentPage)
-        _orderStatussList.value = result?.content ?: emptyList()
-        _totalPage.value = result?.totalPages ?: 0
+        if (result != null) {
+            _orderStatussList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "OrderStatus Get All Successfully"
+        } else {
+            _operationStatus.value = "Failed to Get All OrderStatus"
+        }
     }
 }

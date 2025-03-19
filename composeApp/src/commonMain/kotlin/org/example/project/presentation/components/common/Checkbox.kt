@@ -10,6 +10,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import org.example.project.presentation.theme.ButtonColor
 import org.example.project.presentation.theme.Size
@@ -18,12 +19,14 @@ import org.example.project.presentation.theme.Typography
 
 @Composable
 fun Checkbox(
+    modifier: Modifier = Modifier,
     text: String? = null,
     checked: MutableState<Boolean> = remember { mutableStateOf(false) },
     onCheckedChange: (Boolean) -> Unit = {},
     color: ButtonColor = Themes.Light.primaryLayout,
 ) {
     Row(
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Size.Space.S300)
     ) {

@@ -9,8 +9,14 @@ class ReviewImageViewModel(private val reviewImageRepository: ReviewImageReposit
     private val _totalPage = mutableStateOf<Int>(0)
     val totalPage: State<Int?> get() = _totalPage
 
+    private val _createdReviewImage = mutableStateOf<ReviewImage?>(null)
+    val createdReviewImage: State<ReviewImage?> get() = _createdReviewImage
+    
     private val _reviewImage = mutableStateOf<ReviewImage?>(null)
     val reviewImage: State<ReviewImage?> get() = _reviewImage
+    
+    private val _updatedReviewImage = mutableStateOf<ReviewImage?>(null)
+    val updatedReviewImage: State<ReviewImage?> get() = _updatedReviewImage
 
     private val _reviewImagesList = mutableStateOf<List<ReviewImage>>(emptyList())
     val reviewImagesList: State<List<ReviewImage>> get() = _reviewImagesList
@@ -21,6 +27,7 @@ class ReviewImageViewModel(private val reviewImageRepository: ReviewImageReposit
     suspend fun createReviewImage(reviewImage: ReviewImage) {
         val result = reviewImageRepository.createReviewImage(reviewImage)
         if (result != null) {
+            _createdReviewImage.value = result
             _operationStatus.value = "ReviewImage Created Successfully"
         } else {
             _operationStatus.value = "Failed to Create ReviewImage"
@@ -31,14 +38,16 @@ class ReviewImageViewModel(private val reviewImageRepository: ReviewImageReposit
         val result = reviewImageRepository.getReviewImage(reviewImageId)
         if (result != null) {
             _reviewImage.value = result
+            _operationStatus.value = "ReviewImage Get Successfully"
         } else {
-            _operationStatus.value = "ReviewImage Not Found"
+            _operationStatus.value = "Failed to Get ReviewImage or ReviewImage Not Found"
         }
     }
 
     suspend fun updateReviewImage(reviewImageId: Int, reviewImage: ReviewImage) {
         val result = reviewImageRepository.updateReviewImage(reviewImageId, reviewImage)
         if (result != null) {
+            _updatedReviewImage.value = result
             _operationStatus.value = "ReviewImage Updated Successfully"
         } else {
             _operationStatus.value = "Failed to Update ReviewImage"
@@ -56,7 +65,23 @@ class ReviewImageViewModel(private val reviewImageRepository: ReviewImageReposit
 
     suspend fun getAllReviewImages(currentPage: Int) {
         val result = reviewImageRepository.getAllReviewImages(currentPage)
-        _reviewImagesList.value = result?.content ?: emptyList()
-        _totalPage.value = result?.totalPages ?: 0
+        if (result != null) {
+            _reviewImagesList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "ReviewImage Get All Successfully"
+        } else {
+            _operationStatus.value = "Failed to Get All ReviewImage"
+        }
+    }
+
+    suspend fun getReviewImagesByReviewId(currentPage: Int, review: Int) {
+        val result = reviewImageRepository.getReviewImagesByReviewId(currentPage, review)
+        if (result != null) {
+            _reviewImagesList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "ReviewImage Get All Successfully"
+        } else {
+            _operationStatus.value = "ReviewImage to Get All Account"
+        }
     }
 }

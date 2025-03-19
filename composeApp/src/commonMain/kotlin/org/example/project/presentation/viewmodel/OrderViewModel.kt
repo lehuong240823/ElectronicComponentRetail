@@ -9,8 +9,14 @@ class OrderViewModel(private val orderRepository: OrderRepository) {
     private val _totalPage = mutableStateOf<Int>(0)
     val totalPage: State<Int?> get() = _totalPage
 
+    private val _createdOrder = mutableStateOf<Order?>(null)
+    val createdOrder: State<Order?> get() = _createdOrder
+    
     private val _order = mutableStateOf<Order?>(null)
     val order: State<Order?> get() = _order
+    
+    private val _updatedOrder = mutableStateOf<Order?>(null)
+    val updatedOrder: State<Order?> get() = _updatedOrder
 
     private val _ordersList = mutableStateOf<List<Order>>(emptyList())
     val ordersList: State<List<Order>> get() = _ordersList
@@ -21,6 +27,7 @@ class OrderViewModel(private val orderRepository: OrderRepository) {
     suspend fun createOrder(order: Order) {
         val result = orderRepository.createOrder(order)
         if (result != null) {
+            _createdOrder.value = result
             _operationStatus.value = "Order Created Successfully"
         } else {
             _operationStatus.value = "Failed to Create Order"
@@ -31,14 +38,16 @@ class OrderViewModel(private val orderRepository: OrderRepository) {
         val result = orderRepository.getOrder(orderId)
         if (result != null) {
             _order.value = result
+            _operationStatus.value = "Order Get Successfully"
         } else {
-            _operationStatus.value = "Order Not Found"
+            _operationStatus.value = "Failed to Get Order or Order Not Found"
         }
     }
 
     suspend fun updateOrder(orderId: Int, order: Order) {
         val result = orderRepository.updateOrder(orderId, order)
         if (result != null) {
+            _updatedOrder.value = result
             _operationStatus.value = "Order Updated Successfully"
         } else {
             _operationStatus.value = "Failed to Update Order"
@@ -56,7 +65,45 @@ class OrderViewModel(private val orderRepository: OrderRepository) {
 
     suspend fun getAllOrders(currentPage: Int) {
         val result = orderRepository.getAllOrders(currentPage)
-        _ordersList.value = result?.content ?: emptyList()
-        _totalPage.value = result?.totalPages ?: 0
+        if (result != null) {
+            _ordersList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "Order Get All Successfully"
+        } else {
+            _operationStatus.value = "Failed to Get All Order"
+        }
+    }
+
+    suspend fun getOrdersByOrderStatusId(currentPage: Int, orderStatus: Byte) {
+        val result = orderRepository.getOrdersByOrderStatusId(currentPage, orderStatus)
+        if (result != null) {
+            _ordersList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "Order Get All Successfully"
+        } else {
+            _operationStatus.value = "Order to Get All Account"
+        }
+    }
+
+    suspend fun getOrdersByUserId(currentPage: Int, user: Int) {
+        val result = orderRepository.getOrdersByUserId(currentPage, user)
+        if (result != null) {
+            _ordersList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "Order Get All Successfully"
+        } else {
+            _operationStatus.value = "Order to Get All Account"
+        }
+    }
+
+    suspend fun getOrdersByVoucherId(currentPage: Int, voucher: Int) {
+        val result = orderRepository.getOrdersByVoucherId(currentPage, voucher)
+        if (result != null) {
+            _ordersList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "Order Get All Successfully"
+        } else {
+            _operationStatus.value = "Order to Get All Account"
+        }
     }
 }

@@ -9,7 +9,7 @@ import io.ktor.client.request.setBody
 import io.ktor.http.contentType
 import org.example.project.getPageSize
 import org.example.project.core.HttpClient
-import org.example.project.core.BASE_URL
+import org.example.project.BASE_URL
 import org.example.project.domain.model.PaginatedResponse
 import org.example.project.domain.model.OrderItem
 
@@ -17,22 +17,22 @@ class OrderItemApi {
     val endPoint = "/api/order-items"
 
     suspend fun getAllOrderItems(currentPage: Int): PaginatedResponse<OrderItem> {
-        return HttpClient.client.get("${BASE_URL}${endPoint}?size=${getPageSize()}&page=${currentPage}").body()
+        return HttpClient.client.get("$BASE_URL${endPoint}?size=${getPageSize()}&page=${currentPage}").body()
     }
 
     suspend fun getOrderItem(orderItemId: Int): OrderItem {
-        return HttpClient.client.get("${BASE_URL}${endPoint}/${orderItemId}").body()
+        return HttpClient.client.get("$BASE_URL${endPoint}/${orderItemId}").body()
     }
     
     suspend fun createOrderItem(orderItem: OrderItem): OrderItem {
-        return HttpClient.client.post("${BASE_URL}${endPoint}") {
+        return HttpClient.client.post("$BASE_URL${endPoint}") {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(orderItem)
         }.body()
     }
 
     suspend fun updateOrderItem(orderItemId: Int, orderItem: OrderItem): OrderItem {
-        return HttpClient.client.put("${BASE_URL}${endPoint}/${orderItemId}") {
+        return HttpClient.client.put("$BASE_URL${endPoint}/${orderItemId}") {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(orderItem)
         }.body()
@@ -40,11 +40,19 @@ class OrderItemApi {
 
     suspend fun deleteOrderItem(orderItemId: Int): Boolean {
         return try {
-            HttpClient.client.delete("${BASE_URL}${endPoint}/${orderItemId}")
+            HttpClient.client.delete("$BASE_URL${endPoint}/${orderItemId}")
             true
         } catch (e: Exception) {
             println("Error deleting orderItem: ${e.message}")
             false
         }
+    }
+
+    suspend fun getOrderItemsByOrderId(currentPage: Int, order: Int): PaginatedResponse<OrderItem> {
+        return HttpClient.client.get("$BASE_URL${endPoint}/order/id/${order}?size=${getPageSize()}&page=${currentPage}").body()
+    }
+
+    suspend fun getOrderItemsByProductId(currentPage: Int, product: Int): PaginatedResponse<OrderItem> {
+        return HttpClient.client.get("$BASE_URL${endPoint}/product/id/${product}?size=${getPageSize()}&page=${currentPage}").body()
     }
 }

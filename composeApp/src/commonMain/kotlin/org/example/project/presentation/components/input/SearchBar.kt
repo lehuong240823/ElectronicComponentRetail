@@ -13,11 +13,14 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 
 @Composable
 fun SearchBar(
+    modifier: Modifier = Modifier,
     searchKeyword: MutableState<String> = mutableStateOf(""),
     onClick: () -> Unit
 ) {
     InputField(
+        modifier = modifier,
         value = searchKeyword.value,
+        placeHolder = "Search",
         onValueChange = {
             searchKeyword.value = it
         },

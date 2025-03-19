@@ -8,7 +8,7 @@ class UserAddressRepository(private val userAddressApi: UserAddressApi) {
 
     suspend fun getAllUserAddresss(currentPage: Int): PaginatedResponse<UserAddress>? {
         return try {
-            userAddressApi.getAllUserAddresss(currentPage)
+            userAddressApi.getAllUserAddresses(currentPage)
         } catch (e: Exception) {
             println("Error fetching userAddresss: ${e.message}")
             null
@@ -48,6 +48,15 @@ class UserAddressRepository(private val userAddressApi: UserAddressApi) {
         } catch (e: Exception) {
             println("Error deleting userAddress: ${e.message}")
             false
+        }
+    }
+
+    suspend fun getUserAddresssByUserId(currentPage: Int, user: Int): PaginatedResponse<UserAddress>? {
+        return try {
+            userAddressApi.getUserAddresssByUserId(currentPage, user)
+        } catch (e: Exception) {
+            println("Error fetching userAddresss: ${e.message}")
+            null
         }
     }
 }

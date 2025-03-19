@@ -49,6 +49,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.android)
+            //implementation("com.darkrockstudios:mpfilepicker-android:3.1.0")
         }
 
         commonMain.dependencies {
@@ -68,9 +69,12 @@ kotlin {
             implementation(libs.voyager.navigator)
             implementation(libs.slf4j.api)
             implementation(libs.slf4j.simple)
-            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
-            implementation("com.ionspin.kotlin:bignum:0.3.10")
-            //implementation("io.github.kevinnzou:compose-webview-multiplatform:1.9.40")
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.bignum)
+            implementation("io.github.vinceglb:filekit-core:0.8.8")
+            implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+            //implementation("com.darkrockstudios:mpfilepicker:3.1.0")
+            //implementation("io.coil-kt:coil-compose-multiplatform:2.5.0")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

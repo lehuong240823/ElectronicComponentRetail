@@ -8,7 +8,7 @@ class OrderStatusRepository(private val orderStatusApi: OrderStatusApi) {
 
     suspend fun getAllOrderStatuss(currentPage: Int): PaginatedResponse<OrderStatus>? {
         return try {
-            orderStatusApi.getAllOrderStatuss(currentPage)
+            orderStatusApi.getAllOrderStatuses(currentPage)
         } catch (e: Exception) {
             println("Error fetching orderStatuss: ${e.message}")
             null

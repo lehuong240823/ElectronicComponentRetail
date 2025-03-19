@@ -10,7 +10,7 @@ import androidx.compose.material.SliderDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import org.example.project.core.CURRENCY
+import org.example.project.CURRENCY
 import org.example.project.presentation.components.common.BodyText
 import org.example.project.presentation.theme.ButtonColor
 import org.example.project.presentation.theme.Size

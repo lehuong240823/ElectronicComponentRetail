@@ -50,4 +50,22 @@ class UserPaymentRepository(private val userPaymentApi: UserPaymentApi) {
             false
         }
     }
+
+    suspend fun getUserPaymentsByPaymentMethodId(currentPage: Int, paymentMethod: Byte): PaginatedResponse<UserPayment>? {
+        return try {
+            userPaymentApi.getUserPaymentsByPaymentMethodId(currentPage, paymentMethod)
+        } catch (e: Exception) {
+            println("Error fetching userPayments: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getUserPaymentsByUserId(currentPage: Int, user: Int): PaginatedResponse<UserPayment>? {
+        return try {
+            userPaymentApi.getUserPaymentsByUserId(currentPage, user)
+        } catch (e: Exception) {
+            println("Error fetching userPayments: ${e.message}")
+            null
+        }
+    }
 }

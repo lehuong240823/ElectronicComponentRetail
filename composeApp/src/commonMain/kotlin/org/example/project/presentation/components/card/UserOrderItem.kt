@@ -11,10 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.example.project.SessionData
+import org.example.project.core.enums.AccountRoleType
+import org.example.project.domain.model.Account
 import org.example.project.domain.model.Order
 import org.example.project.presentation.components.common.BodyText
 import org.example.project.presentation.components.common.Divider
 import org.example.project.presentation.components.common.CustomButton
+import org.example.project.presentation.components.dropdown.ExposedDropdownInputField
 import org.example.project.presentation.theme.ButtonColor
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
@@ -26,28 +30,46 @@ fun UserOrderItem(
     buttonGroup: @Composable () -> Unit,
     color: ButtonColor = Themes.Light.primaryLayout
 ) {
+    val currentAccount = SessionData.getCurrentAccount()
     Column(
         modifier = Modifier.background(color = color.defaultBackground!!, shape = RectangleShape)
             .padding(Size.Space.S400),
         verticalArrangement = Arrangement.spacedBy(Size.Space.S200)
     ) {
-        Row (
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-        ) {
-            BodyText(
-                modifier = Modifier
-                    //.border(Size.Stroke.Border, color.primaryText!!, CustomRoundedCorner())
-                .padding(Size.Space.S200),
-                text = "Delivered",
-                style = Typography.Style.BodyText.copy(fontWeight = FontWeight.Bold)
-            )
-        }
+        OrderStatusOnAccountRoleChange(
+            currentAccount = currentAccount
+        )
         Divider()
         UserOrderProduct()
         UserOrderProduct()
         Divider()
         buttonGroup()
+    }
+}
+
+@Composable
+fun OrderStatusOnAccountRoleChange(
+    currentAccount: Account?,
+    ) {
+    Row (
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End,
+    ) {
+        when(currentAccount?.accountRole?.name) {
+            AccountRoleType.Administrator.toString() -> {
+                ExposedDropdownInputField(
+                    colors = Themes.Light.dropdownMenu
+                )
+            }
+            AccountRoleType.User.toString() -> {
+                BodyText(
+                    modifier = Modifier
+                        .padding(Size.Space.S200),
+                    text = "Delivered",
+                    style = Typography.Style.BodyText.copy(fontWeight = FontWeight.Bold)
+                )
+            }
+        }
     }
 }
 

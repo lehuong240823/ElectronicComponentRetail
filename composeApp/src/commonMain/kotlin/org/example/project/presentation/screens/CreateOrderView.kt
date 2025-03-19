@@ -12,17 +12,18 @@ import androidx.compose.material.icons.outlined.Payment
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import kotlinx.coroutines.Dispatchers
 import org.example.project.presentation.components.ColumnBackground
 import org.example.project.presentation.components.Form
-import org.example.project.presentation.components.table.OrderTable
 import org.example.project.presentation.components.card.VoucherItem
 import org.example.project.presentation.components.common.AlertDialog
 import org.example.project.presentation.components.common.BodyText
-import org.example.project.presentation.components.input.InputField
 import org.example.project.presentation.components.common.CustomButton
+import org.example.project.presentation.components.input.InputField
+import org.example.project.presentation.components.table.OrderTable
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 import org.example.project.presentation.theme.Typography
@@ -30,8 +31,16 @@ import org.example.project.presentation.theme.Typography
 class CreateOrder : Screen {
     @Composable
     override fun Content() {
-        MaterialTheme {
-            ColumnBackground {
+        val navigator = LocalNavigator.current
+        val rootMaxWidth = remember { mutableStateOf(0) }
+        val scope = rememberCoroutineScope{ Dispatchers.Default}
+        val showLoadingOverlay = mutableStateOf(true)
+        val totalPage = mutableStateOf(0)
+        val currentPage = mutableStateOf(0)
+        val showErrorDialog = remember { mutableStateOf(false) }
+            ColumnBackground(
+                rootMaxWidth = rootMaxWidth
+            ) {
                 //item {
                     Column(
                         modifier = Modifier.fillMaxSize().padding(Size.Space.S600),
@@ -40,13 +49,13 @@ class CreateOrder : Screen {
                         AddressPanel()
                         ProductPanel()
                         TransportPanel()
-                        VoucherPanel()
+                        VoucherPanel(
+                            rootMaxWidth = rootMaxWidth
+                        )
                         PaymentPanel()
                         TotalPanel()
                     }
-                //}
             }
-        }
     }
 }
 
@@ -86,19 +95,21 @@ fun TransportPanel() {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun VoucherPanel() {
+fun VoucherPanel(
+    rootMaxWidth: MutableState<Int>
+) {
     Form(
         modifier = Modifier.fillMaxWidth(),
     ) {
-        var showDialog by remember { mutableStateOf(value = false) }
+        var showDialog = remember { mutableStateOf(value = false) }
 
         AlertDialog(
             title = "Select a Voucher",
+            message = null,
             showDialog = showDialog,
-            usePlatformDefaultWidth = false,
+            rootMaxWidth = rootMaxWidth,
+            //usePlatformDefaultWidth = false,
             maxWidth = 640.dp,
-            onDismissRequest = { showDialog = false },
-            onConfirmation = { showDialog = false },
             content = {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(Size.Space.S400)
@@ -143,7 +154,7 @@ fun VoucherPanel() {
                 text = "Change",
                 color = Themes.Light.neutralButton,
                 onClick = {
-                    showDialog = true
+                    showDialog.value = true
                 }
             )
         }

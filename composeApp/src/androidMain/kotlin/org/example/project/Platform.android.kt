@@ -1,8 +1,6 @@
 package org.example.project
 
 import android.os.Build
-import org.example.project.core.ANDROID_PAGE_SIZE
-import org.example.project.presentation.screens.SignIn
 
 class AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"

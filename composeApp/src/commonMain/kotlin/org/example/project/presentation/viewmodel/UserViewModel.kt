@@ -9,8 +9,14 @@ class UserViewModel(private val userRepository: UserRepository) {
     private val _totalPage = mutableStateOf<Int>(0)
     val totalPage: State<Int?> get() = _totalPage
 
+    private val _createdUser = mutableStateOf<User?>(null)
+    val createdUser: State<User?> get() = _createdUser
+    
     private val _user = mutableStateOf<User?>(null)
     val user: State<User?> get() = _user
+    
+    private val _updatedUser = mutableStateOf<User?>(null)
+    val updatedUser: State<User?> get() = _updatedUser
 
     private val _usersList = mutableStateOf<List<User>>(emptyList())
     val usersList: State<List<User>> get() = _usersList
@@ -21,6 +27,7 @@ class UserViewModel(private val userRepository: UserRepository) {
     suspend fun createUser(user: User) {
         val result = userRepository.createUser(user)
         if (result != null) {
+            _createdUser.value = result
             _operationStatus.value = "User Created Successfully"
         } else {
             _operationStatus.value = "Failed to Create User"
@@ -31,14 +38,16 @@ class UserViewModel(private val userRepository: UserRepository) {
         val result = userRepository.getUser(userId)
         if (result != null) {
             _user.value = result
+            _operationStatus.value = "User Get Successfully"
         } else {
-            _operationStatus.value = "User Not Found"
+            _operationStatus.value = "Failed to Get User or User Not Found"
         }
     }
 
     suspend fun updateUser(userId: Int, user: User) {
         val result = userRepository.updateUser(userId, user)
         if (result != null) {
+            _updatedUser.value = result
             _operationStatus.value = "User Updated Successfully"
         } else {
             _operationStatus.value = "Failed to Update User"
@@ -56,7 +65,23 @@ class UserViewModel(private val userRepository: UserRepository) {
 
     suspend fun getAllUsers(currentPage: Int) {
         val result = userRepository.getAllUsers(currentPage)
-        _usersList.value = result?.content ?: emptyList()
-        _totalPage.value = result?.totalPages ?: 0
+        if (result != null) {
+            _usersList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "User Get All Successfully"
+        } else {
+            _operationStatus.value = "Failed to Get All User"
+        }
+    }
+
+    suspend fun getUsersByAccountId(currentPage: Int, account: Int) {
+        val result = userRepository.getUsersByAccountId(currentPage, account)
+        if (result != null) {
+            _usersList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "User Get All Successfully"
+        } else {
+            _operationStatus.value = "User to Get All Account"
+        }
     }
 }

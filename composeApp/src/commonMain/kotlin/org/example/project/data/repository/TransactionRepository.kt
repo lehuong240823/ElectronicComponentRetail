@@ -50,4 +50,31 @@ class TransactionRepository(private val transactionApi: TransactionApi) {
             false
         }
     }
+
+    suspend fun getTransactionsByPaymentMethodId(currentPage: Int, paymentMethod: Byte): PaginatedResponse<Transaction>? {
+        return try {
+            transactionApi.getTransactionsByPaymentMethodId(currentPage, paymentMethod)
+        } catch (e: Exception) {
+            println("Error fetching transactions: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getTransactionsByTransactionStatusId(currentPage: Int, transactionStatus: Byte): PaginatedResponse<Transaction>? {
+        return try {
+            transactionApi.getTransactionsByTransactionStatusId(currentPage, transactionStatus)
+        } catch (e: Exception) {
+            println("Error fetching transactions: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getTransactionsByOrderId(currentPage: Int, order: Int): PaginatedResponse<Transaction>? {
+        return try {
+            transactionApi.getTransactionsByOrderId(currentPage, order)
+        } catch (e: Exception) {
+            println("Error fetching transactions: ${e.message}")
+            null
+        }
+    }
 }

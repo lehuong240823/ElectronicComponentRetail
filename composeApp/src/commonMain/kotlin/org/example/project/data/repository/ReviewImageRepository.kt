@@ -50,4 +50,13 @@ class ReviewImageRepository(private val reviewImageApi: ReviewImageApi) {
             false
         }
     }
+
+    suspend fun getReviewImagesByReviewId(currentPage: Int, review: Int): PaginatedResponse<ReviewImage>? {
+        return try {
+            reviewImageApi.getReviewImagesByReviewId(currentPage, review)
+        } catch (e: Exception) {
+            println("Error fetching reviewImages: ${e.message}")
+            null
+        }
+    }
 }

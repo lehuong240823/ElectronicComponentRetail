@@ -50,4 +50,13 @@ class ReviewRepository(private val reviewApi: ReviewApi) {
             false
         }
     }
+
+    suspend fun getReviewsByOrderItemId(currentPage: Int, orderItem: Int): PaginatedResponse<Review>? {
+        return try {
+            reviewApi.getReviewsByOrderItemId(currentPage, orderItem)
+        } catch (e: Exception) {
+            println("Error fetching reviews: ${e.message}")
+            null
+        }
+    }
 }

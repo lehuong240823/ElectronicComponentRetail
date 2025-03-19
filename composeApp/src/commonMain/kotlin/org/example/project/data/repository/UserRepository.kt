@@ -50,4 +50,13 @@ class UserRepository(private val userApi: UserApi) {
             false
         }
     }
+
+    suspend fun getUsersByAccountId(currentPage: Int, account: Int): PaginatedResponse<User>? {
+        return try {
+            userApi.getUsersByAccountId(currentPage, account)
+        } catch (e: Exception) {
+            println("Error fetching users: ${e.message}")
+            null
+        }
+    }
 }

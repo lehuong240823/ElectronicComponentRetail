@@ -9,8 +9,14 @@ class AdministratorViewModel(private val administratorRepository: AdministratorR
     private val _totalPage = mutableStateOf<Int>(0)
     val totalPage: State<Int?> get() = _totalPage
 
+    private val _createdAdministrator = mutableStateOf<Administrator?>(null)
+    val createdAdministrator: State<Administrator?> get() = _createdAdministrator
+    
     private val _administrator = mutableStateOf<Administrator?>(null)
     val administrator: State<Administrator?> get() = _administrator
+    
+    private val _updatedAdministrator = mutableStateOf<Administrator?>(null)
+    val updatedAdministrator: State<Administrator?> get() = _updatedAdministrator
 
     private val _administratorsList = mutableStateOf<List<Administrator>>(emptyList())
     val administratorsList: State<List<Administrator>> get() = _administratorsList
@@ -21,6 +27,7 @@ class AdministratorViewModel(private val administratorRepository: AdministratorR
     suspend fun createAdministrator(administrator: Administrator) {
         val result = administratorRepository.createAdministrator(administrator)
         if (result != null) {
+            _createdAdministrator.value = result
             _operationStatus.value = "Administrator Created Successfully"
         } else {
             _operationStatus.value = "Failed to Create Administrator"
@@ -31,14 +38,16 @@ class AdministratorViewModel(private val administratorRepository: AdministratorR
         val result = administratorRepository.getAdministrator(administratorId)
         if (result != null) {
             _administrator.value = result
+            _operationStatus.value = "Administrator Get Successfully"
         } else {
-            _operationStatus.value = "Administrator Not Found"
+            _operationStatus.value = "Failed to Get Administrator or Administrator Not Found"
         }
     }
 
     suspend fun updateAdministrator(administratorId: Int, administrator: Administrator) {
         val result = administratorRepository.updateAdministrator(administratorId, administrator)
         if (result != null) {
+            _updatedAdministrator.value = result
             _operationStatus.value = "Administrator Updated Successfully"
         } else {
             _operationStatus.value = "Failed to Update Administrator"
@@ -56,7 +65,45 @@ class AdministratorViewModel(private val administratorRepository: AdministratorR
 
     suspend fun getAllAdministrators(currentPage: Int) {
         val result = administratorRepository.getAllAdministrators(currentPage)
-        _administratorsList.value = result?.content ?: emptyList()
-        _totalPage.value = result?.totalPages ?: 0
+        if (result != null) {
+            _administratorsList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "Administrator Get All Successfully"
+        } else {
+            _operationStatus.value = "Failed to Get All Administrator"
+        }
+    }
+
+    suspend fun getAdministratorsByJobPositionId(currentPage: Int, jobPosition: Byte) {
+        val result = administratorRepository.getAdministratorsByJobPositionId(currentPage, jobPosition)
+        if (result != null) {
+            _administratorsList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "Administrator Get All Successfully"
+        } else {
+            _operationStatus.value = "Administrator to Get All Account"
+        }
+    }
+
+    suspend fun getAdministratorsByAccessLevelId(currentPage: Int, accessLevel: Byte) {
+        val result = administratorRepository.getAdministratorsByAccessLevelId(currentPage, accessLevel)
+        if (result != null) {
+            _administratorsList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "Administrator Get All Successfully"
+        } else {
+            _operationStatus.value = "Administrator to Get All Account"
+        }
+    }
+
+    suspend fun getAdministratorsByAccountId(currentPage: Int, account: Int) {
+        val result = administratorRepository.getAdministratorsByAccountId(currentPage, account)
+        if (result != null) {
+            _administratorsList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "Administrator Get All Successfully"
+        } else {
+            _operationStatus.value = "Administrator to Get All Account"
+        }
     }
 }

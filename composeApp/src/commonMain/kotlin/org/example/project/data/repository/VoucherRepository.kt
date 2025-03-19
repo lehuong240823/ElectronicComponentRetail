@@ -50,4 +50,13 @@ class VoucherRepository(private val voucherApi: VoucherApi) {
             false
         }
     }
+
+    suspend fun getVouchersByVoucherTypeId(currentPage: Int, voucherType: Byte): PaginatedResponse<Voucher>? {
+        return try {
+            voucherApi.getVouchersByVoucherTypeId(currentPage, voucherType)
+        } catch (e: Exception) {
+            println("Error fetching vouchers: ${e.message}")
+            null
+        }
+    }
 }

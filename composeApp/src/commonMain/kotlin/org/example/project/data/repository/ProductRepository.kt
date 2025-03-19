@@ -50,4 +50,31 @@ class ProductRepository(private val productApi: ProductApi) {
             false
         }
     }
+
+    suspend fun getProductsByProductStatusId(currentPage: Int, productStatus: Byte): PaginatedResponse<Product>? {
+        return try {
+            productApi.getProductsByProductStatusId(currentPage, productStatus)
+        } catch (e: Exception) {
+            println("Error fetching products: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getProductsByCategoryId(currentPage: Int, category: Int): PaginatedResponse<Product>? {
+        return try {
+            productApi.getProductsByCategoryId(currentPage, category)
+        } catch (e: Exception) {
+            println("Error fetching products: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getProductsByProviderId(currentPage: Int, provider: Int): PaginatedResponse<Product>? {
+        return try {
+            productApi.getProductsByProviderId(currentPage, provider)
+        } catch (e: Exception) {
+            println("Error fetching products: ${e.message}")
+            null
+        }
+    }
 }

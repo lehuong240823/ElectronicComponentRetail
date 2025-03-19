@@ -8,7 +8,7 @@ class ProductStatusRepository(private val productStatusApi: ProductStatusApi) {
 
     suspend fun getAllProductStatuss(currentPage: Int): PaginatedResponse<ProductStatus>? {
         return try {
-            productStatusApi.getAllProductStatuss(currentPage)
+            productStatusApi.getAllProductStatuses(currentPage)
         } catch (e: Exception) {
             println("Error fetching productStatuss: ${e.message}")
             null

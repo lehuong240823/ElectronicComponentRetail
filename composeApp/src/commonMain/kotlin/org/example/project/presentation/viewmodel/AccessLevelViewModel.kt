@@ -9,8 +9,14 @@ class AccessLevelViewModel(private val accessLevelRepository: AccessLevelReposit
     private val _totalPage = mutableStateOf<Int>(0)
     val totalPage: State<Int?> get() = _totalPage
 
+    private val _createdAccessLevel = mutableStateOf<AccessLevel?>(null)
+    val createdAccessLevel: State<AccessLevel?> get() = _createdAccessLevel
+    
     private val _accessLevel = mutableStateOf<AccessLevel?>(null)
     val accessLevel: State<AccessLevel?> get() = _accessLevel
+    
+    private val _updatedAccessLevel = mutableStateOf<AccessLevel?>(null)
+    val updatedAccessLevel: State<AccessLevel?> get() = _updatedAccessLevel
 
     private val _accessLevelsList = mutableStateOf<List<AccessLevel>>(emptyList())
     val accessLevelsList: State<List<AccessLevel>> get() = _accessLevelsList
@@ -21,6 +27,7 @@ class AccessLevelViewModel(private val accessLevelRepository: AccessLevelReposit
     suspend fun createAccessLevel(accessLevel: AccessLevel) {
         val result = accessLevelRepository.createAccessLevel(accessLevel)
         if (result != null) {
+            _createdAccessLevel.value = result
             _operationStatus.value = "AccessLevel Created Successfully"
         } else {
             _operationStatus.value = "Failed to Create AccessLevel"
@@ -31,14 +38,16 @@ class AccessLevelViewModel(private val accessLevelRepository: AccessLevelReposit
         val result = accessLevelRepository.getAccessLevel(accessLevelId)
         if (result != null) {
             _accessLevel.value = result
+            _operationStatus.value = "AccessLevel Get Successfully"
         } else {
-            _operationStatus.value = "AccessLevel Not Found"
+            _operationStatus.value = "Failed to Get AccessLevel or AccessLevel Not Found"
         }
     }
 
     suspend fun updateAccessLevel(accessLevelId: Int, accessLevel: AccessLevel) {
         val result = accessLevelRepository.updateAccessLevel(accessLevelId, accessLevel)
         if (result != null) {
+            _updatedAccessLevel.value = result
             _operationStatus.value = "AccessLevel Updated Successfully"
         } else {
             _operationStatus.value = "Failed to Update AccessLevel"
@@ -56,7 +65,12 @@ class AccessLevelViewModel(private val accessLevelRepository: AccessLevelReposit
 
     suspend fun getAllAccessLevels(currentPage: Int) {
         val result = accessLevelRepository.getAllAccessLevels(currentPage)
-        _accessLevelsList.value = result?.content ?: emptyList()
-        _totalPage.value = result?.totalPages ?: 0
+        if (result != null) {
+            _accessLevelsList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "AccessLevel Get All Successfully"
+        } else {
+            _operationStatus.value = "Failed to Get All AccessLevel"
+        }
     }
 }

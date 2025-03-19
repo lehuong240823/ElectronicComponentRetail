@@ -9,12 +9,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
-import org.example.project.presentation.components.*
+import org.example.project.presentation.components.ColumnBackground
 import org.example.project.presentation.components.card.*
 import org.example.project.presentation.components.common.Navigator
 import org.example.project.presentation.theme.Size
 
-class UserViewOrder: Screen {
+class OrderView : Screen {
     @Composable
     override fun Content() {
         ColumnBackground {

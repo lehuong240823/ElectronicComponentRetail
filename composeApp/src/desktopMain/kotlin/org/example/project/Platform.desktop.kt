@@ -9,9 +9,6 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.example.project.core.DESKTOP_PAGE_SIZE
-import org.example.project.core.DESKTOP_REDIRECT_URL
-import org.example.project.core.getGoogleAuthUrl
 import java.awt.Desktop
 import java.net.URI
 import java.util.concurrent.CompletableFuture

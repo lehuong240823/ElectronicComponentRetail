@@ -22,6 +22,7 @@ fun BodyText(
 ) {
     Text(
         modifier = modifier,
+        fontFamily = LocalTextStyle.current.fontFamily,
         style = LocalTextStyle.current
             .merge(
                 color = color.primaryText!!,

@@ -50,4 +50,22 @@ class CartRepository(private val cartApi: CartApi) {
             false
         }
     }
+
+    suspend fun getCartsByUserId(currentPage: Int, user: Int): PaginatedResponse<Cart>? {
+        return try {
+            cartApi.getCartsByUserId(currentPage, user)
+        } catch (e: Exception) {
+            println("Error fetching carts: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getCartsByProductId(currentPage: Int, product: Int): PaginatedResponse<Cart>? {
+        return try {
+            cartApi.getCartsByProductId(currentPage, product)
+        } catch (e: Exception) {
+            println("Error fetching carts: ${e.message}")
+            null
+        }
+    }
 }

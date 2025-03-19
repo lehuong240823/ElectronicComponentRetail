@@ -51,11 +51,29 @@ class AccountRepository(private val accountApi: AccountApi) {
         }
     }
 
-    suspend fun getAccountByEmail(email: String): Account? {
+    suspend fun getAccountsByEmail(currentPage: Int, email: String): PaginatedResponse<Account>? {
         return try {
-            accountApi.getAccountByEmail(email)
+            accountApi.getAccountsByEmail(currentPage, email)
         } catch (e: Exception) {
             println("Error fetching account by email: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getAccountsByAccountRoleId(currentPage: Int, accountRole: Byte): PaginatedResponse<Account>? {
+        return try {
+            accountApi.getAccountsByAccountRoleId(currentPage, accountRole)
+        } catch (e: Exception) {
+            println("Error fetching accounts: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getAccountsByAccountStatusId(currentPage: Int, accountStatus: Byte): PaginatedResponse<Account>? {
+        return try {
+            accountApi.getAccountsByAccountStatusId(currentPage, accountStatus)
+        } catch (e: Exception) {
+            println("Error fetching accounts: ${e.message}")
             null
         }
     }

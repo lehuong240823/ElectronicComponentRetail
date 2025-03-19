@@ -1,5 +1,6 @@
 package org.example.project.presentation.components.dropdown
 
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -8,13 +9,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import org.example.project.presentation.components.common.BodyText
 import org.example.project.presentation.components.input.InputField
+import org.example.project.presentation.theme.ButtonColor
+import org.example.project.presentation.theme.Themes
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ExposedDropdownInputField(
-    options: List<String> = listOf("aaa", "b"),
-    textFieldValue: String? = null
+    modifier: Modifier = Modifier.wrapContentSize(),
+    options: List<String> = listOf(),
+    textFieldValue: String? = null,
+    placeholder: String? = null,
+    colors: ButtonColor = Themes.Light.textField
 ) {
     val focusRequester = remember { FocusRequester() }
     var expanded by remember { mutableStateOf(false) }
@@ -27,6 +34,7 @@ fun ExposedDropdownInputField(
         onExpandedChange = { expanded = it },
     ) {
         InputField(
+            modifier = modifier,
             value = textFieldValue,
             onValueChange = {
                 textFieldValue = it
@@ -40,6 +48,8 @@ fun ExposedDropdownInputField(
                     )
                 }
             },
+            placeHolder = placeholder,
+            colors = colors
         )
         ExposedDropdownMenu(
             expanded = expanded,
@@ -49,7 +59,12 @@ fun ExposedDropdownInputField(
                 .filter { if (!textFieldValue.isNullOrEmpty()) it.startsWith(textFieldValue) else true }
                 .forEach { option ->
                     DropdownMenuItem(
-                        content = { Text(option, style = MaterialTheme.typography.body1) },
+                        content = {
+                            BodyText(
+                                text = option,
+                                style = MaterialTheme.typography.body1
+                            )
+                        },
                         onClick = {
                             textFieldValue = option
                             expanded = false

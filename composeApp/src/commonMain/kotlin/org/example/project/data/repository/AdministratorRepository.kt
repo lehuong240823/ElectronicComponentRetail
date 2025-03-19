@@ -50,4 +50,31 @@ class AdministratorRepository(private val administratorApi: AdministratorApi) {
             false
         }
     }
+
+    suspend fun getAdministratorsByJobPositionId(currentPage: Int, jobPosition: Byte): PaginatedResponse<Administrator>? {
+        return try {
+            administratorApi.getAdministratorsByJobPositionId(currentPage, jobPosition)
+        } catch (e: Exception) {
+            println("Error fetching administrators: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getAdministratorsByAccessLevelId(currentPage: Int, accessLevel: Byte): PaginatedResponse<Administrator>? {
+        return try {
+            administratorApi.getAdministratorsByAccessLevelId(currentPage, accessLevel)
+        } catch (e: Exception) {
+            println("Error fetching administrators: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getAdministratorsByAccountId(currentPage: Int, account: Int): PaginatedResponse<Administrator>? {
+        return try {
+            administratorApi.getAdministratorsByAccountId(currentPage, account)
+        } catch (e: Exception) {
+            println("Error fetching administrators: ${e.message}")
+            null
+        }
+    }
 }

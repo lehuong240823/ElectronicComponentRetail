@@ -25,12 +25,13 @@ import org.example.project.presentation.theme.Typography
 @Preview
 @Composable
 fun VoucherItem(
+    modifier: Modifier = Modifier,
     voucher: Voucher? = null,
     onClick: () -> Unit,
     color: ButtonColor=  Themes.Light.voucherItem,
 ) {
     Row (
-        modifier = Modifier.wrapContentHeight()
+        modifier = modifier.wrapContentHeight()
             .clip(shape = CustomRoundedCorner())
             .background( color = color.defaultBackground!!)
             .border(width = Size.Stroke.Border, color = color.border!!, shape = CustomRoundedCorner())
@@ -66,7 +67,7 @@ fun VoucherItem(
         Spacer(Modifier.weight(1f))
             CustomButton(
                 text = "Use",
-                onClick = { onClick }
+                onClick = onClick
             )
 
     }

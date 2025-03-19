@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.presentation.theme.ButtonColor
@@ -38,8 +39,14 @@ fun CustomButton(
     color: ButtonColor = Themes.Light.primaryButton,
 ) {
     val style = LocalTextStyle.current.fontFamily
+
     MaterialTheme(
-        typography = androidx.compose.material.Typography(defaultFontFamily = style!!, button = MaterialTheme.typography.button.merge(letterSpacing = 0.sp))
+        typography = androidx.compose.material.Typography(
+            defaultFontFamily = style?: FontFamily.Monospace,
+            button = MaterialTheme.typography.button.merge(
+                letterSpacing = 0.sp,
+                fontFamily = style?: FontFamily.Monospace),
+            )
     ){
         Row(
             modifier = modifier
@@ -131,7 +138,9 @@ fun CustomButtonText(
         BodyText(
             text = text,
             style = Typography.Style.ButtonText.merge(
-                color = if(!enabled) color.disabledPrimaryText!! else if(isHovered && color.hoverPrimaryText != null) color.hoverPrimaryText else color.primaryText!!,
+                color = if(!enabled && color.disabledPrimaryText != null) color.disabledPrimaryText
+                else if(isHovered && color.hoverPrimaryText != null) color.hoverPrimaryText
+                else if(enabled && color.primaryText != null) color.primaryText else Color.Black,
             )
         )
     }
@@ -149,6 +158,7 @@ fun CustomButtonIcon(
         imageVector = icon,
         modifier = Modifier.size(if (isMenuItem) Size.Icon.Small else Size.Icon.Default),
         contentDescription = null,
-        tint = if(!enabled) color.disabledPrimaryText!! else if(isHovered && color.hoverPrimaryText != null) color.hoverPrimaryText else color.primaryText!!,
+        tint = color.icon
+            ?: if(!enabled) color.disabledPrimaryText!! else if(isHovered && color.hoverPrimaryText != null) color.hoverPrimaryText else color.primaryText!!,
     )
 }

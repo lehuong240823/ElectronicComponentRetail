@@ -50,4 +50,31 @@ class OrderRepository(private val orderApi: OrderApi) {
             false
         }
     }
+
+    suspend fun getOrdersByOrderStatusId(currentPage: Int, orderStatus: Byte): PaginatedResponse<Order>? {
+        return try {
+            orderApi.getOrdersByOrderStatusId(currentPage, orderStatus)
+        } catch (e: Exception) {
+            println("Error fetching orders: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getOrdersByUserId(currentPage: Int, user: Int): PaginatedResponse<Order>? {
+        return try {
+            orderApi.getOrdersByUserId(currentPage, user)
+        } catch (e: Exception) {
+            println("Error fetching orders: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getOrdersByVoucherId(currentPage: Int, voucher: Int): PaginatedResponse<Order>? {
+        return try {
+            orderApi.getOrdersByVoucherId(currentPage, voucher)
+        } catch (e: Exception) {
+            println("Error fetching orders: ${e.message}")
+            null
+        }
+    }
 }

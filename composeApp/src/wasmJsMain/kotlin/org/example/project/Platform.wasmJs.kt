@@ -1,9 +1,6 @@
 package org.example.project
 
 import kotlinx.browser.window
-import org.example.project.core.WEB_PAGE_SIZE
-import org.example.project.core.WEB_REDIRECT_URL
-import org.example.project.core.getGoogleAuthUrl
 
 class WasmPlatform: Platform {
     //override val name: String = "Web with Kotlin/Wasm"

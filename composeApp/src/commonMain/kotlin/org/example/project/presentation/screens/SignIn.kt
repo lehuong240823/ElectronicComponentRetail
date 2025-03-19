@@ -110,8 +110,8 @@ class SignIn() : Screen {
                 var request = FirebaseEmailAuthRequest(email = email, password = password)
                 firebaseEmailAuthViewModel.signIn(request)
 
-                var response = firebaseEmailAuthViewModel.response.value
-                if (response != null && response.registered) {
+                var response = firebaseEmailAuthViewModel.firebaseEmailAuthResponse.value
+                if (response != null && response.registered == true) {
                     //pushWithLimitScreen(navigator, CreateOrder())
                 }
             }

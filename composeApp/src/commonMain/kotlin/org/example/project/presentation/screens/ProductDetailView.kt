@@ -14,20 +14,25 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
-import electroniccomponentretail.composeapp.generated.resources.*
 import electroniccomponentretail.composeapp.generated.resources.Image
 import electroniccomponentretail.composeapp.generated.resources.Res
 import electroniccomponentretail.composeapp.generated.resources.blank_profile
-import org.example.project.core.CURRENCY
+import electroniccomponentretail.composeapp.generated.resources.ic_dots_vertical
+import org.example.project.CURRENCY
 import org.example.project.presentation.components.ColumnBackground
 import org.example.project.presentation.components.card.ReviewCard
-import org.example.project.presentation.components.common.*
+import org.example.project.presentation.components.common.BackButton
+import org.example.project.presentation.components.common.BodyText
+import org.example.project.presentation.components.common.CustomButton
 import org.example.project.presentation.components.input.QuantityGroup
-import org.example.project.presentation.theme.*
+import org.example.project.presentation.theme.ButtonColor
+import org.example.project.presentation.theme.Size
+import org.example.project.presentation.theme.Themes
+import org.example.project.presentation.theme.Typography
 import org.example.project.presentation.theme.Typography.Primitive
 import org.jetbrains.compose.resources.painterResource
 
-class ProductDetail  : Screen {
+class ProductDetail : Screen {
     @OptIn(ExperimentalLayoutApi::class)
     @Composable
     override fun Content() {
@@ -42,31 +47,41 @@ class ProductDetail  : Screen {
                     rootMaxWidth = coordinates.size.width
                 }
         ) {
-            FlowRow (
+            Column(
                 modifier = Modifier.fillMaxWidth()
                     .background(color = color.defaultBackground!!)
-                    .padding(Size.Space.S1600),
-                maxItemsInEachRow = 2,
-                overflow = FlowRowOverflow.Visible,
-                horizontalArrangement = Arrangement.spacedBy(Size.Space.S1600),
+                    .padding(
+                        top = Size.Space.S600,
+                        start = Size.Space.S1600,
+                        bottom = Size.Space.S1600,
+                        end = Size.Space.S1600
+                    ),
                 verticalArrangement = Arrangement.spacedBy(Size.Space.S600)
             ) {
-                Image(
-                    modifier = Modifier.weight(1f)
-                        .heightIn(min = 300.dp, max = 420.dp),
-                    painter = painterResource(Res.drawable.Image),
-                    contentScale = ContentScale.FillWidth,
-                    contentDescription = null
-                )
-                ProductInfoColumn(
-                    modifier = Modifier.wrapContentHeight()
-                        .weight(1f),
-                    quantity = quantity
-                )
-                ProductDescriptionColumn(
-                    modifier = Modifier.weight(1f)
-                )
-                ProductReiviewColumn()
+                BackButton()
+                FlowRow(
+                    maxItemsInEachRow = 2,
+                    overflow = FlowRowOverflow.Visible,
+                    horizontalArrangement = Arrangement.spacedBy(Size.Space.S1600),
+                    verticalArrangement = Arrangement.spacedBy(Size.Space.S600)
+                ) {
+                    Image(
+                        modifier = Modifier.weight(1f)
+                            .heightIn(min = 300.dp, max = 420.dp),
+                        painter = painterResource(Res.drawable.Image),
+                        contentScale = ContentScale.FillWidth,
+                        contentDescription = null
+                    )
+                    ProductInfoColumn(
+                        modifier = Modifier.wrapContentHeight()
+                            .weight(1f),
+                        quantity = quantity
+                    )
+                    ProductDescriptionColumn(
+                        modifier = Modifier.weight(1f)
+                    )
+                    ProductReiviewColumn()
+                }
             }
         }
     }
@@ -137,7 +152,7 @@ fun ProductReiviewColumn(
         verticalArrangement = Arrangement.spacedBy(Size.Space.S300)
     ) {
         BodyText(
-            text = "Product Reivew",
+            text = "Product Review",
             style = Typography.Style.Heading
         )
         FlowRow(

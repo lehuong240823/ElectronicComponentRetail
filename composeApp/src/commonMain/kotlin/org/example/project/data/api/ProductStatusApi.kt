@@ -9,30 +9,30 @@ import io.ktor.client.request.setBody
 import io.ktor.http.contentType
 import org.example.project.getPageSize
 import org.example.project.core.HttpClient
-import org.example.project.core.BASE_URL
+import org.example.project.BASE_URL
 import org.example.project.domain.model.PaginatedResponse
 import org.example.project.domain.model.ProductStatus
 
 class ProductStatusApi {
-    val endPoint = "/api/product-statuss"
+    val endPoint = "/api/product-statuses"
 
-    suspend fun getAllProductStatuss(currentPage: Int): PaginatedResponse<ProductStatus> {
-        return HttpClient.client.get("${BASE_URL}${endPoint}?size=${getPageSize()}&page=${currentPage}").body()
+    suspend fun getAllProductStatuses(currentPage: Int): PaginatedResponse<ProductStatus> {
+        return HttpClient.client.get("$BASE_URL${endPoint}?size=${getPageSize()}&page=${currentPage}").body()
     }
 
     suspend fun getProductStatus(productStatusId: Int): ProductStatus {
-        return HttpClient.client.get("${BASE_URL}${endPoint}/${productStatusId}").body()
+        return HttpClient.client.get("$BASE_URL${endPoint}/${productStatusId}").body()
     }
     
     suspend fun createProductStatus(productStatus: ProductStatus): ProductStatus {
-        return HttpClient.client.post("${BASE_URL}${endPoint}") {
+        return HttpClient.client.post("$BASE_URL${endPoint}") {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(productStatus)
         }.body()
     }
 
     suspend fun updateProductStatus(productStatusId: Int, productStatus: ProductStatus): ProductStatus {
-        return HttpClient.client.put("${BASE_URL}${endPoint}/${productStatusId}") {
+        return HttpClient.client.put("$BASE_URL${endPoint}/${productStatusId}") {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(productStatus)
         }.body()
@@ -40,7 +40,7 @@ class ProductStatusApi {
 
     suspend fun deleteProductStatus(productStatusId: Int): Boolean {
         return try {
-            HttpClient.client.delete("${BASE_URL}${endPoint}/${productStatusId}")
+            HttpClient.client.delete("$BASE_URL${endPoint}/${productStatusId}")
             true
         } catch (e: Exception) {
             println("Error deleting productStatus: ${e.message}")

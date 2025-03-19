@@ -1,8 +1,10 @@
 package org.example.project.domain.model
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 @JsonIgnoreUnknownKeys
 data class FirebaseEmailAuthResponse (
@@ -11,5 +13,5 @@ data class FirebaseEmailAuthResponse (
     val refreshToken: String? = null,
     val expiresIn: String? = null,
     val localId: String,
-    val registered: Boolean
+    val registered: Boolean? = null
 )

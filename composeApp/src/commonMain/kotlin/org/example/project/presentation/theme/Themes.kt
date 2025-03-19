@@ -25,7 +25,8 @@ object Themes {
             hoverBackground = Colors.Default.Light.Background.BrandDefault,
             border = Colors.Default.Light.Border.DefaultDefault,
             primaryText = Colors.Default.Light.Text.DefaultDefault,
-            icon = Colors.Default.Light.Icon.DefaultDefault
+            icon = Colors.Default.Light.Icon.DefaultDefault,
+            hoverPrimaryText = Colors.Default.Light.Text.BrandOnBrand
         )
 
         val toggleButton = ButtonColor(
@@ -96,6 +97,14 @@ object Themes {
         val textField = ButtonColor(
             defaultBackground = Colors.Default.Light.Background.DefaultDefault,
             border = Colors.Default.Light.Border.DefaultDefault,
+            primaryText = Colors.Default.Light.Text.DefaultDefault,
+            secondaryText = Colors.Default.Light.Text.DefaultSecondary,
+            tertiaryText = Colors.Default.Light.Text.DefaultTertiary,
+        )
+
+        val dropdownMenu = ButtonColor(
+            defaultBackground = Colors.Default.Light.Background.DefaultDefault,
+            border = Color.Transparent,
             primaryText = Colors.Default.Light.Text.DefaultDefault,
         )
 

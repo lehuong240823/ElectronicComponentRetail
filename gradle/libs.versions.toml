@@ -11,11 +11,13 @@ androidx-espresso-core = "3.6.1"
 androidx-lifecycle = "2.8.4"
 androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
+bignum = "0.3.10"
 compose-multiplatform = "1.7.0"
 junit = "4.13.2"
 kotlin = "2.1.0"
 kotlinx-coroutines = "1.10.1"
 kotlinx-serialization = "2.1.0"
+kotlinxDatetime = "0.6.2"
 lifecycleLivedataCore = "2.8.5"
 ktor = "3.1.0"
 slf4j = "2.0.0"
@@ -24,6 +26,7 @@ foundationAndroid = "1.7.8"
 composeTesting = "1.0.0-alpha03"
 
 [libraries]
+bignum = { module = "com.ionspin.kotlin:bignum", version.ref = "bignum" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -37,6 +40,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 androidx-lifecycle-livedata-core = { group = "androidx.lifecycle", name = "lifecycle-livedata-core", version.ref = "lifecycleLivedataCore" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }

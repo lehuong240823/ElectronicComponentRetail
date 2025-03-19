@@ -11,12 +11,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.example.project.data.api.TransactionStatusApi
 import org.example.project.data.repository.TransactionStatusRepository
 import org.example.project.presentation.components.ColumnBackground
+import org.example.project.presentation.components.common.AlertDialog
 import org.example.project.presentation.components.table.TransactionTable
 import org.example.project.presentation.components.common.Navigator
 import org.example.project.presentation.components.common.Pagination
@@ -26,13 +28,16 @@ import org.example.project.presentation.viewmodel.TransactionStatusViewModel
 class TransactionView: Screen {
     @Composable
     override fun Content() {
-        val showLoadingOverlay = mutableStateOf(false)
-        val selectedTabIndex = mutableStateOf(0)
-        val totalPage = mutableStateOf(1)
-        val currentPage = mutableStateOf(1)
-        val tabTitles = mutableStateOf(listOf("All"))
+        val navigator = LocalNavigator.current
+        val rootMaxWidth = remember { mutableStateOf(0) }
+        val scope = rememberCoroutineScope{ Dispatchers.Default}
+        val showLoadingOverlay = mutableStateOf(true)
+        val totalPage = mutableStateOf(0)
+        val currentPage = mutableStateOf(0)
+        val showErrorDialog = remember { mutableStateOf(false) }
 
-        var scope = remember { CoroutineScope(Dispatchers.Default) }
+        val selectedTabIndex = mutableStateOf(0)
+        val tabTitles = mutableStateOf(listOf("All"))
         val transactionStatusViewModel = TransactionStatusViewModel(
             TransactionStatusRepository(
                 TransactionStatusApi()
@@ -40,17 +45,25 @@ class TransactionView: Screen {
         )
 
         scope.launch {
-            showLoadingOverlay.value = true
             val titles = mutableListOf("All")
             transactionStatusViewModel.getAllTransactionStatuss(0)
             transactionStatusViewModel.transactionStatussList.value.forEach {
-                if(!it.name.isNullOrEmpty())
+                if (!it.name.isNullOrEmpty())
                     titles.add(it.name)
             }
             tabTitles.value  = titles
             showLoadingOverlay.value = false
+
+            if (transactionStatusViewModel.operationStatus.value.contains("Failed")){
+                showErrorDialog.value = true
+            }
         }
-        //showLoadingOverlay.value = true
+
+        AlertDialog(
+            showDialog = showErrorDialog,
+            rootMaxWidth = rootMaxWidth
+        )
+
         ColumnBackground(
             showLoadingOverlay = showLoadingOverlay
         ) {
@@ -60,26 +73,18 @@ class TransactionView: Screen {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Navigator(
-                    tabTitles = /*listOf(
-                        "All",
-                        "Pending",
-                        "Completed",
-                        "Failed",
-                        "Cancelled",
-                        "Refunded",
-                        "Processing",
-                        "On hold"
-                    )*/
-                    tabTitles.value,
+                    tabTitles = tabTitles.value,
                     selectedTabIndex = selectedTabIndex
                 )
                 TransactionTable()
-                Pagination(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    totalPage = totalPage,
-                    currentPage = currentPage,
-                    onCurrentPageChange = {}
-                )
+                if(totalPage.value > 0) {
+                    Pagination(
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        totalPage = totalPage,
+                        currentPage = currentPage,
+                        onCurrentPageChange = {}
+                    )
+                }
             }
         }
     }

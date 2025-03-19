@@ -4,6 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -13,15 +15,18 @@ import androidx.compose.ui.unit.dp
 import com.ionspin.kotlin.bignum.decimal.toBigDecimal
 import electroniccomponentretail.composeapp.generated.resources.Image
 import electroniccomponentretail.composeapp.generated.resources.Res
-import org.example.project.core.CURRENCY
+import electroniccomponentretail.composeapp.generated.resources.ic_dots_vertical
+import org.example.project.CURRENCY
 import org.example.project.domain.model.Product
 import org.example.project.presentation.components.common.BodyText
 import org.example.project.presentation.components.common.CustomRoundedCorner
+import org.example.project.presentation.components.dropdown.ExposedDropdownMenuButton
 import org.example.project.presentation.theme.ButtonColor
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 import org.example.project.presentation.theme.Typography
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.vectorResource
 
 @Composable
 fun ProductItem(
@@ -30,6 +35,7 @@ fun ProductItem(
     space: Dp = Size.Space.S400,
     color: ButtonColor = Themes.Light.primaryLayout,
     unit: String = CURRENCY,
+    showMoreActionButton: Boolean = true,
     product: Product = Product(name = "Product", price = 0.toBigDecimal())
 ) {
     Column(
@@ -46,17 +52,27 @@ fun ProductItem(
             contentScale = ContentScale.FillWidth,
             contentDescription = null
         )
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(Size.Space.S200)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            BodyText(
-                text = product.name!!
-            )
-            BodyText(
-                text = "${unit}${product.price}",
-                style = Typography.Style.BodyStrong
-            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(Size.Space.S200)
+            ) {
+                BodyText(
+                    text = product.name!!
+                )
+                BodyText(
+                    text = "${unit}${product.price}",
+                    style = Typography.Style.BodyStrong
+                )
+            }
+            if(showMoreActionButton) {
+                ExposedDropdownMenuButton(
+                    icon = vectorResource(Res.drawable.ic_dots_vertical),
+                    content = {}
+                )
+            }
         }
     }
 }

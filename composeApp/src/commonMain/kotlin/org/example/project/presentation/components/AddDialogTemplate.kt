@@ -39,35 +39,56 @@ fun ImageAddDialog(
                 horizontalArrangement = Arrangement.spacedBy(Size.Space.S600),
                 overflow = FlowRowOverflow.Visible
             ) {
-                Column(
-                    modifier = Modifier.weight(1f).fillMaxRowHeight(1f),
+                FlowRow (
+                    modifier = Modifier.weight(1f).wrapContentHeight(),
                     verticalArrangement = Arrangement.spacedBy(Size.Space.S200),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    maxItemsInEachRow = 1,
+                    maxLines = 2,
+                    overflow = FlowRowOverflow.Visible,
+                    horizontalArrangement = Arrangement.Center
                 ) {
                     Image(
-                        modifier = Modifier.aspectRatio(1f).fillMaxWidth(),
+                        modifier = Modifier.aspectRatio(1f).fillMaxSize(),
                         painter = painterResource(Res.drawable.Image),
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
-                    Box(
-
-                    ) {
-                        CustomButton(
-                            text = "Upload",
-                            icon = Icons.Outlined.Upload,
-                            isIconFirst = true,
-                            color = Themes.Light.subtleButton.copy(border = Color.Black),
-                            onClick = onUploadButtonClick
-                        )
-                    }
+                    CustomButton(
+                        text = "Upload",
+                        icon = Icons.Outlined.Upload,
+                        isIconFirst = true,
+                        color = Themes.Light.subtleButton.copy(border = Color.Black),
+                        onClick = onUploadButtonClick
+                    )
                 }
                 Column(
-                    modifier = Modifier.weight(1.5f).fillMaxRowHeight(1f),
+                    modifier = Modifier.weight(1.5f),
                     verticalArrangement = Arrangement.spacedBy(Size.Space.S200)
                 ) {
                     content()
                 }
+            }
+        },
+        onConfirmation = onConfirmation
+    )
+}
+
+@Composable
+fun AddDialog(
+    title: String,
+    showAddDialog: MutableState<Boolean>,
+    onConfirmation: () -> Unit = {},
+    content: @Composable ColumnScope.() -> Unit
+) {
+    AlertDialog(
+        title = title,
+        message = null,
+        showDialog = showAddDialog,
+        content = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(Size.Space.S200)
+            ) {
+                content()
             }
         },
         onConfirmation = onConfirmation

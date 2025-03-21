@@ -2,19 +2,23 @@ package org.example.project
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
+import org.example.project.core.enums.AlertType
 
 fun checkError(
     showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType> = mutableStateOf(AlertType.Default),
     operationStatus: State<String>,
-    onSuccess: () -> Unit,
+    onSuccess: () -> Unit = {},
     onFailure: () -> Unit = {},
 ) {
     if(operationStatus.value.contains("Success")) {
         showErrorDialog.value = false
         onSuccess()
     } else {
+        alertType.value = AlertType.Default
         showErrorDialog.value = true
         onFailure()
     }

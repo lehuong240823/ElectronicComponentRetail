@@ -2,7 +2,6 @@ package org.example.project.presentation.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ConfirmationNumber
@@ -109,7 +108,7 @@ fun VoucherPanel(
             showDialog = showDialog,
             rootMaxWidth = rootMaxWidth,
             //usePlatformDefaultWidth = false,
-            maxWidth = 640.dp,
+            //maxWidth = 640.dp,
             content = {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(Size.Space.S400)

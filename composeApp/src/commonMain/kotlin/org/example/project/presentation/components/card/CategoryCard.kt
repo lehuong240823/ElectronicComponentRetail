@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import electroniccomponentretail.composeapp.generated.resources.Image
 import electroniccomponentretail.composeapp.generated.resources.Res
+import org.example.project.domain.model.Category
 import org.example.project.presentation.components.Form
 import org.example.project.presentation.components.common.BodyText
 import org.example.project.presentation.theme.Size
@@ -23,6 +24,7 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun CategoryCard(
     modifier: Modifier = Modifier.wrapContentSize(),
+    category: Category = Category()
 ) {
     Form(
         modifier = modifier,
@@ -40,7 +42,7 @@ fun CategoryCard(
             contentDescription = null
         )
         BodyText(
-            text = "Category",
+            text = category.name?:"",
         )
     }
 }

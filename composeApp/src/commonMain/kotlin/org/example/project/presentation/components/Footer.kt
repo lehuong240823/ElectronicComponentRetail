@@ -23,16 +23,18 @@ import org.example.project.presentation.theme.Themes
 import org.example.project.presentation.theme.Typography
 import org.jetbrains.compose.resources.painterResource
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun Footer(
     color: ButtonColor = Themes.Light.brandLayout
 ) {
-    Row(
+    FlowRow(
         modifier = Modifier.fillMaxWidth()
             .wrapContentHeight()
             .background(color = color.defaultBackground!!)
             .padding(Size.Space.S800),
-        horizontalArrangement = Arrangement.spacedBy(Size.Space.S400)
+        horizontalArrangement = Arrangement.spacedBy(Size.Space.S400),
+        verticalArrangement = Arrangement.spacedBy(Size.Space.S400),
     ) {
         Column(
             modifier = Modifier.weight(1f),

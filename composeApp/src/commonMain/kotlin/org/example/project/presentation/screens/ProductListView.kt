@@ -1,30 +1,25 @@
 package org.example.project.presentation.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Upload
 import androidx.compose.material.ripple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import electroniccomponentretail.composeapp.generated.resources.Image
 import electroniccomponentretail.composeapp.generated.resources.Res
 import electroniccomponentretail.composeapp.generated.resources.ic_sort_ascending
 import electroniccomponentretail.composeapp.generated.resources.ic_sort_descending
@@ -38,7 +33,10 @@ import org.example.project.presentation.components.Form
 import org.example.project.presentation.components.ImageAddDialog
 import org.example.project.presentation.components.card.CategoryCard
 import org.example.project.presentation.components.card.ProductItem
-import org.example.project.presentation.components.common.*
+import org.example.project.presentation.components.common.BodyText
+import org.example.project.presentation.components.common.CustomButton
+import org.example.project.presentation.components.common.CustomIconToggleButton
+import org.example.project.presentation.components.common.Pagination
 import org.example.project.presentation.components.dropdown.ExposedDropdownInputField
 import org.example.project.presentation.components.input.CustomRangerSlider
 import org.example.project.presentation.components.input.InputField
@@ -50,7 +48,6 @@ import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 import org.example.project.presentation.theme.Typography
 import org.example.project.pushWithLimitScreen
-import org.jetbrains.compose.resources.painterResource
 
 class ProductList : Screen {
     @Composable
@@ -68,6 +65,8 @@ class ProductList : Screen {
         val rating = remember { mutableStateOf(0) }
         val showAddNewProductDialog = remember { mutableStateOf(false) }
         val productList = remember { mutableStateOf(listOf(Product(id = 1))) }
+
+        AddNewProductDialog(showAddNewProductDialog = showAddNewProductDialog)
 
         ColumnBackground(
             rootMaxWidth = rootMaxWidth
@@ -298,6 +297,7 @@ fun FilterBar(
                     onValueChange = onRateValueChange
                 )
             }
+
             AddProductButton(
                 showAddNewProductDialog = showAddNewProductDialog,
                 currentAccount = currentAccount
@@ -311,7 +311,6 @@ fun AddProductButton(
     showAddNewProductDialog: MutableState<Boolean>,
     currentAccount: Account?
 ) {
-    AddNewProductDialog(showAddNewProductDialog = showAddNewProductDialog)
     if (AccountRoleType.Administrator.name == currentAccount?.accountRole?.name) {
         CustomButton(
             modifier = Modifier.defaultMinSize(minWidth = 80.dp),
@@ -342,7 +341,6 @@ fun ColumnScope.ProductCardGrid(
                 modifier = Modifier.wrapContentSize()
                     .clickable(
                         enabled = true,
-                        onClickLabel = null,
                         onClick = {
                             pushWithLimitScreen(navigator, ProductDetail())
                         },

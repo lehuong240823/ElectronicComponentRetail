@@ -28,10 +28,9 @@ class FirebaseEmailAuthApi {
         val endPoint = "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=$FIREBASE_API_KEY"
         return HttpClient.client.post(endPoint) {
             contentType(ContentType.Application.Json)
-            setBody(firebaseResetPasswordLinkRequest)
+            setBody("""{"requestType":"PASSWORD_RESET","email":"${firebaseResetPasswordLinkRequest.email}"}""")
         }.body()
     }
-
     suspend fun sendResetPasswordCodeToEmail(firebaseResetPasswordCodeRequest: FirebaseResetPasswordCodeRequest): FirebaseResetPasswordCodeResponse {
         val endPoint = "https://identitytoolkit.googleapis.com/v1/accounts:resetPassword?key=$FIREBASE_API_KEY"
         return HttpClient.client.post(endPoint) {

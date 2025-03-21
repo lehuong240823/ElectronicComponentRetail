@@ -1,10 +1,8 @@
 package org.example.project.presentation.screens
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,19 +11,17 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import electroniccomponentretail.composeapp.generated.resources.Res
 import electroniccomponentretail.composeapp.generated.resources.ic_google
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.example.project.data.api.AccountApi
 import org.example.project.data.api.FirebaseEmailAuthApi
 import org.example.project.data.repository.AccountRepository
 import org.example.project.data.repository.FirebaseEmailAuthRepository
-import org.example.project.domain.model.FirebaseEmailAuthRequest
+import org.example.project.presentation.components.ColumnBackground
 import org.example.project.presentation.components.Form
-import org.example.project.presentation.components.common.RoundIconButton
-import org.example.project.presentation.components.common.Hyperlink
-import org.example.project.presentation.components.input.InputField
 import org.example.project.presentation.components.common.CustomButton
+import org.example.project.presentation.components.common.Hyperlink
+import org.example.project.presentation.components.common.RoundIconButton
+import org.example.project.presentation.components.input.InputField
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.viewmodel.AccountViewModel
 import org.example.project.presentation.viewmodel.FirebaseEmailAuthViewModel
@@ -35,19 +31,29 @@ import org.example.project.signInWithGoogle
 
 class SignIn() : Screen {
 
-    val viewModel: AccountViewModel = AccountViewModel(accountRepository = AccountRepository(AccountApi()))
-    val firebaseEmailAuthViewModel = FirebaseEmailAuthViewModel(FirebaseEmailAuthRepository(FirebaseEmailAuthApi()))
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        var scope = remember { CoroutineScope(Dispatchers.Default) }
+        val rootMaxWidth = remember { mutableStateOf(0) }
+        val scope = rememberCoroutineScope { Dispatchers.Default }
+        val showLoadingOverlay = mutableStateOf(false)
+        val totalPage = mutableStateOf(1)
+        val currentPage = mutableStateOf(0)
+        val showErrorDialog = remember { mutableStateOf(false) }
+        val viewModel: AccountViewModel = AccountViewModel(accountRepository = AccountRepository(AccountApi()))
+        val firebaseEmailAuthViewModel = FirebaseEmailAuthViewModel(FirebaseEmailAuthRepository(FirebaseEmailAuthApi()))
+
         var email by remember { mutableStateOf(value = "") }
         var password by remember { mutableStateOf(value = "") }
-        MaterialTheme {
-            Box(
-                modifier = Modifier.fillMaxSize()
-                    .padding(Size.Padding.Sm),
-                contentAlignment = Alignment.Center
+        ColumnBackground(
+            rootMaxWidth = rootMaxWidth,
+            showLoadingOverlay = showLoadingOverlay,
+            showHeaderAndFooter = false
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(Size.Space.S800),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Form {
                     InputField(
@@ -75,11 +81,8 @@ class SignIn() : Screen {
                         text = "Sign In",
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            scope.launch {
-                                //viewModel.getAccountByEmail("someemail")
-                                viewModel.getAccount(1)
-                            }
-                            pushWithLimitScreen(navigator, CreateOrder())
+
+                            //pushWithLimitScreen(navigator, CreateOrder())
                             //signInButtonAction()
                         }
                     )
@@ -102,20 +105,5 @@ class SignIn() : Screen {
         }
     }
 
-    suspend fun signInButtonAction(email: String, password: String) {
-        //CoroutineScope(Dispatchers.Default).launch {
-        //email = email.trim()
-        //password = password.trim()
-            if(!email.isNullOrEmpty() && !password.isNullOrEmpty() && password.length >= 6) {
-                var request = FirebaseEmailAuthRequest(email = email, password = password)
-                firebaseEmailAuthViewModel.signIn(request)
-
-                var response = firebaseEmailAuthViewModel.firebaseEmailAuthResponse.value
-                if (response != null && response.registered == true) {
-                    //pushWithLimitScreen(navigator, CreateOrder())
-                }
-            }
-        //}
-    }
 }
 

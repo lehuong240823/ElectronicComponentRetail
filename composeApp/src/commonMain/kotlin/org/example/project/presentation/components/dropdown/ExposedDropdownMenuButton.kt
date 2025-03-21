@@ -8,15 +8,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import org.example.project.presentation.components.common.BodyText
 import org.example.project.presentation.theme.Size
-import org.example.project.presentation.theme.Typography
+
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ExposedDropdownMenuButton(
     modifier: Modifier = Modifier,
     icon: ImageVector,
-    content: @Composable ColumnScope.() -> Unit
+    onEdit: () -> Unit = {},
+    onDelete: () -> Unit = {},
+    content: @Composable ColumnScope.() -> Unit = {
+        DefaultMenuItems(
+            onEdit = onEdit,
+            onDelete = onDelete,
+        ) }
 ) {
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
@@ -42,13 +49,22 @@ fun ExposedDropdownMenuButton(
             onDismissRequest = { expanded = false },
         ) {
             content()
-            DropdownMenuItem(
-                content = { Text("aa", style = Typography.Style.BodyBase) },
-                onClick = {
-                    //textFieldValue = option
-                    //expanded = false
-                },
-            )
         }
     }
+}
+
+@Composable
+fun ColumnScope.DefaultMenuItems(
+    modifier: Modifier = Modifier,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    DropdownMenuItem(
+        content = { BodyText(text = "Edit") },
+        onClick = onEdit,
+    )
+    DropdownMenuItem(
+        content = { BodyText(text = "Delete") },
+        onClick = onDelete,
+    )
 }

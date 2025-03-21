@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.presentation.theme.ButtonColor
@@ -34,11 +35,16 @@ fun CustomIconToggleButton(
     color: ButtonColor = Themes.Light.toggleButton,
 ) {
     val style = LocalTextStyle.current.fontFamily
+
     MaterialTheme(
-        typography = androidx.compose.material.Typography(defaultFontFamily = style!!, button = MaterialTheme.typography.button.merge(letterSpacing = 0.sp))
-    ) {
+        typography = androidx.compose.material.Typography(
+            defaultFontFamily = style?: FontFamily.Monospace,
+            button = MaterialTheme.typography.button.merge(
+                letterSpacing = 0.sp,
+                fontFamily = style?: FontFamily.Monospace),
+        )
+    ){
         val interactionSource = remember { MutableInteractionSource() }
-        val isHovered by interactionSource.collectIsHoveredAsState()
         Button(
             modifier = modifier
                 .clip(shape = CustomRoundedCorner())
@@ -82,7 +88,7 @@ fun CustomIconToggleButton(
                         tint = if (checked.value) color.primaryText!! else color.secondaryText!!
                     )
                 }
-                if (!text.isNullOrEmpty()) {
+                if (text.isNotEmpty()) {
                     Text(
                         text = text,
                         style = Typography.Style.ButtonText.copy(

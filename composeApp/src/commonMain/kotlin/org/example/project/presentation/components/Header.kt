@@ -20,6 +20,7 @@ import org.example.project.SessionData
 import org.example.project.core.enums.AccountRoleType
 import org.example.project.domain.model.Account
 import org.example.project.presentation.*
+import org.example.project.presentation.components.common.BodyText
 import org.example.project.presentation.components.common.CustomButton
 import org.example.project.presentation.components.dropdown.ExposedDropdownMenuButton
 import org.example.project.presentation.screens.*
@@ -64,7 +65,14 @@ fun Header(
             ExposedDropdownMenuButton(
                 icon = Icons.Outlined.Menu,
             ) {
-
+                when(currentAccount?.accountRole?.name) {
+                    AccountRoleType.Administrator.toString() -> {
+                        AdminMenuItems()
+                    }
+                    else -> {
+                        UserMenuItems(currentAccount = currentAccount)
+                    }
+                }
             }
         }
         if(rootMaxWidth.value.isExpanded()) {
@@ -185,7 +193,7 @@ fun AdministratorNavigationPillList() {
     FlowRow(
         modifier = Modifier.wrapContentSize(),
         horizontalArrangement = Arrangement.spacedBy(Size.Space.S200),
-        maxLines = 1
+        maxLines = 1,
     ) {
         CustomButton(
             text = "Products",
@@ -316,5 +324,167 @@ fun HeaderAuthWithCredential(
                 contentDescription = null
             )
         }
+    }
+}
+
+@Composable
+fun ColumnScope.AdminMenuItems(
+    modifier: Modifier = Modifier,
+) {
+    val navigator = LocalNavigator.current
+    DropdownMenuItem(
+        content = { BodyText(text = "Products") },
+        onClick = {
+            pushWithLimitScreen(
+                navigator = navigator, ProductList()
+            )
+        },
+    )
+    DropdownMenuItem(
+        content = { BodyText(text = "Categories") },
+        onClick = {
+            pushWithLimitScreen(
+                navigator = navigator, AdministratorCategoryView()
+            )
+        },
+    )
+    DropdownMenuItem(
+        content = { BodyText(text = "Providers") },
+        onClick = {
+            pushWithLimitScreen(
+                navigator = navigator, AdministratorProviderView()
+            )
+        },
+    )
+
+    DropdownMenuItem(
+        content = { BodyText(text = "Orders") },
+        onClick = {
+            pushWithLimitScreen(
+                navigator = navigator, OrderView()
+            )
+        },
+    )
+
+    DropdownMenuItem(
+        content = { BodyText(text = "Transactions") },
+        onClick = {
+            pushWithLimitScreen(
+                navigator = navigator, TransactionView()
+            )
+        },
+    )
+
+    DropdownMenuItem(
+        content = { BodyText(text = "Vouchers") },
+        onClick = {
+            pushWithLimitScreen(
+                navigator = navigator, AdministratorVoucherView()
+            )
+        },
+    )
+}
+
+@Composable
+fun ColumnScope.UserMenuItems(
+    modifier: Modifier = Modifier,
+    currentAccount: Account?
+) {
+    val navigator = LocalNavigator.current
+    DropdownMenuItem(
+        content = { BodyText(text = "Products") },
+        onClick = {
+            pushWithLimitScreen(
+                navigator = navigator, ProductList()
+            )
+        },
+    )
+    DropdownMenuItem(
+        content = { BodyText(text = "Categories") },
+        onClick = {
+            pushWithLimitScreen(
+                navigator = navigator, UserCategoryView()
+            )
+        },
+    )
+
+    DropdownMenuItem(
+        content = { BodyText(text = "Providers") },
+        onClick = {
+            pushWithLimitScreen(
+                navigator = navigator, UserProviderView()
+            )
+        },
+    )
+
+    DropdownMenuItem(
+        content = { BodyText(text = "Orders") },
+        onClick = {
+            if (currentAccount == null) {
+                pushWithLimitScreen(
+                    navigator = navigator, SignIn()
+                )
+            } else {
+                pushWithLimitScreen(
+                    navigator = navigator, OrderView()
+                )
+            }
+        },
+    )
+
+    DropdownMenuItem(
+        content = { BodyText(text = "Transactions") },
+        onClick = {
+            if (currentAccount == null) {
+                pushWithLimitScreen(
+                    navigator = navigator, SignIn()
+                )
+            } else {
+                pushWithLimitScreen(
+                    navigator = navigator, TransactionView()
+                )
+            }
+        },
+    )
+
+    DropdownMenuItem(
+        content = { BodyText(text = "Vouchers") },
+        onClick = {
+            pushWithLimitScreen(
+                navigator = navigator, UserVoucherView()
+            )
+        },
+    )
+
+    DropdownMenuItem(
+        content = { BodyText(text = "Support") },
+        onClick = {
+            pushWithLimitScreen(
+                navigator = navigator, UserVoucherView()
+            )
+        },
+    )
+    if(currentAccount == null) {
+        CustomButton(
+            text = "Register",
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+                pushWithLimitScreen(
+                    navigator = navigator, Register()
+                )
+            }
+        )
+        CustomButton(
+            text = "Sign In",
+            color = Themes.Light.neutralButton,
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+                pushWithLimitScreen(
+                    navigator = navigator, SignIn()
+                )
+            }
+        )
+    } else {
+
     }
 }

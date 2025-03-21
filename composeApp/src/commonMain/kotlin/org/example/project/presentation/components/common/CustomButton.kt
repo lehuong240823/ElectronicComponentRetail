@@ -42,12 +42,13 @@ fun CustomButton(
 
     MaterialTheme(
         typography = androidx.compose.material.Typography(
-            defaultFontFamily = style?: FontFamily.Monospace,
+            defaultFontFamily = style ?: FontFamily.Monospace,
             button = MaterialTheme.typography.button.merge(
                 letterSpacing = 0.sp,
-                fontFamily = style?: FontFamily.Monospace),
-            )
-    ){
+                fontFamily = style ?: FontFamily.Monospace
+            ),
+        )
+    ) {
         Row(
             modifier = modifier
         ) {

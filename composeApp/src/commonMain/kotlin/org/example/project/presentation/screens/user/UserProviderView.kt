@@ -3,20 +3,25 @@ package org.example.project.presentation.screens.user
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.example.project.core.enums.AlertType
+import org.example.project.data.api.ProviderApi
+import org.example.project.data.repository.ProviderRepository
+import org.example.project.domain.model.Provider
 import org.example.project.presentation.components.ColumnBackground
 import org.example.project.presentation.components.card.CategoryCard
+import org.example.project.presentation.components.common.AlertDialog
 import org.example.project.presentation.components.common.Pagination
+import org.example.project.presentation.screens.administrator.handlerGetAllProviders
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
+import org.example.project.presentation.viewmodel.ProviderViewModel
 
 class UserProviderView: Screen {
     @OptIn(ExperimentalLayoutApi::class)
@@ -24,13 +29,35 @@ class UserProviderView: Screen {
     override fun Content() {
         val navigator = LocalNavigator.current
         val rootMaxWidth = remember { mutableStateOf(0) }
-        val scope = rememberCoroutineScope{ Dispatchers.Default}
+        val currentPage = remember { mutableStateOf(0) }
+        val totalPage = remember { mutableStateOf(0) }
+        val scope = rememberCoroutineScope { Dispatchers.Default }
         val showLoadingOverlay = mutableStateOf(true)
-        val totalPage = mutableStateOf(0)
-        val currentPage = mutableStateOf(0)
+        val showErrorDialog = mutableStateOf(false)
+        val alertType = mutableStateOf(AlertType.Default)
+        val providerViewModel = ProviderViewModel(ProviderRepository(ProviderApi()))
+        val providerList: MutableState<List<Provider>> = mutableStateOf(emptyList())
+
+        scope.launch {
+            handlerGetAllProviders(
+                totalPage = totalPage,
+                currentPage = currentPage,
+                providerViewModel = providerViewModel,
+                providerList = providerList,
+                showLoadingOverlay = showLoadingOverlay,
+                showErrorDialog = showErrorDialog,
+                alertType = alertType
+            )
+        }
+
+        AlertDialog(
+            alertType = alertType,
+            showDialog = showErrorDialog
+        )
 
         ColumnBackground(
-            rootMaxWidth = rootMaxWidth
+            rootMaxWidth = rootMaxWidth,
+            showLoadingOverlay = showLoadingOverlay
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth()
@@ -47,7 +74,7 @@ class UserProviderView: Screen {
                     maxItemsInEachRow = 10,
                     overflow = FlowRowOverflow.Visible
                 ) {
-                    for (i in 1..20) {
+                    providerList.value.forEach { provider ->
                         CategoryCard()
                     }
                 }

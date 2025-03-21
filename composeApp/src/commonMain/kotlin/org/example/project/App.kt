@@ -11,8 +11,9 @@ import org.example.project.presentation.theme.Typography
 fun App() {
     val inter = Typography.loadInterFontFamily()
     CompositionLocalProvider(LocalTextStyle.provides(LocalTextStyle.current.merge(fontFamily = inter))) {
-        Navigator(ProductList())
+    Navigator(SignIn())
     }
+
 }
 
 

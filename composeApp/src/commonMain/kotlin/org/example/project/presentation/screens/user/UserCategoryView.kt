@@ -3,23 +3,25 @@ package org.example.project.presentation.screens.user
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.example.project.core.enums.AlertType
+import org.example.project.data.api.CategoryApi
+import org.example.project.data.repository.CategoryRepository
+import org.example.project.domain.model.Category
 import org.example.project.presentation.components.ColumnBackground
 import org.example.project.presentation.components.card.CategoryCard
+import org.example.project.presentation.components.common.AlertDialog
 import org.example.project.presentation.components.common.Pagination
-import org.example.project.presentation.screens.CategoryFlowRow
+import org.example.project.presentation.screens.administrator.handlerGetAllCategories
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
+import org.example.project.presentation.viewmodel.CategoryViewModel
 
 class UserCategoryView: Screen {
     @OptIn(ExperimentalLayoutApi::class)
@@ -27,13 +29,35 @@ class UserCategoryView: Screen {
     override fun Content() {
         val navigator = LocalNavigator.current
         val rootMaxWidth = remember { mutableStateOf(0) }
-        val scope = rememberCoroutineScope{ Dispatchers.Default}
-        val showLoadingOverlay = mutableStateOf(true)
+        val scope = rememberCoroutineScope { Dispatchers.Default }
+        val showLoadingOverlay = mutableStateOf(false)
+        val showErrorDialog = mutableStateOf(false)
+        val alertType = mutableStateOf(AlertType.Default)
         val totalPage = mutableStateOf(0)
         val currentPage = mutableStateOf(0)
+        val categoryViewModel = CategoryViewModel(CategoryRepository(CategoryApi()))
+        val categoryList: MutableState<List<Category>> = mutableStateOf(emptyList())
+
+        AlertDialog(
+            alertType = alertType,
+            showDialog = showErrorDialog
+        )
+
+        scope.launch {
+            handlerGetAllCategories(
+                totalPage = totalPage,
+                currentPage = currentPage,
+                categoryViewModel = categoryViewModel,
+                categoryList = categoryList,
+                showLoadingOverlay = showLoadingOverlay,
+                showErrorDialog = showErrorDialog,
+                alertType = alertType
+            )
+        }
 
         ColumnBackground(
-            rootMaxWidth = rootMaxWidth
+            rootMaxWidth = rootMaxWidth,
+            showLoadingOverlay = showLoadingOverlay
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth()
@@ -50,8 +74,10 @@ class UserCategoryView: Screen {
                     maxItemsInEachRow = 10,
                     overflow = FlowRowOverflow.Visible
                 ) {
-                    for (i in 1..20) {
-                        CategoryCard()
+                    categoryList.value.forEach { category ->
+                        CategoryCard(
+                            category = category
+                        )
                     }
                 }
                 if(totalPage.value > 0) {
@@ -59,7 +85,19 @@ class UserCategoryView: Screen {
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         totalPage = totalPage,
                         currentPage = currentPage,
-                        onCurrentPageChange = {}
+                        onCurrentPageChange = {
+                            scope.launch {
+                                handlerGetAllCategories(
+                                    totalPage = totalPage,
+                                    currentPage = currentPage,
+                                    categoryViewModel = categoryViewModel,
+                                    categoryList = categoryList,
+                                    showLoadingOverlay = showLoadingOverlay,
+                                    showErrorDialog = showErrorDialog,
+                                    alertType = alertType
+                                )
+                            }
+                        }
                     )
                 }
             }

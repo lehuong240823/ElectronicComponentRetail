@@ -24,8 +24,8 @@ import org.jetbrains.compose.resources.vectorResource
 @Composable
 fun Pagination(
     modifier: Modifier = Modifier,
-    totalPage: MutableState<Int>,// = mutableStateOf(10),
-    currentPage: MutableState<Int>,// = mutableStateOf(1)
+    totalPage: MutableState<Int>,
+    currentPage: MutableState<Int>,
     onCurrentPageChange: () -> Unit
 ) {
     Row(
@@ -34,13 +34,13 @@ fun Pagination(
         verticalAlignment = Alignment.CenterVertically
     ) {
         var combinedRanges = mutableListOf(
-            1..3,
-            currentPage.value..currentPage.value,
-            totalPage.value - 2..totalPage.value
+            0..3,
+            currentPage.value - 1..currentPage.value - 1,
+            totalPage.value - 3..totalPage.value - 1
         )
             .flatten()
             .toSet()
-            .filter { it in 1..totalPage.value }
+            .filter { it in 0..totalPage.value - 1 }
             .sorted()
 
         PaginationButton(
@@ -48,7 +48,7 @@ fun Pagination(
             icon = vectorResource(Res.drawable.ic_arrow_left),
             isIconFirst = true,
             onClick = {
-                if (currentPage.value > 1) currentPage.value--
+                if (currentPage.value > 0) currentPage.value--
                 onCurrentPageChange()
             },
             enabled = currentPage.value != combinedRanges.first(),
@@ -66,7 +66,7 @@ fun Pagination(
 
             PaginationButton(
                 modifier = Modifier.width(36.plus(8.times(pageNum.toString().length)).dp) ,
-                text = pageNum.toString(),
+                text = (pageNum + 1).toString(),
                 onClick = {
                     currentPage.value = pageNum
                     /*combinedRanges = mutableListOf(
@@ -89,7 +89,7 @@ fun Pagination(
             text = "Next",
             icon = vectorResource(Res.drawable.ic_arrow_right),
             onClick = {
-                if (currentPage.value < totalPage.value) currentPage.value++
+                if (currentPage.value < totalPage.value - 1) currentPage.value++
                 onCurrentPageChange()
             },
             enabled = currentPage.value != combinedRanges.last(),

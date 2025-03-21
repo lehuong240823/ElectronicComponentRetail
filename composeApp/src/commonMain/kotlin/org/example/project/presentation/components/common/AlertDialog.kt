@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import org.example.project.core.enums.AlertType
 import org.example.project.presentation.components.Form
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
@@ -22,6 +23,7 @@ import org.example.project.presentation.theme.Typography
 @Preview
 @Composable
 fun AlertDialog(
+    alertType: MutableState<AlertType> = mutableStateOf(AlertType.Default),
     title: String = "Error Loading Content",
     message: String? = "We encountered an issue while trying to fetch the required information. Please check your internet connection and try again.",
     rootMaxWidth: MutableState<Int> = mutableStateOf(0),
@@ -30,8 +32,33 @@ fun AlertDialog(
     maxWidth: Dp = Dp.Unspecified,
     content: @Composable () -> Unit = {},
     onDismissRequest: () -> Unit = { showDialog.value = false },
-    onConfirmation: () -> Unit = { showDialog.value = false },
+    onConfirmation: () -> Unit = {  },
 ) {
+    val _title = mutableStateOf(title)
+    val _message = mutableStateOf(message)
+
+    when(alertType.value) {
+        AlertType.Default -> {
+            _title.value = title
+            _message.value = message
+        }
+        AlertType.Duplication -> {
+            _title.value = "Duplicate Name"
+            _message.value = "This name already exists. Please choose another name."
+        }
+        AlertType.Null -> {
+            _title.value = "Require Field Not Valid"
+            _message.value = "Require field value should not be blank or null. Please try again."
+        }
+        AlertType.SendEmailSuccess -> {
+            _title.value = "Send Email Success"
+            _message.value = "Follow the link in your email to reset password."
+        }
+        AlertType.Success -> {
+            _title.value = "Change Success"
+            _message.value = "Your data have been updated."
+        }
+    }
 
     if (showDialog.value) {
         Dialog(onDismissRequest = { onDismissRequest() },
@@ -40,15 +67,14 @@ fun AlertDialog(
             LazyColumn {
                 item {
                     Form(
-                        modifier = Modifier.wrapContentHeight(unbounded = true),
                         horizontalArrangement = Alignment.Start,
                         maxWidth = maxWidth
                     ) {
                         Text(
-                            text = title,
+                            text = _title.value,
                             style = Typography.Style.Heading6
                         )
-                        if (message != null) { BodyText(text = message) }
+                        if (_message.value != null) { BodyText(text = _message.value!!) }
                         content()
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -62,7 +88,10 @@ fun AlertDialog(
                             CustomButton(
                                 modifier = Modifier.defaultMinSize(minWidth = 70.dp),
                                 text = "Confirm",
-                                onClick = { onConfirmation() })
+                                onClick = {
+                                    showDialog.value = false
+                                    onConfirmation() }
+                            )
                         }
                     }
                 }

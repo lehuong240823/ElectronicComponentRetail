@@ -19,15 +19,14 @@ import org.example.project.presentation.theme.Themes
 fun ExposedDropdownInputField(
     modifier: Modifier = Modifier.wrapContentSize(),
     options: List<String> = listOf(),
-    textFieldValue: String? = null,
+    textFieldValue: MutableState<String> = mutableStateOf(""),
+    onValueChange: (String) -> Unit = { textFieldValue.value = it },
     placeholder: String? = null,
+    enabled: Boolean = true,
     colors: ButtonColor = Themes.Light.textField
 ) {
     val focusRequester = remember { FocusRequester() }
     var expanded by remember { mutableStateOf(false) }
-    var textFieldValue by remember {
-        mutableStateOf("")
-    }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -35,9 +34,11 @@ fun ExposedDropdownInputField(
     ) {
         InputField(
             modifier = modifier,
-            value = textFieldValue,
+            enabled = enabled,
+            value = textFieldValue.value,
             onValueChange = {
-                textFieldValue = it
+                textFieldValue.value = it
+                onValueChange(it)
             },
             trailingIcon = {
                 IconButton(onClick = {}, modifier = Modifier.clearAndSetSemantics {}) {
@@ -56,17 +57,17 @@ fun ExposedDropdownInputField(
             onDismissRequest = { expanded = false },
         ) {
             options
-                .filter { if (!textFieldValue.isNullOrEmpty()) it.startsWith(textFieldValue) else true }
+                .filter { if (!textFieldValue.value.isNullOrEmpty()) it.startsWith(textFieldValue.value) else true }
                 .forEach { option ->
                     DropdownMenuItem(
                         content = {
                             BodyText(
                                 text = option,
-                                style = MaterialTheme.typography.body1
                             )
                         },
                         onClick = {
-                            textFieldValue = option
+                            textFieldValue.value = option
+                            onValueChange(option)
                             expanded = false
                         },
                     )

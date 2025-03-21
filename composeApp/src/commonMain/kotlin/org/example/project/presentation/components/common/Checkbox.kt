@@ -23,17 +23,22 @@ fun Checkbox(
     text: String? = null,
     checked: MutableState<Boolean> = remember { mutableStateOf(false) },
     onCheckedChange: (Boolean) -> Unit = {},
+    enabled: Boolean = true,
     color: ButtonColor = Themes.Light.primaryLayout,
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Size.Space.S300)
+        //horizontalArrangement = Arrangement.spacedBy(Size.Space.S200)
     ) {
         Checkbox(
             checked = checked.value,
-            onCheckedChange = { checked.value = it },
-            colors = CheckboxDefaults.colors(checkedColor = color.primaryText?: Color.Black)
+            onCheckedChange = {
+                checked.value = it
+                onCheckedChange(it)
+                              },
+            enabled = enabled,
+        colors = CheckboxDefaults.colors(checkedColor = color.primaryText?: Color.Black)
         )
         if (!text.isNullOrEmpty())
         {

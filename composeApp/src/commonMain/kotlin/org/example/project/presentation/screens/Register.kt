@@ -90,7 +90,7 @@ class Register : Screen {
         ColumnBackground(
             rootMaxWidth = rootMaxWidth,
             showLoadingOverlay = showLoadingOverlay,
-            showHeaderAndFooter = false
+            //showHeaderAndFooter = false
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth()

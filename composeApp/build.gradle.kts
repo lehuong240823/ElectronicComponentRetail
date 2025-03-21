@@ -71,8 +71,13 @@ kotlin {
             implementation(libs.slf4j.simple)
             implementation(libs.kotlinx.datetime)
             implementation(libs.bignum)
-            implementation("io.github.vinceglb:filekit-core:0.8.8")
-            implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+            implementation("io.github.vinceglb:filekit-core:0.7.0")
+            implementation("io.coil-kt.coil3:coil-compose:3.0.4")
+            implementation("com.kizitonwose.calendar:compose-multiplatform:2.6.0-beta01")
+            implementation("io.coil-kt.coil3:coil-network-ktor:3.0.0-alpha08")
+            //implementation("io.github.vinceglb:filekit-dialogs:0.7.0")
+            //implementation("io.github.vinceglb:filekit-dialogs-compose:0.7.0")
+            //implementation("io.github.vinceglb:filekit-coil:0.7.0")
             //implementation("com.darkrockstudios:mpfilepicker:3.1.0")
             //implementation("io.coil-kt:coil-compose-multiplatform:2.5.0")
         }
@@ -91,10 +96,10 @@ kotlin {
         wasmJsMain {
             dependencies {
                 implementation(libs.ktor.client.js)
-                implementation(libs.ktor.server.auth)
-                implementation(libs.ktor.server.content.negotiation)
-                implementation(libs.ktor.server.core)
-                implementation(libs.ktor.server.status.pages)
+                //implementation(libs.ktor.server.auth)
+                //implementation(libs.ktor.server.content.negotiation)
+                //implementation(libs.ktor.server.core)
+                //implementation(libs.ktor.server.status.pages)
             }
         }
     }

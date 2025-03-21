@@ -18,6 +18,7 @@ pluginManagement {
 dependencyResolutionManagement {
     repositories {
         maven("https://jogamp.org/deployment/maven")
+        maven("https://repo1.maven.org/maven2")
         google {
             mavenContent {
                 includeGroupAndSubgroups("androidx")

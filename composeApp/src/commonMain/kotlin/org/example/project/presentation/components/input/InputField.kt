@@ -117,8 +117,8 @@ fun CustomBasicTextField(
                 .onFocusChanged { focusState ->
                     isFocused = focusState.isFocused
                 },
-            value = TextFieldValue(text = value, selection = TextRange(value.length)),
-            onValueChange = { onValueChange(it.text) },
+            value = value,//TextFieldValue(text = value, selection = TextRange.Zero),
+            onValueChange = onValueChange,//onValueChange(it.text) },
             textStyle = Typography.Style.InputField.copy(
                 color = colors.primaryText!!,
                 textAlign = textAlign

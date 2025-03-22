@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import org.example.project.ui.theme.Colors
 import org.example.project.ui.theme.Size
 import org.example.project.ui.theme.ThemeColors
@@ -18,7 +19,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun Register() {
+fun Register(navController: NavController) {
     MaterialTheme(
         colors = lightColors().copy(background = Color.Black),
         typography = Typography(defaultFontFamily = Typography.loadInterFontFamily(),
@@ -49,7 +50,11 @@ fun Register() {
                 InputField("Password", password, onValueChange = { password = it })
 
                 ButtonGroup(
-                    colors = Themes.Light.brand, onClick = { }, text = "Register"
+                    colors = Themes.Light.brand,
+                    onClick = {
+                        navController.navigate("manageSuppliers")
+                    },
+                    text = "Register"
                 )
             }
         }

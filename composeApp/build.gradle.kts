@@ -18,9 +18,9 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     jvm("desktop")
-    
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "composeApp"
@@ -40,15 +40,36 @@ kotlin {
         }
         binaries.executable()
     }
-    
+
     sourceSets {
-        val desktopMain by getting
-        
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.androidx.navigation.compose)
+                implementation(compose.preview)
+                implementation(libs.androidx.activity.compose)
+                implementation(libs.androidx.material.icons.extended)
+                implementation(libs.androidx.ui.android)
+            }
         }
+
+        val desktopMain by getting
+
+//        val wasmJsMain by getting {
+//            dependencies {
+//                implementation(compose.runtime)
+//                implementation(compose.foundation)
+//                implementation(compose.material)
+//                implementation(compose.ui)
+//                implementation(compose.components.resources)
+//                implementation("org.jetbrains.kotlin:kotlin-stdlib-wasm-js:2.1.0")
+//                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+//                // https://mvnrepository.com/artifact/org.jetbrains.skiko/skiko-wasm-js
+//                implementation("org.jetbrains.skiko:skiko-wasm-js:0.8.4")
+//            }
+//        }
+
         commonMain.dependencies {
+            implementation(libs.kotlinx.datetime.v061)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
@@ -57,12 +78,19 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+            implementation(libs.navigation.compose)
         }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
         }
     }
+}
+
+repositories {
+    mavenCentral()
+    google()
 }
 
 android {
@@ -91,18 +119,17 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
-android {
-    compileSdk = 34
 
-    defaultConfig {
-        minSdk = 24
-        targetSdk = 34
-    }
-}
 dependencies {
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.kotlinx.datetime.v061)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.tv.material)
     implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.ui.android)
+    implementation(libs.androidx.ui.text.android)
+    implementation(libs.androidx.foundation.layout.android)
     debugImplementation(compose.uiTooling)
 }
 

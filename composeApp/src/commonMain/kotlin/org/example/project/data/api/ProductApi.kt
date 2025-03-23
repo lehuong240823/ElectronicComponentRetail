@@ -61,6 +61,6 @@ class ProductApi {
     }
 
     suspend fun findProductsByNameContainingIgnoreCase(currentPage: Int, name: String): PaginatedResponse<Product> {
-        return HttpClient.client.get("$BASE_URL${endPoint}/name/${name}?size=${getPageSize()}&page=${currentPage}").body()
+        return HttpClient.client.get("$BASE_URL${endPoint}/name?name=${name}&size=${getPageSize()}&page=${currentPage}").body()
     }
 }

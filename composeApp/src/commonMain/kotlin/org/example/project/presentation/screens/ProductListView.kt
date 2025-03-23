@@ -228,7 +228,20 @@ class ProductList : Screen {
                         rateAsc = rateAsc,
                         onRateValueChange = {},
                         searchKeyword = searchKeyword,
-                        onSearchBarClick = {},
+                        onSearchBarClick = {
+                            scope.launch {
+                                handlerFindProductsByNameContainingIgnoreCase(
+                                    totalPage = totalPage,
+                                    currentPage = currentPage,
+                                    productViewModel = productViewModel,
+                                    productList = productList,
+                                    showLoadingOverlay = showLoadingOverlay,
+                                    showErrorDialog = showErrorDialog,
+                                    alertType = alertType,
+                                    searchKeyword = searchKeyword
+                                )
+                            }
+                        },
                         productList = productList,
                         totalPage = totalPage,
                         currentPage = currentPage,
@@ -824,5 +837,30 @@ suspend fun handlerGetAllProductStatuses(
         alertType = alertType,
         operationStatus = productStatusViewModel.operationStatus,
         onSuccess = {}
+    )
+}
+
+suspend fun handlerFindProductsByNameContainingIgnoreCase(
+    totalPage: MutableState<Int>,
+    currentPage: MutableState<Int>,
+    productViewModel: ProductViewModel,
+    productList: MutableState<List<Product>>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>,
+    searchKeyword: MutableState<String>,
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            currentPage.value = 0
+            productViewModel.findProductsByNameContainingIgnoreCase(currentPage.value, searchKeyword.value)
+            productList.value = productViewModel.productsList.value
+        }
+    )
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = productViewModel.operationStatus,
     )
 }

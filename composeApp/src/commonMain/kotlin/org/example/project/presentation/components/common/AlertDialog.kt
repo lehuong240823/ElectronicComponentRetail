@@ -14,11 +14,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import cafe.adriel.voyager.navigator.LocalNavigator
 import org.example.project.core.enums.AlertType
 import org.example.project.presentation.components.Form
+import org.example.project.presentation.screens.SignIn
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 import org.example.project.presentation.theme.Typography
+import org.example.project.pushWithLimitScreen
 
 @Preview
 @Composable
@@ -36,6 +39,7 @@ fun AlertDialog(
 ) {
     val _title = mutableStateOf(title)
     val _message = mutableStateOf(message)
+    val navigator = LocalNavigator.current
 
     when(alertType.value) {
         AlertType.Default -> {
@@ -61,6 +65,10 @@ fun AlertDialog(
         AlertType.EmailOrPasswordNull -> {
             _title.value = "Input Not Valid"
             _message.value = "Email and password are required."
+        }
+        AlertType.TokenExpired -> {
+            _title.value = "Session expired"
+            _message.value = "Please login again."
         }
     }
 
@@ -88,13 +96,22 @@ fun AlertDialog(
                                 modifier = Modifier.defaultMinSize(minWidth = 70.dp),
                                 text = "Cancel",
                                 color = Themes.Light.neutralButton,
-                                onClick = { onDismissRequest() })
+                                onClick = {
+                                    if (alertType.value == AlertType.TokenExpired) {
+                                        pushWithLimitScreen(navigator = navigator, screen = SignIn())
+                                    }
+                                    onDismissRequest()
+                                })
                             CustomButton(
                                 modifier = Modifier.defaultMinSize(minWidth = 70.dp),
                                 text = "Confirm",
                                 onClick = {
                                     showDialog.value = false
-                                    onConfirmation() }
+                                    if (alertType.value == AlertType.TokenExpired) {
+                                        pushWithLimitScreen(navigator = navigator, screen = SignIn())
+                                    }
+                                    onConfirmation()
+                                }
                             )
                         }
                     }

@@ -77,4 +77,13 @@ class ProductRepository(private val productApi: ProductApi) {
             null
         }
     }
+
+    suspend fun findProductsByNameContainingIgnoreCase(currentPage: Int, name: String): PaginatedResponse<Product>? {
+        return try {
+            productApi.findProductsByNameContainingIgnoreCase(currentPage, name)
+        } catch (e: Exception) {
+            println("Error fetching products: ${e.message}")
+            null
+        }
+    }
 }

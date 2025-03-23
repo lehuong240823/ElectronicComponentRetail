@@ -1,5 +1,7 @@
 package org.example.project
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import org.example.project.domain.model.Account
 import org.example.project.domain.model.AccountRole
 
@@ -14,6 +16,7 @@ object SessionData {
     )
     private var _token: String? = null
     private var _tokenExpire: String? = null
+    private var _loginTime: Instant? = null
 
     fun setCurrentAccount(account: Account) {
         _currentAccount = account
@@ -25,6 +28,7 @@ object SessionData {
 
     fun setToken(refreshToken: String?) {
         _token = refreshToken
+        _loginTime = Clock.System.now()
     }
 
     fun getToken(): String? {
@@ -37,5 +41,9 @@ object SessionData {
 
     fun getTokenExpire(): String? {
         return _tokenExpire
+    }
+
+    fun getLoginTime(): Instant? {
+        return _loginTime
     }
 }

@@ -106,4 +106,15 @@ class ProductViewModel(private val productRepository: ProductRepository) {
             _operationStatus.value = "Product to Get All Account"
         }
     }
+
+    suspend fun findProductsByNameContainingIgnoreCase(currentPage: Int, name: String) {
+        val result = productRepository.findProductsByNameContainingIgnoreCase(currentPage, name)
+        if (result != null) {
+            _productsList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "Product Get All Successfully"
+        } else {
+            _operationStatus.value = "Product to Get All Account"
+        }
+    }
 }

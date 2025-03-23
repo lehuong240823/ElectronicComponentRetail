@@ -217,15 +217,7 @@ fun ProductReviewColumn(
             ReviewCard(
                 modifier = Modifier.weight(1f)
             )
-            ReviewCard(
-                modifier = Modifier.weight(1f)
-            )
-            ReviewCard(
-                modifier = Modifier.weight(1f)
-            )
-            ReviewCard(
-                modifier = Modifier.weight(1f)
-            )
+
         }
     }
 }

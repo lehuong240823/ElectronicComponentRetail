@@ -7,4 +7,5 @@ enum class AlertType() {
     SendEmailSuccess(),
     Success(),
     EmailOrPasswordNull(),
+    TokenExpired(),
 }

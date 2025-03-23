@@ -10,9 +10,13 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.example.project.SessionData
 import org.example.project.checkError
+import org.example.project.core.enums.AlertType
 import org.example.project.data.api.TransactionStatusApi
 import org.example.project.data.repository.TransactionStatusRepository
+import org.example.project.domain.model.Transaction
+import org.example.project.domain.model.TransactionStatus
 import org.example.project.executeSuspendFunction
 import org.example.project.presentation.components.ColumnBackground
 import org.example.project.presentation.components.common.AlertDialog
@@ -23,10 +27,12 @@ import org.example.project.presentation.components.table.TransactionTable
 import org.example.project.presentation.isExpanded
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.viewmodel.TransactionStatusViewModel
+import org.example.project.presentation.viewmodel.TransactionViewModel
 
 class TransactionView: Screen {
     @Composable
     override fun Content() {
+        val currentAccount = SessionData.getCurrentAccount()
         val rootMaxWidth = remember { mutableStateOf(0) }
         val scope = rememberCoroutineScope{ Dispatchers.Default}
         val showLoadingOverlay = mutableStateOf(true)
@@ -103,7 +109,7 @@ suspend fun handlerGetAllTransactionStatuses(
         function = {
             val titles = mutableListOf("All")
             transactionStatusViewModel.getAllTransactionStatuss(0)
-            transactionStatusViewModel.transactionStatussList.value.forEach {
+            transactionStatusViewModel.transactionStatussList.value.sortedBy { it.id }.forEach {
                 if (!it.name.isNullOrEmpty())
                     titles.add(it.name)
             }
@@ -116,3 +122,87 @@ suspend fun handlerGetAllTransactionStatuses(
         onSuccess = {}
     )
 }
+
+suspend fun handlerGetAllTransactions(
+    totalPage: MutableState<Int>,
+    currentPage: MutableState<Int>,
+    transactionViewModel: TransactionViewModel,
+    transactionList: MutableState<List<Transaction>>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            transactionViewModel.getAllTransactions(currentPage.value)
+            totalPage.value = transactionViewModel.totalPage.value ?: 0
+            transactionList.value = transactionViewModel.transactionsList.value
+        }
+    )
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = transactionViewModel.operationStatus,
+    )
+}
+
+suspend fun handlerGetAllTransactionsByStatus(
+    totalPage: MutableState<Int>,
+    currentPage: MutableState<Int>,
+    transactionViewModel: TransactionViewModel,
+    transactionList: MutableState<List<Transaction>>,
+    transactionStatus: MutableState<TransactionStatus>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            transactionViewModel.getTransactionsByTransactionStatusId(
+                currentPage.value,
+                transactionStatus.value.id ?: 0
+            )
+            totalPage.value = transactionViewModel.totalPage.value ?: 0
+            transactionList.value = transactionViewModel.transactionsList.value
+        }
+    )
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = transactionViewModel.operationStatus,
+    )
+}
+
+/*suspend fun handlerEditTransaction(
+    totalPage: MutableState<Int>,
+    currentPage: MutableState<Int>,
+    transactionViewModel: TransactionViewModel,
+    transactionList: MutableState<List<Transaction>>,
+    showLoadingOverlay: MutableState<Boolean>,
+    alertType: MutableState<AlertType>,
+    showErrorDialog: MutableState<Boolean>,
+    transaction: MutableState<Transaction>,
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            transactionViewModel.updateTransaction(transaction.value.id ?: 0, transaction.value)
+            handlerGetAllTransactions(
+                totalPage = totalPage,
+                currentPage = currentPage,
+                transactionViewModel = transactionViewModel,
+                transactionList = transactionList,
+                showLoadingOverlay = showLoadingOverlay,
+                showErrorDialog = showErrorDialog,
+                alertType = alertType
+            )
+        }
+    )
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = transactionViewModel.operationStatus,
+    )
+}*/

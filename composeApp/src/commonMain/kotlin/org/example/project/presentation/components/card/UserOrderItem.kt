@@ -6,15 +6,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.SessionData
+import org.example.project.checkError
 import org.example.project.core.enums.AccountRoleType
-import org.example.project.domain.model.Account
-import org.example.project.domain.model.Order
+import org.example.project.core.enums.AlertType
+import org.example.project.domain.model.*
+import org.example.project.executeSuspendFunction
 import org.example.project.presentation.components.common.BodyText
 import org.example.project.presentation.components.common.Divider
 import org.example.project.presentation.components.common.CustomButton
@@ -23,6 +26,8 @@ import org.example.project.presentation.theme.ButtonColor
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 import org.example.project.presentation.theme.Typography
+import org.example.project.presentation.viewmodel.OrderItemViewModel
+import org.example.project.presentation.viewmodel.TransactionViewModel
 
 @Composable
 fun UserOrderItem(
@@ -217,4 +222,29 @@ fun returnedRefundedButtonGroup() {
             }
         )
     }
+}
+
+suspend fun handlerGetAllOrderItemsByStatusOrderId(
+    totalPage: MutableState<Int>,
+    currentPage: MutableState<Int>,
+    orderItemViewModel: OrderItemViewModel,
+    orderItemList: MutableState<List<OrderItem>>,
+    order: MutableState<Order>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            orderItemViewModel.getOrderItemsByOrderId(currentPage.value, order.value.id?:0)
+            totalPage.value = orderItemViewModel.totalPage.value ?: 0
+            orderItemList.value = orderItemViewModel.orderItemsList.value
+        }
+    )
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = orderItemViewModel.operationStatus,
+    )
 }

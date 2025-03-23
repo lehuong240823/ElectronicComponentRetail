@@ -264,7 +264,13 @@ suspend fun handlerForNonExistEmail(
 ) {
     val authViewModel = FirebaseEmailAuthViewModel(FirebaseEmailAuthRepository(FirebaseEmailAuthApi()))
     val request = FirebaseEmailAuthRequest(email = email.value, password = password.value)
-    authViewModel.signUp(request)
+
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            authViewModel.signUp(request)
+        }
+    )
 
     checkError(
         showErrorDialog = showErrorDialog,

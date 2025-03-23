@@ -34,7 +34,9 @@ fun ProductItem(
     color: ButtonColor = Themes.Light.primaryLayout,
     unit: String = CURRENCY,
     showMoreActionButton: Boolean = true,
-    product: Product = Product(name = "Product", price = 0.toBigDecimal())
+    product: Product = Product(name = "Product", price = 0.toBigDecimal()),
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
 ) {
     Column(
         modifier = modifier.clip(shape = CustomRoundedCorner())
@@ -61,14 +63,15 @@ fun ProductItem(
                     text = product.name!!
                 )
                 BodyText(
-                    text = "${unit}${product.price}",
+                    text = "${unit}${product.price?.toPlainString()}",
                     style = Typography.Style.BodyStrong
                 )
             }
             if(showMoreActionButton) {
                 ExposedDropdownMenuButton(
                     icon = vectorResource(Res.drawable.ic_dots_vertical),
-                    content = {}
+                    onEdit = onEdit,
+                    onDelete = onDelete
                 )
             }
         }

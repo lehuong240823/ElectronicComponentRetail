@@ -5,5 +5,6 @@ enum class AlertType() {
     Duplication(),
     Null(),
     SendEmailSuccess(),
-    Success()
+    Success(),
+    EmailOrPasswordNull(),
 }

@@ -20,33 +20,46 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import com.ionspin.kotlin.bignum.decimal.BigDecimal
+import com.ionspin.kotlin.bignum.decimal.toBigDecimal
 import electroniccomponentretail.composeapp.generated.resources.Res
 import electroniccomponentretail.composeapp.generated.resources.ic_sort_ascending
 import electroniccomponentretail.composeapp.generated.resources.ic_sort_descending
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.example.project.SessionData
+import org.example.project.checkError
 import org.example.project.core.enums.AccountRoleType
-import org.example.project.domain.model.Account
-import org.example.project.domain.model.Product
+import org.example.project.core.enums.AlertType
+import org.example.project.data.api.CategoryApi
+import org.example.project.data.api.ProductApi
+import org.example.project.data.api.ProductStatusApi
+import org.example.project.data.api.ProviderApi
+import org.example.project.data.repository.CategoryRepository
+import org.example.project.data.repository.ProductRepository
+import org.example.project.data.repository.ProductStatusRepository
+import org.example.project.data.repository.ProviderRepository
+import org.example.project.domain.model.*
+import org.example.project.executeSuspendFunction
 import org.example.project.presentation.components.ColumnBackground
 import org.example.project.presentation.components.Form
 import org.example.project.presentation.components.ImageAddDialog
 import org.example.project.presentation.components.card.CategoryCard
 import org.example.project.presentation.components.card.ProductItem
-import org.example.project.presentation.components.common.BodyText
-import org.example.project.presentation.components.common.CustomButton
-import org.example.project.presentation.components.common.CustomIconToggleButton
-import org.example.project.presentation.components.common.Pagination
+import org.example.project.presentation.components.common.*
 import org.example.project.presentation.components.dropdown.ExposedDropdownInputField
 import org.example.project.presentation.components.input.CustomRangerSlider
 import org.example.project.presentation.components.input.InputField
 import org.example.project.presentation.components.input.RatingToggleGroup
 import org.example.project.presentation.components.input.SearchBar
 import org.example.project.presentation.isExpanded
+import org.example.project.presentation.screens.administrator.*
 import org.example.project.presentation.theme.ButtonColor
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 import org.example.project.presentation.theme.Typography
+import org.example.project.presentation.viewmodel.*
 import org.example.project.pushWithLimitScreen
 
 class ProductList : Screen {
@@ -55,8 +68,8 @@ class ProductList : Screen {
         val currentAccount = SessionData.getCurrentAccount()
         val navigator = LocalNavigator.current
         val rootMaxWidth = remember { mutableStateOf(0) }
-        val currentPage = remember { mutableStateOf(1) }
-        val totalPage = remember { mutableStateOf(14) }
+        val currentPage = remember { mutableStateOf(0) }
+        val totalPage = remember { mutableStateOf(0) }
         val scope = rememberCoroutineScope { Dispatchers.Default }
         val priceAsc = remember { mutableStateOf(true) }
         val rateAsc = remember { mutableStateOf(true) }
@@ -64,12 +77,129 @@ class ProductList : Screen {
         val priceRange = remember { mutableStateOf(0f..100f) }
         val rating = remember { mutableStateOf(0) }
         val showAddNewProductDialog = remember { mutableStateOf(false) }
-        val productList = remember { mutableStateOf(listOf(Product(id = 1))) }
+        val showEditProductDialog = remember { mutableStateOf(false) }
+        val showLoadingOverlay = mutableStateOf(true)
+        val showErrorDialog = mutableStateOf(false)
+        val alertType = mutableStateOf(AlertType.Default)
+        val productViewModel = ProductViewModel(ProductRepository(ProductApi()))
+        val productList = remember { mutableStateOf(emptyList<Product>()) }
+        val categoryViewModel = CategoryViewModel(CategoryRepository(CategoryApi()))
+        val categoryList: MutableState<List<Category>> = mutableStateOf(emptyList())
+        val newProduct = mutableStateOf(Product())
+        val updateProduct = mutableStateOf(Product())
 
-        AddNewProductDialog(showAddNewProductDialog = showAddNewProductDialog)
+        scope.launch {
+            handlerGetAllCategories(
+                totalPage = mutableStateOf(0),
+                currentPage = mutableStateOf(0),
+                categoryViewModel = categoryViewModel,
+                categoryList = categoryList,
+                showLoadingOverlay = showLoadingOverlay,
+                showErrorDialog = showErrorDialog,
+                alertType = alertType
+            )
+
+            handlerGetAllProducts(
+                totalPage = totalPage,
+                currentPage = currentPage,
+                productViewModel = productViewModel,
+                productList = productList,
+                showLoadingOverlay = showLoadingOverlay,
+                showErrorDialog = showErrorDialog,
+                alertType = alertType
+            )
+        }
+
+        AlertDialog(
+            alertType = alertType,
+            showDialog = showErrorDialog
+        )
+
+        AddNewProductDialog(
+            title = "Add",
+            scope = scope,
+            showLoadingOverlay = showLoadingOverlay,
+            showErrorDialog = showErrorDialog,
+            showAddNewProductDialog = showAddNewProductDialog,
+            alertType = alertType,
+            product = newProduct,
+            onConfirmation = {
+                if (newProduct.value.name != null && newProduct.value.price != null
+                    && newProduct.value.stock != null
+                ) {
+                    scope.launch {
+                        handlerAddProduct(
+                            totalPage = totalPage,
+                            currentPage = currentPage,
+                            productViewModel = productViewModel,
+                            productList = productList,
+                            showLoadingOverlay = showLoadingOverlay,
+                            showErrorDialog = showErrorDialog,
+                            alertType = alertType,
+                            product = newProduct
+                        )
+                        handlerGetAllProducts(
+                            totalPage = totalPage,
+                            currentPage = currentPage,
+                            productViewModel = productViewModel,
+                            productList = productList,
+                            showLoadingOverlay = showLoadingOverlay,
+                            showErrorDialog = showErrorDialog,
+                            alertType = alertType
+                        )
+                        newProduct.value = Product()
+                    }
+                } else {
+                    alertType.value = AlertType.Null
+                    showErrorDialog.value = true
+                }
+            },
+        )
+
+        AddNewProductDialog(
+            title = "Edit",
+            scope = scope,
+            showLoadingOverlay = showLoadingOverlay,
+            showErrorDialog = showErrorDialog,
+            showAddNewProductDialog = showEditProductDialog,
+            alertType = alertType,
+            product = updateProduct,
+            onConfirmation = {
+                if (updateProduct.value.name != null && updateProduct.value.price != null
+                    && updateProduct.value.stock != null
+                ) {
+                    scope.launch {
+                        handlerEditProduct(
+                            totalPage = totalPage,
+                            currentPage = currentPage,
+                            productViewModel = productViewModel,
+                            productList = productList,
+                            showLoadingOverlay = showLoadingOverlay,
+                            showErrorDialog = showErrorDialog,
+                            alertType = alertType,
+                            product = updateProduct
+                        )
+                        handlerGetAllProducts(
+                            totalPage = totalPage,
+                            currentPage = currentPage,
+                            productViewModel = productViewModel,
+                            productList = productList,
+                            showLoadingOverlay = showLoadingOverlay,
+                            showErrorDialog = showErrorDialog,
+                            alertType = alertType
+                        )
+                        updateProduct.value = Product()
+                    }
+                } else {
+                    alertType.value = AlertType.Null
+                    showErrorDialog.value = true
+                }
+            },
+        )
 
         ColumnBackground(
-            rootMaxWidth = rootMaxWidth
+            rootMaxWidth = rootMaxWidth,
+            showLoadingOverlay = showLoadingOverlay
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth()
@@ -78,7 +208,8 @@ class ProductList : Screen {
                 verticalArrangement = Arrangement.spacedBy(Size.Space.S1600)
             ) {
                 CategoryFlowRow(
-                    rootMaxWidth = rootMaxWidth
+                    rootMaxWidth = rootMaxWidth,
+                    categoryList = categoryList,
                 )
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(Size.Space.S1600)
@@ -101,7 +232,14 @@ class ProductList : Screen {
                         productList = productList,
                         totalPage = totalPage,
                         currentPage = currentPage,
-                        showAddNewProductDialog = showAddNewProductDialog
+                        showAddNewProductDialog = showAddNewProductDialog,
+                        updateProduct = updateProduct,
+                        showEditProductDialog = showEditProductDialog,
+                        scope = scope,
+                        showLoadingOverlay = showLoadingOverlay,
+                        showErrorDialog = showErrorDialog,
+                        alertType = alertType,
+                        productViewModel = productViewModel
                     )
                 }
             }
@@ -174,6 +312,7 @@ fun FilterMenu(
 
 @Composable
 fun SectionProductGrid(
+    scope: CoroutineScope,
     currentAccount: Account?,
     navigator: Navigator?,
     priceAsc: MutableState<Boolean> = mutableStateOf(true),
@@ -185,8 +324,14 @@ fun SectionProductGrid(
     productList: MutableState<List<Product>>,
     totalPage: MutableState<Int>,
     currentPage: MutableState<Int>,
-    showAddNewProductDialog: MutableState<Boolean>
-) {
+    showAddNewProductDialog: MutableState<Boolean>,
+    updateProduct: MutableState<Product>,
+    showEditProductDialog: MutableState<Boolean>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>,
+    productViewModel: ProductViewModel
+    ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(Size.Space.S1200)
     )
@@ -205,7 +350,14 @@ fun SectionProductGrid(
             navigator = navigator,
             productList = productList,
             totalPage = totalPage,
-            currentPage = currentPage
+            currentPage = currentPage,
+            updateProduct = updateProduct,
+            showEditProductDialog = showEditProductDialog,
+            scope = scope,
+            showLoadingOverlay = showLoadingOverlay,
+            showErrorDialog = showErrorDialog,
+            alertType = alertType,
+            productViewModel = productViewModel
         )
     }
 }
@@ -214,6 +366,7 @@ fun SectionProductGrid(
 @Composable
 fun CategoryFlowRow(
     rootMaxWidth: MutableState<Int> = remember { mutableStateOf(0) },
+    categoryList: MutableState<List<Category>>,
     color: ButtonColor = Themes.Light.primaryLayout
 ) {
     var isExpanded by remember { mutableStateOf(false) }
@@ -234,8 +387,10 @@ fun CategoryFlowRow(
             maxLines = 1,
             overflow = if (isExpanded) FlowRowOverflow.Visible else FlowRowOverflow.Clip
         ) {
-            for (i in 1..20) {
-                CategoryCard()
+            categoryList.value.forEach { category ->
+                CategoryCard(
+                    category = category,
+                )
             }
         }
         IconButton(
@@ -325,10 +480,17 @@ fun AddProductButton(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ColumnScope.ProductCardGrid(
+    scope: CoroutineScope,
     navigator: Navigator?,
     productList: MutableState<List<Product>>,
     totalPage: MutableState<Int>,
-    currentPage: MutableState<Int>
+    currentPage: MutableState<Int>,
+    updateProduct: MutableState<Product>,
+    showEditProductDialog: MutableState<Boolean>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>,
+    productViewModel: ProductViewModel
 ) {
     FlowRow(
         modifier = Modifier,
@@ -342,13 +504,31 @@ fun ColumnScope.ProductCardGrid(
                     .clickable(
                         enabled = true,
                         onClick = {
-                            pushWithLimitScreen(navigator, ProductDetail())
+                            pushWithLimitScreen(navigator, ProductDetail(product = product))
                         },
                         role = Role.Button,
                         indication = ripple(bounded = true),
                         interactionSource = remember { MutableInteractionSource() }
                     ),
-                //product = product
+                product = product,
+                onEdit = {
+                    updateProduct.value = product
+                    showEditProductDialog.value = true
+                },
+                onDelete = {
+                    scope.launch {
+                        handlerDeleteProduct(
+                            totalPage = totalPage,
+                            currentPage = currentPage,
+                            productList = productList,
+                            product = mutableStateOf(product),
+                            productViewModel = productViewModel,
+                            showLoadingOverlay = showLoadingOverlay,
+                            showErrorDialog = showErrorDialog,
+                            alertType = alertType
+                        )
+                    }
+                }
             )
         }
     }
@@ -362,28 +542,73 @@ fun ColumnScope.ProductCardGrid(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AddNewProductDialog(
+    title: String,
+    scope: CoroutineScope,
     showAddNewProductDialog: MutableState<Boolean>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>,
+    onConfirmation: () -> Unit,
+    product: MutableState<Product>,
 ) {
+    val categoryViewModel = CategoryViewModel(CategoryRepository(CategoryApi()))
+    val categoryList: MutableState<List<Category>> = mutableStateOf(emptyList())
+    val providerViewModel = ProviderViewModel(ProviderRepository(ProviderApi()))
+    val providerList: MutableState<List<Provider>> = mutableStateOf(emptyList())
+    val productStatusViewModel = ProductStatusViewModel(ProductStatusRepository(ProductStatusApi()))
+    val productStatusList: MutableState<List<ProductStatus>> = mutableStateOf(emptyList())
+
+    scope.launch {
+        handlerGetAllCategories(
+            totalPage = mutableStateOf(0),
+            currentPage = mutableStateOf(0),
+            categoryViewModel = categoryViewModel,
+            categoryList = categoryList,
+            showLoadingOverlay = showLoadingOverlay,
+            showErrorDialog = showErrorDialog,
+            alertType = alertType
+        )
+        handlerGetAllProviders(
+            totalPage = mutableStateOf(0),
+            currentPage = mutableStateOf(0),
+            providerViewModel = providerViewModel,
+            providerList = providerList,
+            showLoadingOverlay = showLoadingOverlay,
+            showErrorDialog = showErrorDialog,
+            alertType = alertType
+        )
+        handlerGetAllProductStatuses(
+            productStatusViewModel = productStatusViewModel,
+            productStatusList = productStatusList,
+            showLoadingOverlay = showLoadingOverlay,
+            showErrorDialog = showErrorDialog,
+            alertType = alertType
+        )
+    }
+
     ImageAddDialog(
-        title = "Add New Product",
+        title = "$title New Product",
         showImageAddDialog = showAddNewProductDialog,
         onUploadButtonClick = {},
-        onConfirmation = {},
+        onConfirmation = onConfirmation,
         content = {
             InputField(
                 placeHolder = "Name",
-                value = "",
-                onValueChange = {}
+                value = product.value.name?:"",
+                onValueChange = {
+                    product.value = product.value.copy(name = it)
+                }
             )
             InputField(
                 placeHolder = "Description",
                 singleLine = false,
                 maxLines = 3,
-                value = "",
-                onValueChange = {}
+                value = product.value.description?:"",
+                onValueChange = {
+                    product.value = product.value.copy(description = it)
+                }
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -392,28 +617,212 @@ fun AddNewProductDialog(
                 InputField(
                     modifier = Modifier.weight(1f),
                     placeHolder = "Price",
-                    value = "",
-                    onValueChange = {}
+                    value = if(product.value.price != null) product.value.price?.toPlainString().toString() else "",
+                    onValueChange = {
+                        var change = it.filter { c -> c.isDigit() }
+                        product.value = product.value.copy(price = if(!change.isNullOrEmpty()) change.toBigDecimal() else BigDecimal.ZERO)
+                    }
                 )
                 InputField(
                     modifier = Modifier.weight(1f),
                     placeHolder = "Stock",
-                    value = "",
-                    onValueChange = {}
+                    value = if(product.value.stock==null) "" else product.value.stock.toString(),
+                    onValueChange = {
+                        var change = it.filter { c -> c.isDigit() }
+                        product.value = product.value.copy(stock =  if(!change.isNullOrEmpty()) change.toInt() else 0)
+                    }
                 )
             }
+
             ExposedDropdownInputField(
                 modifier = Modifier.weight(1f),
                 placeholder = "Category",
+                options = categoryList.value.map { it.name ?: "" },
+                textFieldValue = mutableStateOf(product.value.category?.name?:""),
+                onValueChange = {
+                    product.value = product.value.copy(
+                        category = categoryList.value.find { type -> type.name == it }
+                    )
+                }
             )
             ExposedDropdownInputField(
                 modifier = Modifier.weight(1f),
                 placeholder = "Provider",
+                options = providerList.value.map { it.name ?: "" },
+                textFieldValue = mutableStateOf(product.value.provider?.name?:""),
+                onValueChange = {
+                    product.value = product.value.copy(
+                        provider = providerList.value.find { type -> type.name == it }
+                    )
+                }
             )
             ExposedDropdownInputField(
                 modifier = Modifier.weight(1f),
                 placeholder = "Status",
+                options = productStatusList.value.map { it.name ?: "" },
+                textFieldValue = mutableStateOf(product.value.productStatus?.name?:""),
+                onValueChange = {
+                    product.value = product.value.copy(
+                        productStatus = productStatusList.value.find { type -> type.name == it }
+                    )
+                }
             )
         }
+    )
+}
+
+suspend fun handlerGetAllProducts(
+    totalPage: MutableState<Int>,
+    currentPage: MutableState<Int>,
+    productViewModel: ProductViewModel,
+    productList: MutableState<List<Product>>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            productViewModel.getAllProducts(currentPage.value)
+            totalPage.value = productViewModel.totalPage.value ?: 0
+            productList.value = productViewModel.productsList.value
+        }
+    )
+
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = productViewModel.operationStatus,
+    )
+}
+
+suspend fun handlerAddProduct(
+    totalPage: MutableState<Int>,
+    currentPage: MutableState<Int>,
+    productViewModel: ProductViewModel,
+    productList: MutableState<List<Product>>,
+    showLoadingOverlay: MutableState<Boolean>,
+    alertType: MutableState<AlertType>,
+    showErrorDialog: MutableState<Boolean>,
+    product: MutableState<Product>,
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            productViewModel.createProduct(product.value)
+            handlerGetAllProducts(
+                totalPage = totalPage,
+                currentPage = currentPage,
+                productViewModel = productViewModel,
+                productList = productList,
+                showLoadingOverlay = showLoadingOverlay,
+                showErrorDialog = showErrorDialog,
+                alertType = alertType
+            )
+        }
+    )
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = productViewModel.operationStatus,
+        onSuccess = {
+            if (productViewModel.createdProduct.value == null) {
+                alertType.value = AlertType.Duplication
+                showErrorDialog.value = true
+            } else {
+                alertType.value = AlertType.Success
+                showErrorDialog.value = true
+            }
+        },
+        onFailure = {
+            alertType.value = AlertType.Default
+        }
+    )
+}
+
+suspend fun handlerEditProduct(
+    totalPage: MutableState<Int>,
+    currentPage: MutableState<Int>,
+    productViewModel: ProductViewModel,
+    productList: MutableState<List<Product>>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>,
+    product: MutableState<Product>,
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            productViewModel.updateProduct(product.value.id ?: 0, product.value)
+            handlerGetAllProducts(
+                totalPage = totalPage,
+                currentPage = currentPage,
+                productViewModel = productViewModel,
+                productList = productList,
+                showLoadingOverlay = showLoadingOverlay,
+                showErrorDialog = showErrorDialog,
+                alertType = alertType
+            )
+        }
+    )
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = productViewModel.operationStatus,
+    )
+}
+
+suspend fun handlerDeleteProduct(
+    totalPage: MutableState<Int>,
+    currentPage: MutableState<Int>,
+    productViewModel: ProductViewModel,
+    productList: MutableState<List<Product>>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>,
+    product: MutableState<Product>,
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            productViewModel.deleteProduct(product.value.id ?: 0)
+            handlerGetAllProducts(
+                totalPage = totalPage,
+                currentPage = currentPage,
+                productViewModel = productViewModel,
+                productList = productList,
+                showLoadingOverlay = showLoadingOverlay,
+                showErrorDialog = showErrorDialog,
+                alertType = alertType
+            )
+        }
+    )
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = productViewModel.operationStatus,
+    )
+}
+
+suspend fun handlerGetAllProductStatuses(
+    productStatusViewModel: ProductStatusViewModel,
+    productStatusList: MutableState<List<ProductStatus>>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>,
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            val titles = mutableListOf("All")
+            productStatusViewModel.getAllProductStatuss(0)
+            productStatusList.value = productStatusViewModel.productStatussList.value
+        }
+    )
+    checkError(
+        showErrorDialog = showErrorDialog,
+        alertType = alertType,
+        operationStatus = productStatusViewModel.operationStatus,
+        onSuccess = {}
     )
 }

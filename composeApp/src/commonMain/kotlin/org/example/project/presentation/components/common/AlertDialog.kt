@@ -58,6 +58,10 @@ fun AlertDialog(
             _title.value = "Change Success"
             _message.value = "Your data have been updated."
         }
+        AlertType.EmailOrPasswordNull -> {
+            _title.value = "Input Not Valid"
+            _message.value = "Email and password are required."
+        }
     }
 
     if (showDialog.value) {

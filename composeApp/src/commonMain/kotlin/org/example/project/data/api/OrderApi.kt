@@ -24,8 +24,8 @@ class OrderApi {
         return HttpClient.client.get("$BASE_URL${endPoint}/${orderId}").body()
     }
     
-    suspend fun createOrder(order: Order): Order {
-        return HttpClient.client.post("$BASE_URL${endPoint}") {
+    suspend fun createOrder(order: Order, cartItemIds: List<Int>): Order {
+        return HttpClient.client.post("$BASE_URL${endPoint}?cartItemIds=${cartItemIds.joinToString(",")}") {
             contentType(io.ktor.http.ContentType.Application.Json)
             setBody(order)
         }.body()

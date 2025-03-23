@@ -10,7 +10,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -19,6 +18,12 @@ import electroniccomponentretail.composeapp.generated.resources.Res
 import electroniccomponentretail.composeapp.generated.resources.blank_profile
 import electroniccomponentretail.composeapp.generated.resources.ic_dots_vertical
 import org.example.project.CURRENCY
+import org.example.project.checkError
+import org.example.project.core.enums.AlertType
+import org.example.project.domain.model.OrderItem
+import org.example.project.domain.model.Product
+import org.example.project.domain.model.Review
+import org.example.project.executeSuspendFunction
 import org.example.project.presentation.components.ColumnBackground
 import org.example.project.presentation.components.card.ReviewCard
 import org.example.project.presentation.components.common.BackButton
@@ -30,22 +35,25 @@ import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 import org.example.project.presentation.theme.Typography
 import org.example.project.presentation.theme.Typography.Primitive
+import org.example.project.presentation.viewmodel.ReviewViewModel
 import org.jetbrains.compose.resources.painterResource
 
-class ProductDetail : Screen {
+class ProductDetail(
+    val product: Product
+) : Screen {
     @OptIn(ExperimentalLayoutApi::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        var rootMaxWidth by remember { mutableStateOf(0) }
+        var rootMaxWidth = remember { mutableStateOf(0) }
+        val showLoadingOverlay = mutableStateOf(false)
+        val showErrorDialog = mutableStateOf(false)
         var color: ButtonColor = Themes.Light.primaryLayout
         val quantity = remember { mutableStateOf(1) }
 
         ColumnBackground(
-            rootModifier = Modifier
-                .onGloballyPositioned { coordinates ->
-                    rootMaxWidth = coordinates.size.width
-                }
+            rootMaxWidth = rootMaxWidth,
+            showLoadingOverlay = showLoadingOverlay
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth()
@@ -75,12 +83,16 @@ class ProductDetail : Screen {
                     ProductInfoColumn(
                         modifier = Modifier.wrapContentHeight()
                             .weight(1f),
-                        quantity = quantity
+                        quantity = quantity,
+                        product = product
                     )
                     ProductDescriptionColumn(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        product = product
                     )
-                    ProductReiviewColumn()
+                    ProductReviewColumn(
+                        product = product
+                    )
                 }
             }
         }
@@ -91,7 +103,8 @@ class ProductDetail : Screen {
 @Composable
 fun ProductInfoColumn(
     modifier: Modifier = Modifier,
-    quantity: MutableState<Int>
+    quantity: MutableState<Int>,
+    product: Product
 ) {
     Column(
         modifier = modifier,
@@ -101,7 +114,7 @@ fun ProductInfoColumn(
             verticalArrangement = Arrangement.spacedBy(Size.Space.S400)
         ) {
             BodyText(
-                text = "Product",
+                text = product.name?:"",
                 style = Typography.Style.Heading
             )
             Row(
@@ -113,10 +126,10 @@ fun ProductInfoColumn(
                         .merge(
                             fontSize = Typography.Default.Subtitle.FontSizeSmall,
                             fontWeight = Primitive.Weight.Bold
-                            )
+                        )
                 )
                 BodyText(
-                    text = "50",
+                    text = product.price?.toPlainString().toString(),
                     style = Typography.Style.TitlePage
                 )
             }
@@ -128,25 +141,65 @@ fun ProductInfoColumn(
 
 @Composable
 fun ProductDescriptionColumn(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    product: Product
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(Size.Space.S300)
     ) {
         BodyText(
+            text = "Product Detail",
+            style = Typography.Style.Heading
+        )
+        Row {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(Size.Space.S200)
+            ) {
+                BodyText(
+                    text = "Category",
+                    color = Themes.Light.primaryLayout.copy(primaryText = Themes.Light.primaryLayout.secondaryText)
+                )
+                BodyText(
+                    text = "Provider",
+                    color = Themes.Light.primaryLayout.copy(primaryText = Themes.Light.primaryLayout.secondaryText)
+                )
+                BodyText(
+                    text = "Stock",
+                    color = Themes.Light.primaryLayout.copy(primaryText = Themes.Light.primaryLayout.secondaryText)
+                )
+            }
+            //Spacer(modifier = Modifier.width(Size.Space.S200))
+            Column(
+                modifier = Modifier.weight(2f),
+                verticalArrangement = Arrangement.spacedBy(Size.Space.S200)
+            ) {
+                BodyText(
+                    text = product.category?.name?:"",
+                )
+                BodyText(
+                    text = product.provider?.name?:"",
+                )
+                BodyText(
+                    text = if(product.stock == null) "Out of stock" else product.stock.toString(),
+                )
+            }
+        }
+        BodyText(
             text = "Product Description",
             style = Typography.Style.Heading
         )
         BodyText(
-            text = "Product Product Description Product Description Product Description Product Description Product Description Description Product Description Product Description Product Description Product Description Product Description Product Description Product Description"
+            text = product.description?:"",
         )
     }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ProductReiviewColumn(
-    modifier: Modifier = Modifier
+fun ProductReviewColumn(
+    modifier: Modifier = Modifier,
+    product: Product
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(Size.Space.S300)
@@ -240,4 +293,109 @@ fun ProductDetailButtonRow(
             onClick = {}
         )
     }
+}
+
+suspend fun handlerGetAllReviewsByOrderItem(
+    totalPage: MutableState<Int>,
+    currentPage: MutableState<Int>,
+    reviewViewModel: ReviewViewModel,
+    reviewList: MutableState<List<Review>>,
+    orderItem: MutableState<OrderItem>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            reviewViewModel.getReviewsByOrderItemId(currentPage.value, orderItem.value.id ?: 0)
+            totalPage.value = reviewViewModel.totalPage.value ?: 0
+            reviewList.value = reviewViewModel.reviewsList.value
+        }
+    )
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = reviewViewModel.operationStatus,
+    )
+}
+
+suspend fun handlerAddReview(
+    totalPage: MutableState<Int>,
+    currentPage: MutableState<Int>,
+    reviewViewModel: ReviewViewModel,
+    reviewList: MutableState<List<Review>>,
+    showLoadingOverlay: MutableState<Boolean>,
+    alertType: MutableState<AlertType>,
+    showErrorDialog: MutableState<Boolean>,
+    review: MutableState<Review>,
+    orderItem: MutableState<OrderItem>,
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            reviewViewModel.createReview(review.value)
+            handlerGetAllReviewsByOrderItem(
+                totalPage = totalPage,
+                currentPage = currentPage,
+                reviewViewModel = reviewViewModel,
+                reviewList = reviewList,
+                showLoadingOverlay = showLoadingOverlay,
+                showErrorDialog = showErrorDialog,
+                alertType = alertType,
+                orderItem = orderItem
+            )
+        }
+    )
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = reviewViewModel.operationStatus,
+        onSuccess = {
+            if (reviewViewModel.createdReview.value == null) {
+                alertType.value = AlertType.Duplication
+                showErrorDialog.value = true
+            } else {
+                alertType.value = AlertType.Success
+                showErrorDialog.value = true
+            }
+        },
+        onFailure = {
+            alertType.value = AlertType.Default
+        }
+    )
+}
+
+suspend fun handlerEditReview(
+    totalPage: MutableState<Int>,
+    currentPage: MutableState<Int>,
+    reviewViewModel: ReviewViewModel,
+    reviewList: MutableState<List<Review>>,
+    showLoadingOverlay: MutableState<Boolean>,
+    alertType: MutableState<AlertType>,
+    showErrorDialog: MutableState<Boolean>,
+    review: MutableState<Review>,
+    orderItem: MutableState<OrderItem>,
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            reviewViewModel.updateReview(review.value.id ?: 0, review.value)
+            handlerGetAllReviewsByOrderItem(
+                totalPage = totalPage,
+                currentPage = currentPage,
+                reviewViewModel = reviewViewModel,
+                reviewList = reviewList,
+                showLoadingOverlay = showLoadingOverlay,
+                showErrorDialog = showErrorDialog,
+                alertType = alertType,
+                orderItem = orderItem
+            )
+        }
+    )
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = reviewViewModel.operationStatus,
+    )
 }

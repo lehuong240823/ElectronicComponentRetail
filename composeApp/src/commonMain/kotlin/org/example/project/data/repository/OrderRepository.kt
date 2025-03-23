@@ -24,9 +24,9 @@ class OrderRepository(private val orderApi: OrderApi) {
         }
     }
 
-    suspend fun createOrder(order: Order): Order? {
+    suspend fun createOrder(order: Order, cartItemIds: List<Int>): Order? {
         return try {
-            orderApi.createOrder(order)
+            orderApi.createOrder(order, cartItemIds)
         } catch (e: Exception) {
             println("Error creating order: ${e.message}")
             null

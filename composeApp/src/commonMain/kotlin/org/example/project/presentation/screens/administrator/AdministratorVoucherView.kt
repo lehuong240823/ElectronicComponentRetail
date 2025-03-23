@@ -214,7 +214,6 @@ fun AddEditVoucherDialog(
                     voucher.value = voucher.value.copy(
                         voucherType = voucherTypeList.value.find { type -> type.name == it }
                     )
-                    println(it)
                 }
             )
 

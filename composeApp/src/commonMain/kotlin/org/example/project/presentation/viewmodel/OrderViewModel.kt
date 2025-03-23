@@ -24,8 +24,8 @@ class OrderViewModel(private val orderRepository: OrderRepository) {
     private val _operationStatus = mutableStateOf("")
     val operationStatus: State<String> get() = _operationStatus
 
-    suspend fun createOrder(order: Order) {
-        val result = orderRepository.createOrder(order)
+    suspend fun createOrder(order: Order, cartItemIds: List<Int>) {
+        val result = orderRepository.createOrder(order, cartItemIds)
         if (result != null) {
             _createdOrder.value = result
             _operationStatus.value = "Order Created Successfully"

@@ -27,6 +27,16 @@ fun CustomAppBar(navController: NavController) {
             Button(
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                 elevation = ButtonDefaults.elevation(0.dp),
+                onClick = { navController.navigate("manageCategories") }
+            ) { Text("Categories", fontWeight = FontWeight.Normal) }
+            Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                elevation = ButtonDefaults.elevation(0.dp),
+                onClick = { navController.navigate("manageProducts") }
+            ) { Text("Products", fontWeight = FontWeight.Normal) }
+            Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                elevation = ButtonDefaults.elevation(0.dp),
                 onClick = { navController.navigate("review") }
             ) { Text("Review", fontWeight = FontWeight.Normal) }
             Button(

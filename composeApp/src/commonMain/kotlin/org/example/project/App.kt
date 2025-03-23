@@ -17,6 +17,9 @@ import org.example.project.ui.screens.Review
 import org.example.project.ui.screens.ManageCategories
 import org.example.project.ui.screens.ManageProducts
 
+import org.example.project.ui.screens.CustomerProducts
+import org.example.project.ui.screens.ShoppingCart
+
 @Composable
 @Preview
 fun App() {
@@ -33,6 +36,8 @@ fun App() {
             composable("review") { Review(navController, reviewArgs) }
             composable("manageCategories") { ManageCategories(navController) }
             composable("manageProducts") { ManageProducts(navController) }
+            composable("customerProducts") { CustomerProducts(navController) }
+            composable("shoppingCart") { ShoppingCart(navController) }
         }
     }
 }

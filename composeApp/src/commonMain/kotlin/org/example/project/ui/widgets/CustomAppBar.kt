@@ -15,6 +15,9 @@ fun CustomAppBar(navController: NavController) {
     TopAppBar(
         actions = {
             Button(
+                onClick = { navController.navigate("customerProducts") }
+            ) { Text("Customer View", fontWeight = FontWeight.Normal, color = Color.White) }
+            Button(
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                 elevation = ButtonDefaults.elevation(0.dp),
                 onClick = { navController.navigate("manageSuppliers") }

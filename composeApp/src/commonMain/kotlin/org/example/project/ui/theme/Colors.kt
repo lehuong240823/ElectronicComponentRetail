@@ -3,6 +3,9 @@ package org.example.project.ui.theme
 import androidx.compose.ui.graphics.Color
 
 object Colors {
+    val Primary = Primitive.Green1100
+    val Secondary = Primitive.Blue100
+
     object Primitive {
         val Black100 = Color(0x0C0C0D0D)
         val Black1000 = Color(0xFF0C0C0D)

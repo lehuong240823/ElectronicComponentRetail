@@ -289,12 +289,12 @@ fun AddressItem(
     showEditAddressDialog: MutableState<Boolean>,
     currentAccount: Account?,
     address: UserAddress? = UserAddress(
-        name = "Home",
+        /*name = "Home",
         street = "23 Nguyen Trai",
         ward = "Phuong",
         district = "Quan Ha Dong",
         city = "Ha Noi",
-        isDefault = true
+        isDefault = true*/
     ),
     color: ButtonColor = Themes.Light.subtleButton,
 ) {

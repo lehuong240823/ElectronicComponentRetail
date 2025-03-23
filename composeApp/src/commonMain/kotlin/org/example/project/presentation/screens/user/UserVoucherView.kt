@@ -2,10 +2,7 @@ package org.example.project.presentation.screens.user
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
@@ -30,6 +27,7 @@ class UserVoucherView: Screen {
         val showLoadingOverlay = mutableStateOf(true)
         val totalPage = mutableStateOf(0)
         val currentPage = mutableStateOf(0)
+        val voucherList = mutableStateOf(emptyList<Voucher>())
         ColumnBackground(
             rootMaxWidth = rootMaxWidth
         ) {
@@ -46,7 +44,7 @@ class UserVoucherView: Screen {
                     horizontalArrangement = Arrangement.spacedBy(Size.Space.S300),
                     verticalArrangement = Arrangement.spacedBy(Size.Space.S300)
                 ) {
-                    for (i in 1..20) {
+                    voucherList.value.forEach { voucher ->
                         VoucherItem(
                             modifier = Modifier.weight(1f),
                             voucher = Voucher(),

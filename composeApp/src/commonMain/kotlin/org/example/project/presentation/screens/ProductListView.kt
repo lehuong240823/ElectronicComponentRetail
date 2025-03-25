@@ -32,14 +32,8 @@ import org.example.project.SessionData
 import org.example.project.checkError
 import org.example.project.core.enums.AccountRoleType
 import org.example.project.core.enums.AlertType
-import org.example.project.data.api.CategoryApi
-import org.example.project.data.api.ProductApi
-import org.example.project.data.api.ProductStatusApi
-import org.example.project.data.api.ProviderApi
-import org.example.project.data.repository.CategoryRepository
-import org.example.project.data.repository.ProductRepository
-import org.example.project.data.repository.ProductStatusRepository
-import org.example.project.data.repository.ProviderRepository
+import org.example.project.data.api.*
+import org.example.project.data.repository.*
 import org.example.project.domain.model.*
 import org.example.project.executeSuspendFunction
 import org.example.project.presentation.components.ColumnBackground
@@ -60,10 +54,7 @@ import org.example.project.presentation.theme.ButtonColor
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 import org.example.project.presentation.theme.Typography
-import org.example.project.presentation.viewmodel.CategoryViewModel
-import org.example.project.presentation.viewmodel.ProductStatusViewModel
-import org.example.project.presentation.viewmodel.ProductViewModel
-import org.example.project.presentation.viewmodel.ProviderViewModel
+import org.example.project.presentation.viewmodel.*
 import org.example.project.pushWithLimitScreen
 
 class ProductList : Screen {
@@ -88,9 +79,14 @@ class ProductList : Screen {
         val productViewModel = ProductViewModel(ProductRepository(ProductApi()))
         val productList = remember { mutableStateOf(emptyList<Product>()) }
         val categoryViewModel = CategoryViewModel(CategoryRepository(CategoryApi()))
+        val cloudViewModel = CloudinaryViewModel(CloudinaryStorageRepository(CloudinaryStorageApi()))
+        val productImageViewModel = ProductImageViewModel(ProductImageRepository(ProductImageApi()))
         val categoryList: MutableState<List<Category>> = mutableStateOf(emptyList())
         val newProduct = mutableStateOf(Product())
         val updateProduct = mutableStateOf(Product())
+        val newProductImage = mutableStateOf(ProductImage())
+        val updateProductImage = mutableStateOf(ProductImage())
+        val imageByteArray = mutableStateOf(byteArrayOf())
 
         scope.launch {
             handlerGetAllCategories(
@@ -151,6 +147,18 @@ class ProductList : Screen {
                             showErrorDialog = showErrorDialog,
                             alertType = alertType
                         )
+
+                        addProductImage(
+                            product = newProduct,
+                            productImageViewModel = productImageViewModel,
+                            cloudViewModel = cloudViewModel,
+                            newProductImage = newProductImage,
+                            showLoadingOverlay = showLoadingOverlay,
+                            showErrorDialog = showErrorDialog,
+                            alertType = alertType,
+                            imageByteArray = imageByteArray
+                        )
+                        updateProductImage.value = ProductImage()
                         newProduct.value = Product()
                     }
                 } else {
@@ -158,6 +166,9 @@ class ProductList : Screen {
                     showErrorDialog.value = true
                 }
             },
+            productImage = newProductImage,
+            imageByteArray = imageByteArray,
+            url = mutableStateOf(newProductImage.value.url?:""),
         )
 
         AddNewProductDialog(
@@ -192,13 +203,27 @@ class ProductList : Screen {
                             showErrorDialog = showErrorDialog,
                             alertType = alertType
                         )
+                        updatedProductImage(
+                            product = updateProduct,
+                            productImageViewModel = productImageViewModel,
+                            cloudViewModel = cloudViewModel,
+                            updateProductImage = updateProductImage,
+                            showLoadingOverlay = showLoadingOverlay,
+                            showErrorDialog = showErrorDialog,
+                            alertType = alertType,
+                            imageByteArray = imageByteArray
+                        )
                         updateProduct.value = Product()
+                        updateProductImage.value = ProductImage()
                     }
                 } else {
                     alertType.value = AlertType.Null
                     showErrorDialog.value = true
                 }
             },
+            productImage = updateProductImage,
+            imageByteArray = imageByteArray,
+            url = mutableStateOf(updateProductImage.value.url?:""),
         )
 
         ColumnBackground(
@@ -256,7 +281,8 @@ class ProductList : Screen {
                         showLoadingOverlay = showLoadingOverlay,
                         showErrorDialog = showErrorDialog,
                         alertType = alertType,
-                        productViewModel = productViewModel
+                        productViewModel = productViewModel,
+                        productImageViewModel = productImageViewModel
                     )
                 }
             }
@@ -347,7 +373,8 @@ fun SectionProductGrid(
     showLoadingOverlay: MutableState<Boolean>,
     showErrorDialog: MutableState<Boolean>,
     alertType: MutableState<AlertType>,
-    productViewModel: ProductViewModel
+    productViewModel: ProductViewModel,
+    productImageViewModel: ProductImageViewModel
     ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(Size.Space.S1200)
@@ -374,7 +401,8 @@ fun SectionProductGrid(
             showLoadingOverlay = showLoadingOverlay,
             showErrorDialog = showErrorDialog,
             alertType = alertType,
-            productViewModel = productViewModel
+            productViewModel = productViewModel,
+            productImageViewModel = productImageViewModel
         )
     }
 }
@@ -507,8 +535,9 @@ fun ColumnScope.ProductCardGrid(
     showLoadingOverlay: MutableState<Boolean>,
     showErrorDialog: MutableState<Boolean>,
     alertType: MutableState<AlertType>,
-    productViewModel: ProductViewModel
-) {
+    productViewModel: ProductViewModel,
+    productImageViewModel: ProductImageViewModel,
+    ) {
     FlowRow(
         modifier = Modifier,
         horizontalArrangement = Arrangement.spacedBy(Size.Space.S600),
@@ -516,6 +545,17 @@ fun ColumnScope.ProductCardGrid(
         overflow = FlowRowOverflow.Visible,
     ) {
         productList.value.forEach { product ->
+            val productImage = mutableStateOf(ProductImage())
+            scope.launch {
+                getProductImagesByProductId(
+                    product = mutableStateOf(product),
+                    productImageViewModel = productImageViewModel,
+                    productImage = productImage,
+                    showLoadingOverlay = showLoadingOverlay,
+                    showErrorDialog = showErrorDialog,
+                    alertType = alertType
+                )
+            }
             ProductItem(
                 modifier = Modifier.wrapContentSize()
                     .clickable(
@@ -528,6 +568,7 @@ fun ColumnScope.ProductCardGrid(
                         interactionSource = remember { MutableInteractionSource() }
                     ),
                 product = product,
+                productImage = productImage,
                 onEdit = {
                     updateProduct.value = product
                     showEditProductDialog.value = true
@@ -581,6 +622,9 @@ fun AddNewProductDialog(
     alertType: MutableState<AlertType>,
     onConfirmation: () -> Unit,
     product: MutableState<Product>,
+    productImage: MutableState<ProductImage>,
+    imageByteArray: MutableState<ByteArray>,
+    url:MutableState<String>
 ) {
     val categoryViewModel = CategoryViewModel(CategoryRepository(CategoryApi()))
     val categoryList: MutableState<List<Category>> = mutableStateOf(emptyList())
@@ -620,8 +664,10 @@ fun AddNewProductDialog(
     ImageAddDialog(
         title = "$title New Product",
         showImageAddDialog = showAddNewProductDialog,
-        onUploadButtonClick = {},
         onConfirmation = onConfirmation,
+        scope = scope,
+        imageByteArray = imageByteArray,
+        url = url,
         content = {
             InputField(
                 label = "Name",
@@ -748,7 +794,8 @@ suspend fun handlerAddProduct(
         showLoadingOverlay = showLoadingOverlay,
         function = {
             productViewModel.createProduct(product.value)
-            handlerGetAllProducts(
+            product.value = productViewModel.createdProduct.value?:Product()
+                handlerGetAllProducts(
                 totalPage = totalPage,
                 currentPage = currentPage,
                 productViewModel = productViewModel,
@@ -887,5 +934,129 @@ suspend fun handlerFindProductsByNameContainingIgnoreCase(
         alertType = alertType,
         showErrorDialog = showErrorDialog,
         operationStatus = productViewModel.operationStatus,
+    )
+}
+
+suspend fun getProductImagesByProductId(
+    totalPage: MutableState<Int> = mutableStateOf(0),
+    currentPage: MutableState<Int> = mutableStateOf(0),
+    product: MutableState<Product>,
+    productImageViewModel: ProductImageViewModel,
+    //productImageList: MutableState<List<ProductImage>>,
+    productImage: MutableState<ProductImage>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            productImageViewModel.getProductImagesByProductId(currentPage.value, product.value.id?:0)
+            totalPage.value = productImageViewModel.totalPage.value ?: 0
+            if(productImageViewModel.productImagesList.value.isNotEmpty()) {
+                productImage.value = productImageViewModel.productImagesList.value.first()
+            }
+        }
+    )
+
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = productImageViewModel.operationStatus,
+    )
+}
+
+suspend fun addProductImage(
+    product: MutableState<Product>,
+    productImageViewModel: ProductImageViewModel,
+    cloudViewModel: CloudinaryViewModel,
+    newProductImage: MutableState<ProductImage>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>,
+    imageByteArray: MutableState<ByteArray>,
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            val findImage = mutableStateOf(ProductImage())
+            getProductImagesByProductId(
+                product = product,
+                productImageViewModel = productImageViewModel,
+                productImage = findImage,
+                showLoadingOverlay = showLoadingOverlay,
+                showErrorDialog = showErrorDialog,
+                alertType = alertType
+            )
+            cloudViewModel.uploadImage(imageByteArray.value)
+            newProductImage.value = newProductImage.value.copy(url = cloudViewModel.url.value,
+                product = product.value)
+println("find"+findImage.value)
+            println("find"+newProductImage.value.url)
+
+            if(findImage.value.id == null) {
+                println("find"+newProductImage.value)
+
+                productImageViewModel.createProductImage(newProductImage.value)
+
+                newProductImage.value = productImageViewModel.createdProductImage.value!!
+            }
+        }
+    )
+
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = productImageViewModel.operationStatus,
+    )
+}
+
+suspend fun updatedProductImage(
+    product: MutableState<Product>,
+    productImageViewModel: ProductImageViewModel,
+    cloudViewModel: CloudinaryViewModel,
+    updateProductImage: MutableState<ProductImage>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>,
+    imageByteArray: MutableState<ByteArray>
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            val findImage = mutableStateOf(ProductImage())
+            getProductImagesByProductId(
+                product = product,
+                productImageViewModel = productImageViewModel,
+                productImage = findImage,
+                showLoadingOverlay = showLoadingOverlay,
+                showErrorDialog = showErrorDialog,
+                alertType = alertType
+            )
+            cloudViewModel.uploadImage(imageByteArray.value)
+            updateProductImage.value = updateProductImage.value.copy(url = cloudViewModel.url.value,
+                product = product.value)
+
+            if(findImage.value.id != null) {
+                updateProductImage.value = updateProductImage.value.copy(id = findImage.value.id)
+                updateProductImage.value.id?.let {
+                    productImageViewModel.updateProductImage(
+                        updateProductImage.value.id!!,
+                        updateProductImage.value
+                    )
+                }
+                updateProductImage.value = productImageViewModel.updatedProductImage.value!!
+            } else {
+                productImageViewModel.createProductImage(updateProductImage.value)
+                updateProductImage.value = productImageViewModel.createdProductImage.value!!
+            }
+
+        }
+    )
+
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = productImageViewModel.operationStatus,
     )
 }

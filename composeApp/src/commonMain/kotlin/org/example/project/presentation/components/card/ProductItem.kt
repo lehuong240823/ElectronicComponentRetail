@@ -5,11 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
 import com.ionspin.kotlin.bignum.decimal.toBigDecimal
 import electroniccomponentretail.composeapp.generated.resources.Image
 import electroniccomponentretail.composeapp.generated.resources.Res
@@ -18,6 +21,7 @@ import org.example.project.CURRENCY
 import org.example.project.SessionData
 import org.example.project.core.enums.AccountRoleType
 import org.example.project.domain.model.Product
+import org.example.project.domain.model.ProductImage
 import org.example.project.presentation.components.common.BodyText
 import org.example.project.presentation.components.common.CustomRoundedCorner
 import org.example.project.presentation.components.dropdown.ExposedDropdownMenuButton
@@ -25,9 +29,11 @@ import org.example.project.presentation.theme.ButtonColor
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 import org.example.project.presentation.theme.Typography
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.vectorResource
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ProductItem(
     modifier: Modifier = Modifier.wrapContentSize(),
@@ -37,6 +43,7 @@ fun ProductItem(
     unit: String = CURRENCY,
     showMoreActionButton: Boolean = true,
     product: Product = Product(name = "Product", price = 0.toBigDecimal()),
+    productImage: MutableState<ProductImage>,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
 ) {
@@ -48,11 +55,19 @@ fun ProductItem(
             .widthIn(min = 120.dp, max = 230.dp),
         verticalArrangement = Arrangement.spacedBy(space),
     ) {
-        Image(
-            modifier = Modifier.fillMaxWidth(),
-            painter = painterResource(Res.drawable.Image),
+        /*AsyncImage(
             contentScale = ContentScale.FillWidth,
-            contentDescription = null
+            modifier = Modifier.fillMaxWidth(),
+            model = if(productImage.value.url.isNullOrEmpty()) Res.getUri("composeResources/drawable/Image.png") else productImage.value.url,
+            contentDescription = null,
+        )*/
+        AsyncImage(
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier.fillMaxWidth(),
+            model =  productImage.value.url,
+            error = painterResource(Res.drawable.Image),
+            placeholder = painterResource(Res.drawable.Image),
+            contentDescription = null,
         )
         Row(
             modifier = Modifier.fillMaxWidth(),

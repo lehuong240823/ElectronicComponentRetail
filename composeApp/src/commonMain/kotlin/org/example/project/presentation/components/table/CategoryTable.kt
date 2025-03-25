@@ -35,6 +35,7 @@ fun CategoryTable(
     ) {
     val showEditNewCategoryDialog = mutableStateOf(false)
     val updateCategory = mutableStateOf(Category())
+    val imageByteArray = mutableStateOf(byteArrayOf())
 
     AddEditCategoryDialog(
         title = "Edit",
@@ -53,7 +54,9 @@ fun CategoryTable(
                     alertType = alertType
                 )
             }
-        }
+        },
+        scope = scope,
+        imageByteArray = TODO()
     )
 
     Table(

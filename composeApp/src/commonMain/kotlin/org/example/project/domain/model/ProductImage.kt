@@ -7,8 +7,8 @@ import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import org.example.project.core.BigDecimalSerializer
 
 @Serializable
-@JsonIgnoreUnknownKeys
 data class ProductImage(
     val id: Int? = null,
-    val product: Product? = null
+    val product: Product? = null,
+    val url: String? = null
 )

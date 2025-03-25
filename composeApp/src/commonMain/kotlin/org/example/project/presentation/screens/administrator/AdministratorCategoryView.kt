@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.example.project.checkError
@@ -40,6 +41,7 @@ class AdministratorCategoryView: Screen {
         val categoryViewModel = CategoryViewModel(CategoryRepository(CategoryApi()))
         val categoryList: MutableState<List<Category>> = mutableStateOf(emptyList())
         val newCategory = mutableStateOf(Category())
+        val imageByteArray = mutableStateOf(byteArrayOf())
 
         scope.launch {
             handlerGetAllCategories(
@@ -90,7 +92,9 @@ class AdministratorCategoryView: Screen {
                     showErrorDialog.value = true
                 }
             },
-            category = newCategory
+            category = newCategory,
+            scope = scope,
+            imageByteArray = imageByteArray
         )
 
         ColumnBackground(
@@ -144,16 +148,19 @@ class AdministratorCategoryView: Screen {
 
 @Composable
 fun AddEditCategoryDialog(
+    scope: CoroutineScope,
     title: String,
     showAddEditNewCategoryDialog: MutableState<Boolean>,
     onConfirmation: () -> Unit,
     category: MutableState<Category> = mutableStateOf(Category()),
-) {
+    imageByteArray: MutableState<ByteArray>,
+    ) {
     ImageAddDialog(
+        scope = scope,
         title = "$title New Category",
         showImageAddDialog = showAddEditNewCategoryDialog,
-        onUploadButtonClick = {},
         onConfirmation = onConfirmation,
+        imageByteArray = imageByteArray,
         content = {
             InputField(
                 label = "Name",

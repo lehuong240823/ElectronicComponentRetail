@@ -5,10 +5,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Upload
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import io.github.vinceglb.filekit.core.FileKit
+import io.github.vinceglb.filekit.core.PickerType
+import io.github.vinceglb.filekit.core.pickFile
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.example.project.presentation.components.common.AlertDialog
 import org.example.project.presentation.components.common.CustomButton
 import org.example.project.presentation.theme.Size
@@ -18,10 +27,13 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 @OptIn(ExperimentalLayoutApi::class, ExperimentalResourceApi::class)
 @Composable
 fun ImageAddDialog(
+    scope: CoroutineScope,
     title: String,
     showImageAddDialog: MutableState<Boolean>,
-    onUploadButtonClick: () -> Unit = {},
+    imageByteArray: MutableState<ByteArray>,
     onConfirmation: () -> Unit = {},
+    url:MutableState<String> =
+        mutableStateOf("https://res.cloudinary.com/dvsr9ihcv/image/upload/v1742870878/samples/landscapes/girl-urban-view.jpg"),
     content: @Composable ColumnScope.() -> Unit
 ) {
     AlertDialog(
@@ -57,8 +69,8 @@ fun ImageAddDialog(
 
                     AsyncImage(
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.aspectRatio(1f),
-                        model = "https://i0.wp.com/spacenews.com/wp-content/uploads/2025/01/Thuraya-4-scaled.jpg?resize=2000%2C1241&quality=89&ssl=1",
+                        modifier = Modifier.aspectRatio(1f).widthIn(300.dp),
+                        model = url.value,
                         contentDescription = null,
                     )
                     CustomButton(
@@ -66,7 +78,15 @@ fun ImageAddDialog(
                         icon = Icons.Outlined.Upload,
                         isIconFirst = true,
                         color = Themes.Light.subtleButton.copy(border = Color.Black),
-                        onClick = onUploadButtonClick
+                        onClick = {
+                            scope.launch {
+                                val localImage = FileKit.pickFile(type = PickerType.Image)
+                                url.value = localImage?.path?:""
+                                if (localImage != null) {
+                                    imageByteArray.value = localImage.readBytes()
+                                }
+                            }
+                        }
                     )
                 }
                 Column(

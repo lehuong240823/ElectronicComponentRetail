@@ -130,7 +130,7 @@ fun UserOrderItem(
             }
             FlowRow {
                 BodyText(
-                    text = "Address: ",
+                    text = "Voucher: ",
                     color = Themes.Light.primaryLayout.copy(primaryText = Themes.Light.primaryLayout.secondaryText)
                 )
                 BodyText(

@@ -1,4 +1,4 @@
-package org.example.project.presentation.screens
+package org.example.project.presentation.screens.administrator
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,21 +24,22 @@ import org.example.project.data.api.AccountApi
 import org.example.project.data.api.FirebaseEmailAuthApi
 import org.example.project.data.repository.AccountRepository
 import org.example.project.data.repository.FirebaseEmailAuthRepository
+import org.example.project.domain.model.Administrator
 import org.example.project.domain.model.FirebaseEmailAuthRequest
-import org.example.project.domain.model.User
 import org.example.project.presentation.components.ColumnBackground
 import org.example.project.presentation.components.Form
-import org.example.project.presentation.components.common.AlertDialog
-import org.example.project.presentation.components.common.CustomButton
-import org.example.project.presentation.components.common.Hyperlink
-import org.example.project.presentation.components.common.RoundIconButton
+import org.example.project.presentation.components.common.*
 import org.example.project.presentation.components.input.InputField
+import org.example.project.presentation.screens.ForgotPassword
+import org.example.project.presentation.screens.ProductList
+import org.example.project.presentation.screens.Register
+import org.example.project.presentation.screens.handlerGetAdminByAccountId
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.viewmodel.AccountViewModel
 import org.example.project.presentation.viewmodel.FirebaseEmailAuthViewModel
 
 
-class SignIn() : Screen {
+class AdministratorSignIn : Screen {
 
     @Composable
     override fun Content() {
@@ -66,23 +67,6 @@ class SignIn() : Screen {
             rootMaxWidth = mutableStateOf(0)
         )
 
-        CreateAccountSuccessAlertDialog(
-            showCreateAccountSuccessAlertDialog = showCreateAccountSuccessAlertDialog
-        )
-
-        WarningEmptyFieldAlertDialog(
-            showWarningEmptyFieldAlertDialog = showWarningEmptyFieldAlertDialog
-        )
-
-
-        DeletedStatusAlertDialog(
-            showDeletedStatusAlertDialog = showDeletedStatusAlertDialog
-        )
-
-        SuspendedStatusAlertDialog(
-            showSuspendedStatusAlertDialog = showSuspendedStatusAlertDialog
-        )
-
         ColumnBackground(
             rootMaxWidth = rootMaxWidth,
             showLoadingOverlay = showLoadingOverlay,
@@ -94,6 +78,9 @@ class SignIn() : Screen {
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Form {
+                    BodyText(
+                        text = "Admin"
+                    )
                     InputField(
                         label = "Email",
                         value = email.value,
@@ -130,7 +117,7 @@ class SignIn() : Screen {
                                 alertType.value = AlertType.PasswordNotValid
                                 showErrorDialog.value = true
                             }
-                            if(email.value.isNotEmpty() && password.value.isNotEmpty()) {
+                            if (email.value.isNotEmpty() && password.value.isNotEmpty()) {
                                 scope.launch {
                                     handlerSignIn(
                                         navigator = navigator,
@@ -147,18 +134,11 @@ class SignIn() : Screen {
                                         email = email,
                                         password = password
                                     )
-                                    handlerGetUserByAccountId(
-                                        currentUser = mutableStateOf(User()),
-                                        showLoadingOverlay = showLoadingOverlay,
-                                        showErrorDialog = showErrorDialog,
-                                        alertType = alertType
-                                    )
                                 }
                             } else {
                                 alertType.value = AlertType.EmailOrPasswordNull
                                 showErrorDialog.value = true
                             }
-
                         }
                     )
 
@@ -219,6 +199,12 @@ suspend fun handlerSignIn(
                         showErrorDialog = showErrorDialog,
                         showLoadingOverlay = showLoadingOverlay,
                     )
+                    handlerGetAdminByAccountId(
+                        currentAdmin = mutableStateOf(Administrator()),
+                        showLoadingOverlay = showLoadingOverlay,
+                        showErrorDialog = showErrorDialog,
+                        alertType = alertType
+                    )
                 }
             }
         }
@@ -239,7 +225,7 @@ suspend fun handlerForExistEmailSignIn(
     val accounts = viewModel.accountsList.value.sortedByDescending { it.createTime }
     val latestAccount = accounts.first()
     when (latestAccount.accountRole?.name) {
-        AccountRoleType.User.name -> {
+        AccountRoleType.Administrator.name -> {
             when (latestAccount.accountStatus?.name) {
                 AccountStatusType.Active.name -> {
                     handlerAuthSignIn(
@@ -254,7 +240,8 @@ suspend fun handlerForExistEmailSignIn(
                 }
 
                 AccountStatusType.Inactive.name -> {
-                    println("Email inactive and existed")
+                    alertType.value = AlertType.AccountInactive
+                    showErrorDialog.value = true
                 }
 
                 AccountStatusType.Deleted.name -> {

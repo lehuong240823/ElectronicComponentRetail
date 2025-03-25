@@ -8,4 +8,9 @@ enum class AlertType() {
     Success(),
     EmailOrPasswordNull(),
     TokenExpired(),
+    EmailNotValid(),
+    PasswordNotValid(),
+    AccountInactive(),
+    ProductNotFound(),
+    UpdateOrderSuccess(),
 }

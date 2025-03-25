@@ -1,13 +1,15 @@
 package org.example.project.presentation.components.common
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -15,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import cafe.adriel.voyager.navigator.LocalNavigator
+import org.example.project.SessionData
 import org.example.project.core.enums.AlertType
 import org.example.project.presentation.components.Form
 import org.example.project.presentation.screens.SignIn
@@ -70,6 +73,31 @@ fun AlertDialog(
             _title.value = "Session expired"
             _message.value = "Please login again."
         }
+        AlertType.EmailNotValid -> {
+            _title.value = "Invalid Email"
+            _message.value = "Please enter a valid email address."
+        }
+
+        AlertType.PasswordNotValid -> {
+            _title.value = "Invalid Password"
+            _message.value = "The password you entered is incorrect. Please try again."
+        }
+
+        AlertType.AccountInactive -> {
+            _title.value = "Inactive Account"
+            _message.value = "Please contact the super admin to activate your admin account."
+        }
+
+        AlertType.ProductNotFound -> {
+            _title.value = "Product Not Available"
+            _message.value =
+                "This product is not currently available. Please contact the super admin for further assistance."
+        }
+
+        AlertType.UpdateOrderSuccess -> {
+            _title.value = "Order Updated Successfully"
+            _message.value = "Your order has been updated successfully."
+        }
     }
 
     if (showDialog.value) {
@@ -97,20 +125,36 @@ fun AlertDialog(
                                 text = "Cancel",
                                 color = Themes.Light.neutralButton,
                                 onClick = {
-                                    if (alertType.value == AlertType.TokenExpired) {
-                                        pushWithLimitScreen(navigator = navigator, screen = SignIn())
+                                    when (alertType.value) {
+                                        AlertType.TokenExpired -> {
+                                            SessionData.setCurrentAccount(null)
+                                            SessionData.setToken(null)
+                                            SessionData.setTokenExpire(null)
+                                            pushWithLimitScreen(navigator = navigator, screen = SignIn())
+                                        }
+
+                                        else -> {
+                                            onDismissRequest()
+                                        }
                                     }
-                                    onDismissRequest()
                                 })
                             CustomButton(
                                 modifier = Modifier.defaultMinSize(minWidth = 70.dp),
                                 text = "Confirm",
                                 onClick = {
                                     showDialog.value = false
-                                    if (alertType.value == AlertType.TokenExpired) {
-                                        pushWithLimitScreen(navigator = navigator, screen = SignIn())
+                                    when (alertType.value) {
+                                        AlertType.TokenExpired -> {
+                                            SessionData.setCurrentAccount(null)
+                                            SessionData.setToken(null)
+                                            SessionData.setTokenExpire(null)
+                                            pushWithLimitScreen(navigator = navigator, screen = SignIn())
+                                        }
+
+                                        else -> {
+                                            onConfirmation()
+                                        }
                                     }
-                                    onConfirmation()
                                 }
                             )
                         }

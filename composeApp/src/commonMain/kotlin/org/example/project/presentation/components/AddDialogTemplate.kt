@@ -1,25 +1,21 @@
 package org.example.project.presentation.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Upload
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import electroniccomponentretail.composeapp.generated.resources.Image
-import electroniccomponentretail.composeapp.generated.resources.Res
+import coil3.compose.AsyncImage
 import org.example.project.presentation.components.common.AlertDialog
 import org.example.project.presentation.components.common.CustomButton
-import org.example.project.presentation.components.input.InputField
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
-import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalResourceApi::class)
 @Composable
 fun ImageAddDialog(
     title: String,
@@ -47,11 +43,23 @@ fun ImageAddDialog(
                     overflow = FlowRowOverflow.Visible,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Image(
+                    /*Image(
                         modifier = Modifier.aspectRatio(1f).fillMaxSize(),
-                        painter = painterResource(Res.drawable.Image),
+                        //painter = painterResource(Res.drawable.Image),
                         contentDescription = null,
                         contentScale = ContentScale.Crop
+                    )*/
+                    /*AsyncImage(
+                        model = Res.getUri("drawable/Image.png"),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit
+                    )*/
+
+                    AsyncImage(
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.aspectRatio(1f),
+                        model = "https://i0.wp.com/spacenews.com/wp-content/uploads/2025/01/Thuraya-4-scaled.jpg?resize=2000%2C1241&quality=89&ssl=1",
+                        contentDescription = null,
                     )
                     CustomButton(
                         text = "Upload",

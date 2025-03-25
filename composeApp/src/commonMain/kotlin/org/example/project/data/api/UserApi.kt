@@ -1,17 +1,13 @@
 package org.example.project.data.api
 
-import io.ktor.client.call.body
-import io.ktor.client.request.delete
-import io.ktor.client.request.get
-import io.ktor.client.request.post
-import io.ktor.client.request.put
-import io.ktor.client.request.setBody
-import io.ktor.http.contentType
-import org.example.project.getPageSize
-import org.example.project.core.HttpClient
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import org.example.project.BASE_URL
+import org.example.project.core.HttpClient
 import org.example.project.domain.model.PaginatedResponse
 import org.example.project.domain.model.User
+import org.example.project.getPageSize
 
 class UserApi {
     val endPoint = "/api/users"
@@ -48,7 +44,7 @@ class UserApi {
         }
     }
 
-    suspend fun getUsersByAccountId(currentPage: Int, account: Int): PaginatedResponse<User> {
-        return HttpClient.client.get("$BASE_URL${endPoint}/account/id/${account}?size=${getPageSize()}&page=${currentPage}").body()
+    suspend fun getUserByAccountId(account: Int): User? {
+        return HttpClient.client.get("$BASE_URL${endPoint}/account/id/${account}").body()
     }
 }

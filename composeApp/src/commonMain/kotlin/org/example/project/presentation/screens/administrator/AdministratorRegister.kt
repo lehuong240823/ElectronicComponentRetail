@@ -1,4 +1,4 @@
-package org.example.project.presentation.screens
+package org.example.project.presentation.screens.administrator
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
@@ -19,6 +19,7 @@ import org.example.project.SessionData
 import org.example.project.checkError
 import org.example.project.core.enums.AccountRoleType
 import org.example.project.core.enums.AccountStatusType
+import org.example.project.core.enums.AlertType
 import org.example.project.data.api.AccountApi
 import org.example.project.data.api.FirebaseEmailAuthApi
 import org.example.project.data.repository.AccountRepository
@@ -41,7 +42,7 @@ import org.example.project.presentation.viewmodel.FirebaseEmailAuthViewModel
 import org.example.project.pushWithLimitScreen
 import org.jetbrains.compose.resources.vectorResource
 
-class Register : Screen {
+class AdministratorRegister : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
@@ -59,9 +60,11 @@ class Register : Screen {
         val viewModel = AccountViewModel(accountRepository = AccountRepository(AccountApi()))
         val email = remember { mutableStateOf(value = "") }
         val password = remember { mutableStateOf(value = "") }
+        val alertType = mutableStateOf(AlertType.Default)
 
         AlertDialog(
             showDialog = showErrorDialog,
+            alertType = alertType,
             rootMaxWidth = mutableStateOf(0)
         )
 
@@ -95,6 +98,9 @@ class Register : Screen {
                     .padding(Size.Space.S800),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                BodyText(
+                    text = "Join our workforce"
+                )
                 Form {
                     InputField(
                         label = "Email",
@@ -109,7 +115,7 @@ class Register : Screen {
                     )
                     Hyperlink(text = "Already got an account?",
                         onClick = {
-                            pushWithLimitScreen(navigator = navigator, screen = SignIn())
+                            pushWithLimitScreen(navigator = navigator, screen = AdministratorSignIn())
                         })
                     CustomButton(
                         text = "Register",
@@ -117,7 +123,14 @@ class Register : Screen {
                         onClick = {
                             email.value = email.value.trim().trimIndent().trimMargin()
                             password.value = password.value.trim().trimIndent().trimMargin()
-
+                            if (email.value.isNullOrEmpty()) {
+                                alertType.value = AlertType.EmailNotValid
+                                showErrorDialog.value = true
+                            }
+                            if (password.value.isNullOrEmpty()) {
+                                alertType.value = AlertType.PasswordNotValid
+                                showErrorDialog.value = true
+                            }
                             if (email.value.isNotEmpty() && password.value.isNotEmpty()) {
                                 scope.launch {
                                     handlerRegister(
@@ -142,7 +155,7 @@ class Register : Screen {
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
+                        horizontalArrangement = Arrangement.Center,
                     ) {
                         //Divider()
                         BodyText(
@@ -235,8 +248,8 @@ suspend fun handlerCreateAccount(
                         name = accountRole.name
                     ),
                     accountStatus = AccountStatus(
-                        id = AccountStatusType.Active.ID,
-                        name = AccountStatusType.Active.name
+                        id = AccountStatusType.Inactive.ID,
+                        name = AccountStatusType.Inactive.name
                     ),
                     createTime = Clock.System.now()
                 )
@@ -287,7 +300,7 @@ suspend fun handlerForNonExistEmail(
                     showLoadingOverlay = showLoadingOverlay,
                     showCreateAccountSuccessAlertDialog = showCreateAccountSuccessAlertDialog,
                     viewModel = viewModel,
-                    accountRole = AccountRoleType.User,
+                    accountRole = AccountRoleType.Administrator,
                     email = email,
                 )
             }
@@ -336,7 +349,7 @@ fun CreateAccountSuccessAlertDialog(
         message = "Please sign in.",
         showDialog = showCreateAccountSuccessAlertDialog,
         onConfirmation = {
-            pushWithLimitScreen(navigator = navigator, screen = SignIn())
+            pushWithLimitScreen(navigator = navigator, screen = AdministratorSignIn())
         }
     )
 }
@@ -376,7 +389,7 @@ fun ActiveStatusAlertDialog(
         message = "Please sign in.",
         showDialog = showActiveStatusAlertDialog,
         onConfirmation = {
-            pushWithLimitScreen(navigator = navigator, screen = SignIn())
+            pushWithLimitScreen(navigator = navigator, screen = AdministratorSignIn())
         }
     )
 }

@@ -74,14 +74,13 @@ class UserViewModel(private val userRepository: UserRepository) {
         }
     }
 
-    suspend fun getUsersByAccountId(currentPage: Int, account: Int) {
-        val result = userRepository.getUsersByAccountId(currentPage, account)
+    suspend fun getUserByAccountId(account: Int) {
+        val result = userRepository.getUserByAccountId(account)
         if (result != null) {
-            _usersList.value = result.content
-            _totalPage.value = result.totalPages
-            _operationStatus.value = "User Get All Successfully"
+            _user.value = result
+            _operationStatus.value = "Successfully"
         } else {
-            _operationStatus.value = "User to Get All Account"
+            _operationStatus.value = "Failed"
         }
     }
 }

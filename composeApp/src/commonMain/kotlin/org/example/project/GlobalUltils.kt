@@ -6,9 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import org.example.project.core.enums.AlertType
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 fun checkError(
@@ -18,12 +16,11 @@ fun checkError(
     onSuccess: () -> Unit = {},
     onFailure: () -> Unit = {},
 ) {
-    if(SessionData.getLoginTime() != null && SessionData.getTokenExpire() != null) {
+    if (SessionData.getCurrentAccount() != null && SessionData.getLoginTime() != null && SessionData.getTokenExpire() != null) {
         val expireTime = SessionData.getTokenExpire()?.toInt()?.let { SessionData.getLoginTime()?.plus(it.seconds) }
         if(expireTime == Clock.System.now()) {
             showErrorDialog.value = true
-            alertType.value = AlertType.Default
-
+            alertType.value = AlertType.TokenExpired
         }
     }
     if(operationStatus.value.contains("Success")) {

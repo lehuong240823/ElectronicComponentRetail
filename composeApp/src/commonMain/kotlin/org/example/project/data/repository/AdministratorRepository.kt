@@ -1,8 +1,8 @@
 package org.example.project.data.repository
 
+import org.example.project.data.api.AdministratorApi
 import org.example.project.domain.model.Administrator
 import org.example.project.domain.model.PaginatedResponse
-import org.example.project.data.api.AdministratorApi
 
 class AdministratorRepository(private val administratorApi: AdministratorApi) {
 
@@ -69,9 +69,9 @@ class AdministratorRepository(private val administratorApi: AdministratorApi) {
         }
     }
 
-    suspend fun getAdministratorsByAccountId(currentPage: Int, account: Int): PaginatedResponse<Administrator>? {
+    suspend fun getAdministratorByAccountId(account: Int): Administrator? {
         return try {
-            administratorApi.getAdministratorsByAccountId(currentPage, account)
+            administratorApi.getAdministratorByAccountId(account)
         } catch (e: Exception) {
             println("Error fetching administrators: ${e.message}")
             null

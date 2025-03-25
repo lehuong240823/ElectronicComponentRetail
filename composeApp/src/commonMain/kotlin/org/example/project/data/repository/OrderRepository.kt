@@ -1,8 +1,8 @@
 package org.example.project.data.repository
 
+import org.example.project.data.api.OrderApi
 import org.example.project.domain.model.Order
 import org.example.project.domain.model.PaginatedResponse
-import org.example.project.data.api.OrderApi
 
 class OrderRepository(private val orderApi: OrderApi) {
 
@@ -54,6 +54,19 @@ class OrderRepository(private val orderApi: OrderApi) {
     suspend fun getOrdersByOrderStatusId(currentPage: Int, orderStatus: Byte): PaginatedResponse<Order>? {
         return try {
             orderApi.getOrdersByOrderStatusId(currentPage, orderStatus)
+        } catch (e: Exception) {
+            println("Error fetching orders: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getOrdersByOrderStatusIdAndUserId(
+        currentPage: Int,
+        user: Int,
+        orderStatus: Byte
+    ): PaginatedResponse<Order>? {
+        return try {
+            orderApi.getOrdersByOrderStatusIdAndUserId(currentPage, user, orderStatus)
         } catch (e: Exception) {
             println("Error fetching orders: ${e.message}")
             null

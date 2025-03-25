@@ -18,12 +18,14 @@ import org.example.project.presentation.theme.Themes
 @Composable
 fun ExposedDropdownInputField(
     modifier: Modifier = Modifier.wrapContentSize(),
+    label: String? = null,
     options: List<String> = listOf(),
     textFieldValue: MutableState<String> = mutableStateOf(""),
     onValueChange: (String) -> Unit = { textFieldValue.value = it },
     placeholder: String? = null,
     enabled: Boolean = true,
-    colors: ButtonColor = Themes.Light.textField
+    colors: ButtonColor = Themes.Light.textField,
+    filterOption: Boolean = true,
 ) {
     val focusRequester = remember { FocusRequester() }
     var expanded by remember { mutableStateOf(false) }
@@ -33,6 +35,7 @@ fun ExposedDropdownInputField(
         onExpandedChange = { expanded = it },
     ) {
         InputField(
+            label = label,
             modifier = modifier,
             enabled = enabled,
             value = textFieldValue.value,
@@ -56,9 +59,25 @@ fun ExposedDropdownInputField(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            options
-                .filter { if (!textFieldValue.value.isNullOrEmpty()) it.startsWith(textFieldValue.value) else true }
-                .forEach { option ->
+            if (filterOption) {
+                options
+                    .filter { if (!textFieldValue.value.isNullOrEmpty()) it.startsWith(textFieldValue.value) else true }
+                    .forEach { option ->
+                        DropdownMenuItem(
+                            content = {
+                                BodyText(
+                                    text = option,
+                                )
+                            },
+                            onClick = {
+                                textFieldValue.value = option
+                                onValueChange(option)
+                                expanded = false
+                            },
+                        )
+                    }
+            } else {
+                options.forEach { option ->
                     DropdownMenuItem(
                         content = {
                             BodyText(
@@ -72,6 +91,7 @@ fun ExposedDropdownInputField(
                         },
                     )
                 }
+            }
         }
     }
 }

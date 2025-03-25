@@ -81,7 +81,7 @@ class AdministratorViewModel(private val administratorRepository: AdministratorR
             _totalPage.value = result.totalPages
             _operationStatus.value = "Administrator Get All Successfully"
         } else {
-            _operationStatus.value = "Administrator to Get All Account"
+            _operationStatus.value = "Failed"
         }
     }
 
@@ -92,18 +92,17 @@ class AdministratorViewModel(private val administratorRepository: AdministratorR
             _totalPage.value = result.totalPages
             _operationStatus.value = "Administrator Get All Successfully"
         } else {
-            _operationStatus.value = "Administrator to Get All Account"
+            _operationStatus.value = "Failed"
         }
     }
 
-    suspend fun getAdministratorsByAccountId(currentPage: Int, account: Int) {
-        val result = administratorRepository.getAdministratorsByAccountId(currentPage, account)
+    suspend fun getAdministratorByAccountId(account: Int) {
+        val result = administratorRepository.getAdministratorByAccountId(account)
         if (result != null) {
-            _administratorsList.value = result.content
-            _totalPage.value = result.totalPages
-            _operationStatus.value = "Administrator Get All Successfully"
+            _administrator.value = result
+            _operationStatus.value = "Successfully"
         } else {
-            _operationStatus.value = "Administrator to Get All Account"
+            _operationStatus.value = "Failed"
         }
     }
 }

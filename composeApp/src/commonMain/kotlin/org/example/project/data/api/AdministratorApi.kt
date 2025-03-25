@@ -1,17 +1,13 @@
 package org.example.project.data.api
 
-import io.ktor.client.call.body
-import io.ktor.client.request.delete
-import io.ktor.client.request.get
-import io.ktor.client.request.post
-import io.ktor.client.request.put
-import io.ktor.client.request.setBody
-import io.ktor.http.contentType
-import org.example.project.getPageSize
-import org.example.project.core.HttpClient
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import org.example.project.BASE_URL
-import org.example.project.domain.model.PaginatedResponse
+import org.example.project.core.HttpClient
 import org.example.project.domain.model.Administrator
+import org.example.project.domain.model.PaginatedResponse
+import org.example.project.getPageSize
 
 class AdministratorApi {
     val endPoint = "/api/administrators"
@@ -56,7 +52,7 @@ class AdministratorApi {
         return HttpClient.client.get("$BASE_URL${endPoint}/access-level/id/${accessLevel}?size=${getPageSize()}&page=${currentPage}").body()
     }
 
-    suspend fun getAdministratorsByAccountId(currentPage: Int, account: Int): PaginatedResponse<Administrator> {
-        return HttpClient.client.get("$BASE_URL${endPoint}/account/id/${account}?size=${getPageSize()}&page=${currentPage}").body()
+    suspend fun getAdministratorByAccountId(account: Int): Administrator? {
+        return HttpClient.client.get("$BASE_URL${endPoint}/account/id/${account}").body()
     }
 }

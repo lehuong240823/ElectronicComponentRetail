@@ -1,8 +1,8 @@
 package org.example.project.data.repository
 
-import org.example.project.domain.model.User
-import org.example.project.domain.model.PaginatedResponse
 import org.example.project.data.api.UserApi
+import org.example.project.domain.model.PaginatedResponse
+import org.example.project.domain.model.User
 
 class UserRepository(private val userApi: UserApi) {
 
@@ -51,9 +51,9 @@ class UserRepository(private val userApi: UserApi) {
         }
     }
 
-    suspend fun getUsersByAccountId(currentPage: Int, account: Int): PaginatedResponse<User>? {
+    suspend fun getUserByAccountId(account: Int): User? {
         return try {
-            userApi.getUsersByAccountId(currentPage, account)
+            userApi.getUserByAccountId(account)
         } catch (e: Exception) {
             println("Error fetching users: ${e.message}")
             null

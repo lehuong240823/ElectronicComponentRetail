@@ -156,6 +156,7 @@ fun AddEditProviderDialog(
         onConfirmation = onConfirmation,
         content = {
             InputField(
+                label = "Name",
                 placeHolder = "Name",
                 value = provider.value.name ?: "",
                 onValueChange = {
@@ -163,6 +164,7 @@ fun AddEditProviderDialog(
                 }
             )
             InputField(
+                label = "Type",
                 placeHolder = "Type",
                 value = provider.value.type ?: "",
                 onValueChange = {
@@ -170,6 +172,7 @@ fun AddEditProviderDialog(
                 }
             )
             InputField(
+                label = "Email",
                 placeHolder = "Email",
                 value = provider.value.email ?: "",
                 onValueChange = {
@@ -177,6 +180,7 @@ fun AddEditProviderDialog(
                 }
             )
             InputField(
+                label = "Phone Number",
                 placeHolder = "Phone Number",
                 value = provider.value.phoneNumber ?: "",
                 onValueChange = {
@@ -184,6 +188,7 @@ fun AddEditProviderDialog(
                 }
             )
             InputField(
+                label = "Address",
                 placeHolder = "Address",
                 value = provider.value.address ?: "",
                 onValueChange = {

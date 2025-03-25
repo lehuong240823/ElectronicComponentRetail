@@ -1,6 +1,7 @@
 package org.example.project.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -14,13 +15,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.LocalNavigator
 import electroniccomponentretail.composeapp.generated.resources.Res
 import electroniccomponentretail.composeapp.generated.resources.elcom
 import org.example.project.presentation.components.common.BodyText
+import org.example.project.presentation.screens.administrator.AdministratorRegister
 import org.example.project.presentation.theme.ButtonColor
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 import org.example.project.presentation.theme.Typography
+import org.example.project.pushWithLimitScreen
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -28,6 +32,7 @@ import org.jetbrains.compose.resources.painterResource
 fun Footer(
     color: ButtonColor = Themes.Light.brandLayout
 ) {
+    val navigator = LocalNavigator.current
     FlowRow(
         modifier = Modifier.fillMaxWidth()
             .wrapContentHeight()
@@ -151,7 +156,12 @@ fun Footer(
             )
             BodyText(
                 text = "Careers",
-                color = color
+                color = color,
+                modifier = Modifier.clickable {
+                    pushWithLimitScreen(
+                        navigator = navigator, AdministratorRegister()
+                    )
+                }
             )
             BodyText(
                 text = "Terms & Policies",

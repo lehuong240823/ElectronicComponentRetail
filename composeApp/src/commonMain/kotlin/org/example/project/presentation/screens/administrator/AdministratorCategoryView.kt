@@ -156,6 +156,7 @@ fun AddEditCategoryDialog(
         onConfirmation = onConfirmation,
         content = {
             InputField(
+                label = "Name",
                 placeHolder = "Name",
                 value = category.value.name ?: "",
                 onValueChange = {

@@ -15,6 +15,8 @@ import electroniccomponentretail.composeapp.generated.resources.Image
 import electroniccomponentretail.composeapp.generated.resources.Res
 import electroniccomponentretail.composeapp.generated.resources.ic_dots_vertical
 import org.example.project.CURRENCY
+import org.example.project.SessionData
+import org.example.project.core.enums.AccountRoleType
 import org.example.project.domain.model.Product
 import org.example.project.presentation.components.common.BodyText
 import org.example.project.presentation.components.common.CustomRoundedCorner
@@ -67,7 +69,7 @@ fun ProductItem(
                     style = Typography.Style.BodyStrong
                 )
             }
-            if(showMoreActionButton) {
+            if (SessionData.getCurrentAccount()?.accountRole?.name == AccountRoleType.Administrator.name) {
                 ExposedDropdownMenuButton(
                     icon = vectorResource(Res.drawable.ic_dots_vertical),
                     onEdit = onEdit,

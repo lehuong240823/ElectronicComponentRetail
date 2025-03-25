@@ -81,7 +81,18 @@ class OrderViewModel(private val orderRepository: OrderRepository) {
             _totalPage.value = result.totalPages
             _operationStatus.value = "Order Get All Successfully"
         } else {
-            _operationStatus.value = "Order to Get All Account"
+            _operationStatus.value = "Failed"
+        }
+    }
+
+    suspend fun getOrdersByOrderStatusIdAndUserId(currentPage: Int, user: Int, orderStatus: Byte) {
+        val result = orderRepository.getOrdersByOrderStatusIdAndUserId(currentPage, user, orderStatus)
+        if (result != null) {
+            _ordersList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "Successfully"
+        } else {
+            _operationStatus.value = "Failed"
         }
     }
 
@@ -92,7 +103,7 @@ class OrderViewModel(private val orderRepository: OrderRepository) {
             _totalPage.value = result.totalPages
             _operationStatus.value = "Order Get All Successfully"
         } else {
-            _operationStatus.value = "Order to Get All Account"
+            _operationStatus.value = "Failed"
         }
     }
 

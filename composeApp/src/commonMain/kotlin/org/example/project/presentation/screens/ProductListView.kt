@@ -54,12 +54,16 @@ import org.example.project.presentation.components.input.InputField
 import org.example.project.presentation.components.input.RatingToggleGroup
 import org.example.project.presentation.components.input.SearchBar
 import org.example.project.presentation.isExpanded
-import org.example.project.presentation.screens.administrator.*
+import org.example.project.presentation.screens.administrator.handlerGetAllCategories
+import org.example.project.presentation.screens.administrator.handlerGetAllProviders
 import org.example.project.presentation.theme.ButtonColor
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 import org.example.project.presentation.theme.Typography
-import org.example.project.presentation.viewmodel.*
+import org.example.project.presentation.viewmodel.CategoryViewModel
+import org.example.project.presentation.viewmodel.ProductStatusViewModel
+import org.example.project.presentation.viewmodel.ProductViewModel
+import org.example.project.presentation.viewmodel.ProviderViewModel
 import org.example.project.pushWithLimitScreen
 
 class ProductList : Screen {
@@ -550,7 +554,19 @@ fun ColumnScope.ProductCardGrid(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             totalPage = totalPage,
             currentPage = currentPage,
-            onCurrentPageChange = {}
+            onCurrentPageChange = {
+                scope.launch {
+                    handlerGetAllProducts(
+                        totalPage = totalPage,
+                        currentPage = currentPage,
+                        productViewModel = productViewModel,
+                        productList = productList,
+                        showLoadingOverlay = showLoadingOverlay,
+                        showErrorDialog = showErrorDialog,
+                        alertType = alertType
+                    )
+                }
+            }
         )
     }
 }
@@ -608,6 +624,7 @@ fun AddNewProductDialog(
         onConfirmation = onConfirmation,
         content = {
             InputField(
+                label = "Name",
                 placeHolder = "Name",
                 value = product.value.name?:"",
                 onValueChange = {
@@ -615,6 +632,7 @@ fun AddNewProductDialog(
                 }
             )
             InputField(
+                label = "Description",
                 placeHolder = "Description",
                 singleLine = false,
                 maxLines = 3,
@@ -628,6 +646,7 @@ fun AddNewProductDialog(
                 horizontalArrangement = Arrangement.spacedBy(Size.Space.S200)
             ) {
                 InputField(
+                    label = "Price",
                     modifier = Modifier.weight(1f),
                     placeHolder = "Price",
                     value = if(product.value.price != null) product.value.price?.toPlainString().toString() else "",
@@ -637,18 +656,22 @@ fun AddNewProductDialog(
                     }
                 )
                 InputField(
+                    label = "Stock",
                     modifier = Modifier.weight(1f),
                     placeHolder = "Stock",
                     value = if(product.value.stock==null) "" else product.value.stock.toString(),
                     onValueChange = {
-                        var change = it.filter { c -> c.isDigit() }
-                        product.value = product.value.copy(stock =  if(!change.isNullOrEmpty()) change.toInt() else 0)
+                        var change = it.filter { c -> !c.isLetter() }
+                        if (!change.isNullOrEmpty()) {
+                            product.value = product.value.copy(stock = change.toInt())
+                        }
                     }
                 )
             }
 
             ExposedDropdownInputField(
                 modifier = Modifier.weight(1f),
+                label = "Category",
                 placeholder = "Category",
                 options = categoryList.value.map { it.name ?: "" },
                 textFieldValue = mutableStateOf(product.value.category?.name?:""),
@@ -660,6 +683,7 @@ fun AddNewProductDialog(
             )
             ExposedDropdownInputField(
                 modifier = Modifier.weight(1f),
+                label = "Provider",
                 placeholder = "Provider",
                 options = providerList.value.map { it.name ?: "" },
                 textFieldValue = mutableStateOf(product.value.provider?.name?:""),
@@ -671,6 +695,7 @@ fun AddNewProductDialog(
             )
             ExposedDropdownInputField(
                 modifier = Modifier.weight(1f),
+                label = "Status",
                 placeholder = "Status",
                 options = productStatusList.value.map { it.name ?: "" },
                 textFieldValue = mutableStateOf(product.value.productStatus?.name?:""),

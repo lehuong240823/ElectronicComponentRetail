@@ -3,22 +3,23 @@ package org.example.project.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
-import org.example.project.presentation.components.common.Divider
+import org.example.project.SessionData
+import org.example.project.core.enums.AccountRoleType
 import org.example.project.presentation.components.common.CustomButton
 import org.example.project.presentation.screens.AccountView
-import org.example.project.presentation.screens.TransactionView
 import org.example.project.presentation.screens.OrderView
+import org.example.project.presentation.screens.SignIn
+import org.example.project.presentation.screens.TransactionView
+import org.example.project.presentation.screens.administrator.AdministratorSignIn
 import org.example.project.presentation.theme.ButtonColor
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
@@ -33,6 +34,7 @@ fun SideMenu(
     content: @Composable () -> Unit = { DefaultSideMenuContent(isExpanded) },
     color: ButtonColor = Themes.Light.primaryLayout
 ) {
+    val navigator = LocalNavigator.current
     FlowColumn(
         modifier = Modifier
             .background(color = color.defaultBackground!!)
@@ -75,7 +77,21 @@ fun SideMenu(
                 icon = Icons.AutoMirrored.Outlined.Logout,
                 textVisibility = isExpanded.value,
                 onClick = {
+                    when (SessionData.getCurrentAccount()?.accountRole?.name) {
+                        AccountRoleType.User.name -> {
+                            SessionData.setCurrentAccount(null)
+                            pushWithLimitScreen(
+                                navigator = navigator, SignIn()
+                            )
+                        }
 
+                        AccountRoleType.Administrator.name -> {
+                            SessionData.setCurrentAccount(null)
+                            pushWithLimitScreen(
+                                navigator = navigator, AdministratorSignIn()
+                            )
+                        }
+                    }
                 }
             )
         }

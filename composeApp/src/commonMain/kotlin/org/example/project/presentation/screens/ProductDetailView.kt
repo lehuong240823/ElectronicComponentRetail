@@ -13,15 +13,19 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import coil3.compose.AsyncImage
 import electroniccomponentretail.composeapp.generated.resources.Image
 import electroniccomponentretail.composeapp.generated.resources.Res
 import electroniccomponentretail.composeapp.generated.resources.blank_profile
 import electroniccomponentretail.composeapp.generated.resources.ic_dots_vertical
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.example.project.CURRENCY
 import org.example.project.checkError
 import org.example.project.core.enums.AlertType
 import org.example.project.domain.model.OrderItem
 import org.example.project.domain.model.Product
+import org.example.project.domain.model.ProductImage
 import org.example.project.domain.model.Review
 import org.example.project.executeSuspendFunction
 import org.example.project.presentation.components.ColumnBackground
@@ -39,7 +43,8 @@ import org.example.project.presentation.viewmodel.ReviewViewModel
 import org.jetbrains.compose.resources.painterResource
 
 class ProductDetail(
-    val product: Product
+    val product: Product,
+    val productImage: ProductImage
 ) : Screen {
     @OptIn(ExperimentalLayoutApi::class)
     @Composable
@@ -50,6 +55,7 @@ class ProductDetail(
         val showErrorDialog = mutableStateOf(false)
         var color: ButtonColor = Themes.Light.primaryLayout
         val quantity = remember { mutableStateOf(1) }
+        val scope = rememberCoroutineScope { Dispatchers.Default }
 
         ColumnBackground(
             rootMaxWidth = rootMaxWidth,
@@ -73,13 +79,16 @@ class ProductDetail(
                     horizontalArrangement = Arrangement.spacedBy(Size.Space.S1600),
                     verticalArrangement = Arrangement.spacedBy(Size.Space.S600)
                 ) {
-                    Image(
+                    AsyncImage(
+                        contentScale = ContentScale.FillWidth,
                         modifier = Modifier.weight(1f)
                             .heightIn(min = 300.dp, max = 420.dp),
-                        painter = painterResource(Res.drawable.Image),
-                        contentScale = ContentScale.FillWidth,
-                        contentDescription = null
+                        model =  productImage.url,
+                        error = painterResource(Res.drawable.Image),
+                        placeholder = painterResource(Res.drawable.Image),
+                        contentDescription = null,
                     )
+                    
                     ProductInfoColumn(
                         modifier = Modifier.wrapContentHeight()
                             .weight(1f),

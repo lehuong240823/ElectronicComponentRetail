@@ -12,9 +12,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
+import coil3.compose.AsyncImage
+import electroniccomponentretail.composeapp.generated.resources.Image
+import electroniccomponentretail.composeapp.generated.resources.Res
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -26,15 +30,13 @@ import org.example.project.*
 import org.example.project.core.enums.AccountRoleType
 import org.example.project.core.enums.AlertType
 import org.example.project.core.enums.OrderStatusType
-import org.example.project.domain.model.Account
-import org.example.project.domain.model.Order
-import org.example.project.domain.model.OrderItem
-import org.example.project.domain.model.OrderStatus
+import org.example.project.domain.model.*
 import org.example.project.presentation.components.common.BodyText
 import org.example.project.presentation.components.common.CustomButton
 import org.example.project.presentation.components.common.Divider
 import org.example.project.presentation.components.dropdown.ExposedDropdownInputField
 import org.example.project.presentation.screens.ProductDetail
+import org.example.project.presentation.screens.getProductImagesByProductId
 import org.example.project.presentation.screens.handlerEditOrder
 import org.example.project.presentation.theme.ButtonColor
 import org.example.project.presentation.theme.Size
@@ -42,6 +44,8 @@ import org.example.project.presentation.theme.Themes
 import org.example.project.presentation.theme.Typography
 import org.example.project.presentation.viewmodel.OrderItemViewModel
 import org.example.project.presentation.viewmodel.OrderViewModel
+import org.example.project.presentation.viewmodel.ProductImageViewModel
+import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -60,6 +64,7 @@ fun UserOrderItem(
     alertType: MutableState<AlertType>,
     rootMaxWidth: MutableState<Int>,
     selectedTabIndex: MutableState<Int>,
+    productImageViewModel: ProductImageViewModel,
 ) {
     val currentAccount = SessionData.getCurrentAccount()
 
@@ -144,7 +149,9 @@ fun UserOrderItem(
                 item = item,
                 showLoadingOverlay = showLoadingOverlay,
                 showErrorDialog = showErrorDialog,
-                alertType = alertType
+                alertType = alertType,
+                scope = scope,
+                productImageViewModel = productImageViewModel
             )
         }
 
@@ -247,7 +254,8 @@ fun OrderStatusOnAccountRoleChange(
                             enabled = false,
                             onValueChange = { change ->
                                 order.value = order.value
-                                    .copy(orderStatus = orderStatusList.value.find { status -> status.name == change }
+                                    .copy(orderStatus = orderStatusList.value
+                                        .find { status -> status.name == change }
                                     )
                             }
                         )
@@ -293,26 +301,43 @@ fun UserOrderProduct(
     item: OrderItem,
     showLoadingOverlay: MutableState<Boolean>,
     showErrorDialog: MutableState<Boolean>,
-    alertType: MutableState<AlertType>
-) {
+    alertType: MutableState<AlertType>,
+    scope: CoroutineScope,
+    productImageViewModel: ProductImageViewModel,
+    ) {
     val navigator = LocalNavigator.current
+    val productImage = mutableStateOf(ProductImage())
+    scope.launch {
+        getProductImagesByProductId(
+            product = mutableStateOf(item.product?:Product()),
+            productImageViewModel = productImageViewModel,
+            productImage = productImage,
+            showLoadingOverlay = showLoadingOverlay,
+            showErrorDialog = showErrorDialog,
+            alertType = alertType
+        )
+    }
 
     FlowRow(
         modifier = Modifier.clickable {
             if (item.product != null) {
-                pushWithLimitScreen(
+                /*pushWithLimitScreen(
                     navigator = navigator, ProductDetail(item.product)
-                )
+                )*/
             } else {
                 alertType.value = AlertType.ProductNotFound
             }
         },
     ) {
-        Image(
+        AsyncImage(
+            contentScale = ContentScale.Crop,
             modifier = Modifier.size(64.dp),
-            imageVector = Icons.Outlined.Image,
+            model = productImage.value.url,
+            error = painterResource(Res.drawable.Image),
+            placeholder = painterResource(Res.drawable.Image),
             contentDescription = null,
         )
+        print(productImage.value.url)
         Column(
             modifier = Modifier
         ) {

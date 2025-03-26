@@ -5,7 +5,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import electroniccomponentretail.composeapp.generated.resources.Image
 import electroniccomponentretail.composeapp.generated.resources.Res
 import electroniccomponentretail.composeapp.generated.resources.ic_dots_vertical
 import kotlinx.coroutines.CoroutineScope
@@ -18,6 +22,8 @@ import org.example.project.presentation.screens.administrator.AddEditCategoryDia
 import org.example.project.presentation.screens.administrator.handlerDeleteCategory
 import org.example.project.presentation.screens.administrator.handlerEditCategory
 import org.example.project.presentation.viewmodel.CategoryViewModel
+import org.example.project.presentation.viewmodel.CloudinaryViewModel
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.vectorResource
 
 @Composable
@@ -30,12 +36,13 @@ fun CategoryTable(
     showLoadingOverlay: MutableState<Boolean>,
     showErrorDialog: MutableState<Boolean>,
     alertType: MutableState<AlertType>,
+    cloudViewModel: CloudinaryViewModel,
+    imageByteArray: MutableState<ByteArray>,
     headers: List<String> = listOf("Category ID", "Image", "Name", "Action"),
     weights: List<Float> = listOf(2f, 2f, 5f, 1f),
     ) {
     val showEditNewCategoryDialog = mutableStateOf(false)
     val updateCategory = mutableStateOf(Category())
-    val imageByteArray = mutableStateOf(byteArrayOf())
 
     AddEditCategoryDialog(
         title = "Edit",
@@ -51,12 +58,14 @@ fun CategoryTable(
                     categoryViewModel = categoryViewModel,
                     showLoadingOverlay = showLoadingOverlay,
                     showErrorDialog = showErrorDialog,
-                    alertType = alertType
+                    alertType = alertType,
+                    imageByteArray = imageByteArray,
+                    cloudViewModel = cloudViewModel,
                 )
             }
         },
         scope = scope,
-        imageByteArray = TODO()
+        imageByteArray = imageByteArray
     )
 
     Table(
@@ -102,19 +111,18 @@ fun CategoryRow(
         BodyText(
             modifier = Modifier.weight(weights[0]),
             text = category.id.toString(),
-            textAlign = TextAlign.Center,
             )
         Box(
             Modifier.weight(weights[1])
         ) {
-            /*AsyncImage(
-                model = ImageRequest.Builder(LocalPlatformContext.current)
-                    .data("https://lh3.googleusercontent.com/-GpvTVtKwke4/AAAAAAAAAAI/AAAAAAAAAAA/ALKGfknFDiF9fzcMrW_tv-VAFob9V6JUXQ/photo.jpg?sz=46")
-                    //.transformations(CircleCropTransformation())
-                    .build(),
-                contentDescription = "Circular cropped image"
-            )*/
-
+            AsyncImage(
+                modifier = Modifier.size(64.dp),
+                contentScale = ContentScale.Crop,
+                model = category.image,
+                error = painterResource(Res.drawable.Image),
+                placeholder = painterResource(Res.drawable.Image),
+                contentDescription = null,
+            )
         }
         BodyText(
             modifier = Modifier.weight(weights[2]),

@@ -12,6 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import electroniccomponentretail.composeapp.generated.resources.Image
+import electroniccomponentretail.composeapp.generated.resources.Res
 import io.github.vinceglb.filekit.core.FileKit
 import io.github.vinceglb.filekit.core.PickerType
 import io.github.vinceglb.filekit.core.pickFile
@@ -23,6 +25,7 @@ import org.example.project.presentation.components.common.CustomButton
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalResourceApi::class)
 @Composable
@@ -33,7 +36,7 @@ fun ImageAddDialog(
     imageByteArray: MutableState<ByteArray>,
     onConfirmation: () -> Unit = {},
     url:MutableState<String> =
-        mutableStateOf("https://res.cloudinary.com/dvsr9ihcv/image/upload/v1742870878/samples/landscapes/girl-urban-view.jpg"),
+        mutableStateOf(""),
     content: @Composable ColumnScope.() -> Unit
 ) {
     AlertDialog(
@@ -55,22 +58,12 @@ fun ImageAddDialog(
                     overflow = FlowRowOverflow.Visible,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    /*Image(
-                        modifier = Modifier.aspectRatio(1f).fillMaxSize(),
-                        //painter = painterResource(Res.drawable.Image),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop
-                    )*/
-                    /*AsyncImage(
-                        model = Res.getUri("drawable/Image.png"),
-                        contentDescription = null,
-                        contentScale = ContentScale.Fit
-                    )*/
-
                     AsyncImage(
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.aspectRatio(1f).widthIn(300.dp),
                         model = url.value,
+                        error = painterResource(Res.drawable.Image),
+                        placeholder = painterResource(Res.drawable.Image),
                         contentDescription = null,
                     )
                     CustomButton(

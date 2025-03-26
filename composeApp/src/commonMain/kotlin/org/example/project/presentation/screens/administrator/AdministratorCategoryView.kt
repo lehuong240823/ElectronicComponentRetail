@@ -14,7 +14,9 @@ import kotlinx.coroutines.launch
 import org.example.project.checkError
 import org.example.project.core.enums.AlertType
 import org.example.project.data.api.CategoryApi
+import org.example.project.data.api.CloudinaryStorageApi
 import org.example.project.data.repository.CategoryRepository
+import org.example.project.data.repository.CloudinaryStorageRepository
 import org.example.project.domain.model.Category
 import org.example.project.executeSuspendFunction
 import org.example.project.presentation.components.ColumnBackground
@@ -26,6 +28,7 @@ import org.example.project.presentation.components.table.CategoryTable
 import org.example.project.presentation.components.table.TopTableTemplate
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.viewmodel.CategoryViewModel
+import org.example.project.presentation.viewmodel.CloudinaryViewModel
 
 class AdministratorCategoryView: Screen {
     @Composable
@@ -39,6 +42,7 @@ class AdministratorCategoryView: Screen {
         val alertType = mutableStateOf(AlertType.Default)
         val showAddNewCategoryDialog = mutableStateOf(false)
         val categoryViewModel = CategoryViewModel(CategoryRepository(CategoryApi()))
+        val cloudViewModel = CloudinaryViewModel(CloudinaryStorageRepository(CloudinaryStorageApi()))
         val categoryList: MutableState<List<Category>> = mutableStateOf(emptyList())
         val newCategory = mutableStateOf(Category())
         val imageByteArray = mutableStateOf(byteArrayOf())
@@ -74,7 +78,9 @@ class AdministratorCategoryView: Screen {
                             showLoadingOverlay = showLoadingOverlay,
                             showErrorDialog = showErrorDialog,
                             alertType = alertType,
-                            category = newCategory
+                            category = newCategory,
+                            imageByteArray = imageByteArray,
+                            cloudViewModel = cloudViewModel,
                         )
                         handlerGetAllCategories(
                             totalPage = totalPage,
@@ -118,7 +124,9 @@ class AdministratorCategoryView: Screen {
                     categoryList = categoryList,
                     totalPage = totalPage,
                     currentPage = currentPage,
-                    alertType = alertType
+                    alertType = alertType,
+                    cloudViewModel = cloudViewModel,
+                    imageByteArray = imageByteArray,
                 )
 
                 if (totalPage.value > 0) {
@@ -161,6 +169,7 @@ fun AddEditCategoryDialog(
         showImageAddDialog = showAddEditNewCategoryDialog,
         onConfirmation = onConfirmation,
         imageByteArray = imageByteArray,
+        url = mutableStateOf(category.value.image?:""),
         content = {
             InputField(
                 label = "Name",
@@ -208,10 +217,14 @@ suspend fun handlerAddCategory(
     alertType: MutableState<AlertType>,
     showErrorDialog: MutableState<Boolean>,
     category: MutableState<Category>,
+    imageByteArray: MutableState<ByteArray>,
+    cloudViewModel: CloudinaryViewModel,
 ) {
     executeSuspendFunction(
         showLoadingOverlay = showLoadingOverlay,
         function = {
+            cloudViewModel.uploadImage(imageByteArray.value)
+            category.value = category.value.copy(image = cloudViewModel.url.value)
             categoryViewModel.createCategory(category.value)
             handlerGetAllCategories(
                 totalPage = totalPage,
@@ -252,10 +265,14 @@ suspend fun handlerEditCategory(
     showErrorDialog: MutableState<Boolean>,
     alertType: MutableState<AlertType>,
     category: MutableState<Category>,
+    imageByteArray: MutableState<ByteArray>,
+    cloudViewModel: CloudinaryViewModel,
 ) {
     executeSuspendFunction(
         showLoadingOverlay = showLoadingOverlay,
         function = {
+            cloudViewModel.uploadImage(imageByteArray.value)
+            category.value = category.value.copy(image = cloudViewModel.url.value)
             categoryViewModel.updateCategory(category.value.id ?: 0, category.value)
             handlerGetAllCategories(
                 totalPage = totalPage,

@@ -168,7 +168,7 @@ class ProductList : Screen {
             },
             productImage = newProductImage,
             imageByteArray = imageByteArray,
-            url = mutableStateOf(newProductImage.value.url?:""),
+            productImageViewModel = productImageViewModel,
         )
 
         AddNewProductDialog(
@@ -223,7 +223,7 @@ class ProductList : Screen {
             },
             productImage = updateProductImage,
             imageByteArray = imageByteArray,
-            url = mutableStateOf(updateProductImage.value.url?:""),
+            productImageViewModel = productImageViewModel,
         )
 
         ColumnBackground(
@@ -561,7 +561,10 @@ fun ColumnScope.ProductCardGrid(
                     .clickable(
                         enabled = true,
                         onClick = {
-                            pushWithLimitScreen(navigator, ProductDetail(product = product))
+                            pushWithLimitScreen(navigator, ProductDetail(
+                                product = product,
+                                productImage = productImage.value,
+                            ))
                         },
                         role = Role.Button,
                         indication = ripple(bounded = true),
@@ -623,8 +626,9 @@ fun AddNewProductDialog(
     onConfirmation: () -> Unit,
     product: MutableState<Product>,
     productImage: MutableState<ProductImage>,
+    productImageViewModel: ProductImageViewModel,
     imageByteArray: MutableState<ByteArray>,
-    url:MutableState<String>
+    //url:MutableState<String>
 ) {
     val categoryViewModel = CategoryViewModel(CategoryRepository(CategoryApi()))
     val categoryList: MutableState<List<Category>> = mutableStateOf(emptyList())
@@ -659,15 +663,22 @@ fun AddNewProductDialog(
             showErrorDialog = showErrorDialog,
             alertType = alertType
         )
+        getProductImagesByProductId(
+            product = product,
+            productImageViewModel = productImageViewModel,
+            productImage = productImage,
+            showLoadingOverlay = showLoadingOverlay,
+            showErrorDialog = showErrorDialog,
+            alertType = alertType
+        )
     }
-
     ImageAddDialog(
         title = "$title New Product",
         showImageAddDialog = showAddNewProductDialog,
         onConfirmation = onConfirmation,
         scope = scope,
         imageByteArray = imageByteArray,
-        url = url,
+        url = mutableStateOf(productImage.value.url?:"") ,
         content = {
             InputField(
                 label = "Name",
@@ -955,6 +966,8 @@ suspend fun getProductImagesByProductId(
             totalPage.value = productImageViewModel.totalPage.value ?: 0
             if(productImageViewModel.productImagesList.value.isNotEmpty()) {
                 productImage.value = productImageViewModel.productImagesList.value.first()
+            } else {
+                productImage.value = ProductImage()
             }
         }
     )
@@ -991,12 +1004,8 @@ suspend fun addProductImage(
             cloudViewModel.uploadImage(imageByteArray.value)
             newProductImage.value = newProductImage.value.copy(url = cloudViewModel.url.value,
                 product = product.value)
-println("find"+findImage.value)
-            println("find"+newProductImage.value.url)
 
             if(findImage.value.id == null) {
-                println("find"+newProductImage.value)
-
                 productImageViewModel.createProductImage(newProductImage.value)
 
                 newProductImage.value = productImageViewModel.createdProductImage.value!!
@@ -1033,6 +1042,7 @@ suspend fun updatedProductImage(
                 showErrorDialog = showErrorDialog,
                 alertType = alertType
             )
+            updateProductImage.value = findImage.value
             cloudViewModel.uploadImage(imageByteArray.value)
             updateProductImage.value = updateProductImage.value.copy(url = cloudViewModel.url.value,
                 product = product.value)

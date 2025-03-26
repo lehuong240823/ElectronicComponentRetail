@@ -63,7 +63,7 @@ fun ProductItem(
         )*/
         AsyncImage(
             contentScale = ContentScale.FillWidth,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().aspectRatio(1f),
             model =  productImage.value.url,
             error = painterResource(Res.drawable.Image),
             placeholder = painterResource(Res.drawable.Image),

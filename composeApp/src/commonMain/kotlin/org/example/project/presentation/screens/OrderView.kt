@@ -19,9 +19,11 @@ import org.example.project.core.enums.AlertType
 import org.example.project.data.api.OrderApi
 import org.example.project.data.api.OrderItemApi
 import org.example.project.data.api.OrderStatusApi
+import org.example.project.data.api.ProductImageApi
 import org.example.project.data.repository.OrderItemRepository
 import org.example.project.data.repository.OrderRepository
 import org.example.project.data.repository.OrderStatusRepository
+import org.example.project.data.repository.ProductImageRepository
 import org.example.project.domain.model.Account
 import org.example.project.domain.model.Order
 import org.example.project.domain.model.OrderItem
@@ -39,6 +41,7 @@ import org.example.project.presentation.theme.Size
 import org.example.project.presentation.viewmodel.OrderItemViewModel
 import org.example.project.presentation.viewmodel.OrderStatusViewModel
 import org.example.project.presentation.viewmodel.OrderViewModel
+import org.example.project.presentation.viewmodel.ProductImageViewModel
 
 class OrderView : Screen {
     @Composable
@@ -57,6 +60,7 @@ class OrderView : Screen {
         val tabTitles = mutableStateOf(listOf("All"))
         val orderStatusList = mutableStateOf(emptyList<OrderStatus>())
         val selectedTabIndex = remember { mutableStateOf(0) }
+        val productImageViewModel = ProductImageViewModel(ProductImageRepository(ProductImageApi()))
 
         val orderStatusViewModel = OrderStatusViewModel(
             OrderStatusRepository(
@@ -134,6 +138,7 @@ class OrderView : Screen {
                         orderViewModel = orderViewModel,
                         orderList = orderList,
                         selectedTabIndex = selectedTabIndex,
+                        productImageViewModel = productImageViewModel,
                     )
                 }
 

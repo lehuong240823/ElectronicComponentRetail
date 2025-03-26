@@ -124,48 +124,61 @@ class ProductList : Screen {
             alertType = alertType,
             product = newProduct,
             onConfirmation = {
-                if (newProduct.value.name != null && newProduct.value.price != null
-                    && newProduct.value.stock != null
-                ) {
-                    scope.launch {
-                        handlerAddProduct(
-                            totalPage = totalPage,
-                            currentPage = currentPage,
-                            productViewModel = productViewModel,
-                            productList = productList,
-                            showLoadingOverlay = showLoadingOverlay,
-                            showErrorDialog = showErrorDialog,
-                            alertType = alertType,
-                            product = newProduct
-                        )
-
-                        addProductImage(
-                            product = newProduct,
-                            productImageViewModel = productImageViewModel,
-                            cloudViewModel = cloudViewModel,
-                            newProductImage = newProductImage,
-                            showLoadingOverlay = showLoadingOverlay,
-                            showErrorDialog = showErrorDialog,
-                            alertType = alertType,
-                            imageByteArray = imageByteArray
-                        )
-                        handlerGetAllProducts(
-                            totalPage = totalPage,
-                            currentPage = currentPage,
-                            productViewModel = productViewModel,
-                            productList = productList,
-                            showLoadingOverlay = showLoadingOverlay,
-                            showErrorDialog = showErrorDialog,
-                            alertType = alertType
-                        )
-
-
-                        updateProductImage.value = ProductImage()
-                        newProduct.value = Product()
+                when {
+                    newProduct.value.name.isNullOrBlank() -> {
+                        alertType.value = AlertType.ProductNameNull
+                        showErrorDialog.value = true
                     }
-                } else {
-                    alertType.value = AlertType.Null
-                    showErrorDialog.value = true
+                    newProduct.value.price == null -> {
+                        alertType.value = AlertType.ProductPriceNull
+                        showErrorDialog.value = true
+                    }
+                    newProduct.value.stock == null -> {
+                        alertType.value = AlertType.ProductStockNull
+                        showErrorDialog.value = true
+                    }
+                    newProduct.value.productStatus == null -> {
+                        alertType.value = AlertType.ProductAvailableNull
+                        showErrorDialog.value = true
+                    }
+                    else -> {
+                        scope.launch {
+                            handlerAddProduct(
+                                totalPage = totalPage,
+                                currentPage = currentPage,
+                                productViewModel = productViewModel,
+                                productList = productList,
+                                showLoadingOverlay = showLoadingOverlay,
+                                showErrorDialog = showErrorDialog,
+                                alertType = alertType,
+                                product = newProduct
+                            )
+
+                            addProductImage(
+                                product = newProduct,
+                                productImageViewModel = productImageViewModel,
+                                cloudViewModel = cloudViewModel,
+                                newProductImage = newProductImage,
+                                showLoadingOverlay = showLoadingOverlay,
+                                showErrorDialog = showErrorDialog,
+                                alertType = alertType,
+                                imageByteArray = imageByteArray
+                            )
+                            handlerGetAllProducts(
+                                totalPage = totalPage,
+                                currentPage = currentPage,
+                                productViewModel = productViewModel,
+                                productList = productList,
+                                showLoadingOverlay = showLoadingOverlay,
+                                showErrorDialog = showErrorDialog,
+                                alertType = alertType
+                            )
+
+
+                            updateProductImage.value = ProductImage()
+                            newProduct.value = Product()
+                        }
+                    }
                 }
             },
             productImage = newProductImage,

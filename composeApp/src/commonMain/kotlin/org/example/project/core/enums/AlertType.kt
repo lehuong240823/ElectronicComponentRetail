@@ -13,4 +13,8 @@ enum class AlertType() {
     AccountInactive(),
     ProductNotFound(),
     UpdateOrderSuccess(),
+    ProductNameNull(),
+    ProductStockNull(),
+    ProductPriceNull(),
+    ProductAvailableNull()
 }

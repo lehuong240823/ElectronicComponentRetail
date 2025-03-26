@@ -98,6 +98,22 @@ fun AlertDialog(
             _title.value = "Order Updated Successfully"
             _message.value = "Your order has been updated successfully."
         }
+        AlertType.ProductNameNull -> {
+            _title.value = "Product Name Required"
+            _message.value = "Please enter a product name before proceeding."
+        }
+        AlertType.ProductPriceNull -> {
+            _title.value = "Product Price Required"
+            _message.value = "The product price is missing. Please provide a valid price."
+        }
+        AlertType.ProductStockNull -> {
+            _title.value = "Stock Information Missing"
+            _message.value = "Stock details are required. Please ensure the product has stock information."
+        }
+        AlertType.ProductAvailableNull -> {
+            _title.value = "Product Availability Not Set"
+            _message.value = "Please specify if the product is available before proceeding."
+        }
     }
 
     if (showDialog.value) {

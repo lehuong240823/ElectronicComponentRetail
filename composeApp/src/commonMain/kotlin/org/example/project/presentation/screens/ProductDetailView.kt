@@ -80,8 +80,9 @@ class ProductDetail(
                     verticalArrangement = Arrangement.spacedBy(Size.Space.S600)
                 ) {
                     AsyncImage(
-                        contentScale = ContentScale.FillWidth,
-                        modifier = Modifier.weight(1f)
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.weight(1f).aspectRatio(1f)
+                            .widthIn(max = 420.dp)
                             .heightIn(min = 300.dp, max = 420.dp),
                         model =  productImage.url,
                         error = painterResource(Res.drawable.Image),

@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import electroniccomponentretail.composeapp.generated.resources.Image
 import electroniccomponentretail.composeapp.generated.resources.Res
 import electroniccomponentretail.composeapp.generated.resources.ic_dots_vertical
@@ -29,8 +30,10 @@ import org.example.project.checkError
 import org.example.project.core.enums.AccountRoleType
 import org.example.project.core.enums.AlertType
 import org.example.project.data.api.AdministratorApi
+import org.example.project.data.api.UserAddressApi
 import org.example.project.data.api.UserApi
 import org.example.project.data.repository.AdministratorRepository
+import org.example.project.data.repository.UserAddressRepository
 import org.example.project.data.repository.UserRepository
 import org.example.project.domain.model.Account
 import org.example.project.domain.model.Administrator
@@ -51,6 +54,7 @@ import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 import org.example.project.presentation.theme.Typography
 import org.example.project.presentation.viewmodel.AdministratorViewModel
+import org.example.project.presentation.viewmodel.UserAddressViewModel
 import org.example.project.presentation.viewmodel.UserViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.vectorResource
@@ -71,12 +75,15 @@ class AccountView : Screen {
         val alertType = mutableStateOf(AlertType.Default)
         val selectedTabIndex = mutableStateOf(0)
         val isExpanded = remember { mutableStateOf(true) }
-        val currentAccount = SessionData.getCurrentAccount()
-        val currentUser = mutableStateOf(User())
-        val currentAdmin = mutableStateOf(Administrator())
+        val currentAccount = mutableStateOf(SessionData.getCurrentAccount() ?: Account())
+        val currentUser = mutableStateOf(SessionData.getCurrentUser() ?: User())
+        val currentAdmin = mutableStateOf(SessionData.getCurrentAdmin() ?: Administrator())
+        val userViewModel = UserViewModel(UserRepository(UserApi()))
+        val addressViewModel = UserAddressViewModel(UserAddressRepository(UserAddressApi()))
 
         ColumnBackground(
-            rootMaxWidth = rootMaxWidth
+            rootMaxWidth = rootMaxWidth,
+            showLoadingOverlay = showLoadingOverlay
         ) {
             Row() {
                 if(rootMaxWidth.value.isExpanded()) {
@@ -119,15 +126,19 @@ class AccountView : Screen {
                     ) {
                         when (selectedTabIndex.value) {
                             0 -> {
-                                ProfileTab(
-                                    currentAccount = currentAccount,
-                                    currentUser = currentUser,
-                                    currentAdmin = currentAdmin,
-                                    scope = scope,
-                                    showLoadingOverlay = showLoadingOverlay,
-                                    showErrorDialog = showErrorDialog,
-                                    alertType = alertType
-                                )
+                                if (navigator != null) {
+                                    ProfileTab(
+                                        currentAccount = currentAccount,
+                                        currentUser = currentUser,
+                                        currentAdmin = currentAdmin,
+                                        scope = scope,
+                                        showLoadingOverlay = showLoadingOverlay,
+                                        showErrorDialog = showErrorDialog,
+                                        alertType = alertType,
+                                        navigator = navigator,
+                                        userViewModel = userViewModel
+                                    )
+                                }
                             }
                             1 -> {
                                 AddressTab(
@@ -136,19 +147,29 @@ class AccountView : Screen {
                                     showAddAddressDialog = showAddAddressDialog,
                                     showEditAddressDialog = showEditAddressDialog,
                                     currentUser = currentUser,
-                                    currentAdmin = currentAdmin
-                                )
-                            }
-                            2 -> {
-                                PaymentTab(
-                                    currentAccount = currentAccount,
-                                    currentUser = currentUser,
                                     currentAdmin = currentAdmin,
                                     scope = scope,
+                                    addressViewModel = addressViewModel,
+                                    userViewModel = userViewModel,
                                     showLoadingOverlay = showLoadingOverlay,
                                     showErrorDialog = showErrorDialog,
                                     alertType = alertType
                                 )
+                            }
+                            2 -> {
+                                if (navigator != null) {
+                                    PaymentTab(
+                                        currentAccount = currentAccount,
+                                        currentUser = currentUser,
+                                        currentAdmin = currentAdmin,
+                                        scope = scope,
+                                        showLoadingOverlay = showLoadingOverlay,
+                                        showErrorDialog = showErrorDialog,
+                                        alertType = alertType,
+                                        navigator = navigator,
+                                        userViewModel = userViewModel
+                                    )
+                                }
                             }
                         }
                     }
@@ -162,14 +183,16 @@ class AccountView : Screen {
 @Composable
 fun FlowRowScope.PaymentTab(
     modifier: Modifier = Modifier,
-    currentAccount: Account?,
+    navigator: Navigator,
+    currentAccount: MutableState<Account>,
     currentUser: MutableState<User>,
     currentAdmin: MutableState<Administrator>,
     scope: CoroutineScope,
     showLoadingOverlay: MutableState<Boolean>,
     showErrorDialog: MutableState<Boolean>,
-    alertType: MutableState<AlertType>
-) {
+    alertType: MutableState<AlertType>,
+    userViewModel: UserViewModel,
+    ) {
     Column(
         modifier = Modifier.weight(1.5f)
 
@@ -191,7 +214,9 @@ fun FlowRowScope.PaymentTab(
         scope = scope,
         showLoadingOverlay = showLoadingOverlay,
         showErrorDialog = showErrorDialog,
-        alertType = alertType
+        alertType = alertType,
+        navigator = navigator,
+        userViewModel = userViewModel
     )
 }
 
@@ -199,22 +224,55 @@ fun FlowRowScope.PaymentTab(
 @Composable
 fun FlowRowScope.AddressTab(
     modifier: Modifier = Modifier,
+    scope: CoroutineScope,
+    addressViewModel:UserAddressViewModel,
+    userViewModel: UserViewModel,
     rootMaxWidth: MutableState<Int> = remember { mutableStateOf(0) },
     showAddAddressDialog: MutableState<Boolean>,
     showEditAddressDialog: MutableState<Boolean>,
-    currentAccount: Account?,
+    currentAccount: MutableState<Account>,
     currentUser: MutableState<User>,
-    currentAdmin: MutableState<Administrator>
+    currentAdmin: MutableState<Administrator>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>
 ) {
+    val newUserAddress = mutableStateOf(UserAddress(user = currentUser.value))
+    val updateUserAddress = mutableStateOf(UserAddress(user = currentUser.value))
+
+    val userAddressList = mutableStateOf(emptyList<UserAddress>())
     AddAndEditAddressDialog(
         title = "Add New Address",
         showAddressDialog = showAddAddressDialog,
-        rootMaxWidth = rootMaxWidth
+        rootMaxWidth = rootMaxWidth,
+        userAddress = newUserAddress,
+        onConfirmation = {
+            scope.launch {
+                handlerAddUserAddressByUserId(
+                    addressViewModel = addressViewModel,
+                    userViewModel = userViewModel,
+                    currentUser = currentUser,
+                    userAddress = newUserAddress,
+                    userAddressList = userAddressList,
+                    showLoadingOverlay = showLoadingOverlay,
+                    showErrorDialog = showErrorDialog,
+                    alertType = alertType
+                )
+                newUserAddress.value = UserAddress(user = currentUser.value)
+            }
+        }
     )
+
     AddAndEditAddressDialog(
         title = "Edit Your Address",
         showAddressDialog = showEditAddressDialog,
-        rootMaxWidth = rootMaxWidth
+        rootMaxWidth = rootMaxWidth,
+        userAddress = updateUserAddress,
+        onConfirmation = {
+            scope.launch {
+
+            }
+        }
     )
     Column {
         Row(
@@ -241,17 +299,11 @@ fun FlowRowScope.AddressTab(
                 currentAccount = currentAccount,
                 rootMaxWidth = rootMaxWidth,
                 showEditAddressDialog = showEditAddressDialog,
+                address = TODO(),
+                onEdit = TODO(),
+                onDelete = TODO(),
             )
-            AddressItem(
-                currentAccount = currentAccount,
-                rootMaxWidth = rootMaxWidth,
-                showEditAddressDialog = showEditAddressDialog,
-            )
-            AddressItem(
-                currentAccount = currentAccount,
-                rootMaxWidth = rootMaxWidth,
-                showEditAddressDialog = showEditAddressDialog,
-            )
+
         }
     }
 }
@@ -260,14 +312,16 @@ fun FlowRowScope.AddressTab(
 @Composable
 fun FlowRowScope.ProfileTab(
     modifier: Modifier = Modifier,
-    currentAccount: Account?,
+    navigator: Navigator,
+    currentAccount: MutableState<Account>,
     currentUser: MutableState<User>,
     currentAdmin: MutableState<Administrator>,
     scope: CoroutineScope,
     showLoadingOverlay: MutableState<Boolean>,
     showErrorDialog: MutableState<Boolean>,
-    alertType: MutableState<AlertType>
-) {
+    alertType: MutableState<AlertType>,
+    userViewModel: UserViewModel,
+    ) {
     Column(
         modifier = Modifier.weight(1f)
     ) {
@@ -288,7 +342,9 @@ fun FlowRowScope.ProfileTab(
         scope = scope,
         showLoadingOverlay = showLoadingOverlay,
         showErrorDialog = showErrorDialog,
-        alertType = alertType
+        alertType = alertType,
+        navigator = navigator,
+        userViewModel = userViewModel
     )
 }
 
@@ -296,13 +352,15 @@ fun FlowRowScope.ProfileTab(
 fun ProfileInfo(
     scope: CoroutineScope,
     modifier: Modifier = Modifier,
-    currentAccount: Account?,
+    navigator: Navigator,
+    currentAccount: MutableState<Account>,
     currentUser: MutableState<User>,
     currentAdmin: MutableState<Administrator>,
     showLoadingOverlay: MutableState<Boolean>,
     showErrorDialog: MutableState<Boolean>,
-    alertType: MutableState<AlertType>
-) {
+    alertType: MutableState<AlertType>,
+    userViewModel: UserViewModel,
+    ) {
     Form(
         modifier = modifier.fillMaxWidth(),
         padding = 0.dp,
@@ -319,34 +377,40 @@ fun ProfileInfo(
                         currentUser = currentUser,
                         showLoadingOverlay = showLoadingOverlay,
                         showErrorDialog = showErrorDialog,
-                        alertType = alertType
+                        alertType = alertType,
+                        userViewModel = userViewModel
                     )
                 }
                 InputField(
                     modifier = Modifier.fillMaxWidth(),
                     label = "Username",
-                    value = currentAccount?.username ?: "",
-                    enabled = false,
-                    onValueChange = {},
+                    value = currentAccount.value.username ?: "",
+                    onValueChange = {
+                        currentAccount.value = currentAccount.value.copy(username = it)
+                    },
                 )
                 InputField(
                     modifier = Modifier.fillMaxWidth(),
-                    label = "Fullname",
-                    value = currentAccount?.username ?: "",
-                    enabled = false,
-                    onValueChange = {},
+                    label = "Full name",
+                    value = currentUser.value.fullName ?: "",
+                    onValueChange = {
+                        currentUser.value = currentUser.value.copy(fullName = it)
+                    },
                 )
                 InputField(
                     modifier = Modifier.fillMaxWidth(),
                     label = "Email",
-                    value = currentAccount?.email ?: "",
+                    value = currentAccount.value.email ?: "",
+                    enabled = false,
                     onValueChange = {},
                 )
                 InputField(
                     modifier = Modifier.fillMaxWidth(),
                     label = "Phone number",
-                    value = currentAccount?.phoneNumber ?: "",
-                    onValueChange = {},
+                    value = currentAccount.value.phoneNumber ?: "",
+                    onValueChange = {
+                        currentAccount.value = currentAccount.value.copy(phoneNumber = it)
+                    },
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -356,12 +420,24 @@ fun ProfileInfo(
                         modifier = Modifier.weight(1f),
                         text = "Cancel",
                         color = Themes.Light.subtleButton,
-                        onClick = {}
+                        onClick = {
+                            navigator.pop()
+                        }
                     )
                     CustomButton(
                         modifier = Modifier.weight(1f),
                         text = "Save",
-                        onClick = {}
+                        onClick = {
+                            scope.launch {
+                                handlerUpdateUser(
+                                    currentUser = currentUser,
+                                    showLoadingOverlay = showLoadingOverlay,
+                                    showErrorDialog = showErrorDialog,
+                                    alertType = alertType,
+                                    userViewModel = userViewModel
+                                )
+                            }
+                        }
                     )
                 }
             }
@@ -378,7 +454,7 @@ fun ProfileInfo(
                 InputField(
                     modifier = Modifier.fillMaxWidth(),
                     label = "Username",
-                    value = currentAccount?.username ?: "",
+                    value = currentAccount.value.username ?: "",
                     enabled = false,
                     onValueChange = {},
                 )
@@ -408,7 +484,7 @@ fun AddressItem(
     modifier: Modifier = Modifier,
     rootMaxWidth: MutableState<Int> = remember { mutableStateOf(0) },
     showEditAddressDialog: MutableState<Boolean>,
-    currentAccount: Account?,
+    currentAccount: MutableState<Account>,
     address: UserAddress? = UserAddress(
         /*name = "Home",
         street = "23 Nguyen Trai",
@@ -418,6 +494,8 @@ fun AddressItem(
         isDefault = true*/
     ),
     color: ButtonColor = Themes.Light.subtleButton,
+    onEdit:  ()->Unit,
+    onDelete:  ()->Unit,
 ) {
     Form(
         modifier = modifier.fillMaxWidth(),
@@ -450,10 +528,10 @@ fun AddressItem(
                     horizontalArrangement = Arrangement.spacedBy(Size.Space.S400),
                 ) {
                     BodyText(
-                        text = currentAccount?.username ?: currentAccount?.email ?: ""
+                        text = currentAccount.value.username ?: currentAccount.value.email ?: ""
                     )
                     BodyText(
-                        text = currentAccount?.phoneNumber ?: "",
+                        text = currentAccount.value.phoneNumber ?: "",
                         style = Typography.Style.BodySmall.merge(color = color.secondaryText?: Color.Unspecified)
 
                     )
@@ -476,6 +554,7 @@ fun AddressItem(
                     IconButton(
                         onClick = {
                             showEditAddressDialog.value = true
+                            onEdit()
                         }
                     ) {
                         Icon(
@@ -483,11 +562,16 @@ fun AddressItem(
                             contentDescription = null
                         )
                     }
-
-                    ExposedDropdownMenuButton(
-                        icon = Icons.Outlined.Delete,
-                        content = {}
-                    )
+                    IconButton(
+                        onClick = {
+                            onDelete()
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = null
+                        )
+                    }
                 }
             } else {
                 ExposedDropdownMenuButton(
@@ -505,12 +589,15 @@ fun AddAndEditAddressDialog(
     title: String,
     showAddressDialog: MutableState<Boolean>,
     rootMaxWidth: MutableState<Int>,
-) {
+    userAddress: MutableState<UserAddress>,
+    onConfirmation: () -> Unit,
+    ) {
     AlertDialog(
         title = title,
         showDialog = showAddressDialog,
         rootMaxWidth = rootMaxWidth,
         message = null,
+        onConfirmation = onConfirmation,
         content = {
             Form(
                 modifier = Modifier.fillMaxWidth(),
@@ -523,9 +610,12 @@ fun AddAndEditAddressDialog(
                 ) {
                     InputField(
                         modifier = Modifier.weight(1f),
-                        value = "",
-                        onValueChange = {  },
-                        placeHolder = "Name"
+                        value = userAddress.value.name?:"",
+                        onValueChange = {
+                            userAddress.value = userAddress.value.copy(name = it)
+                        },
+                        placeHolder = "Name",
+                        label = "Name"
                     )
                     Checkbox(
                         modifier = Modifier.weight(1f),
@@ -534,23 +624,40 @@ fun AddAndEditAddressDialog(
                 }
                 InputField(
                     modifier = Modifier.fillMaxWidth(1f),
-                    value = "",
-                    onValueChange = {  },
-                    placeHolder = "Street Address"
+                    value = userAddress.value.street?:"",
+                    onValueChange = {
+                        userAddress.value = userAddress.value.copy(street = it)
+                    },
+                    placeHolder = "Street Address",
+                    label = "Street Address"
                 )
                 ExposedDropdownInputField(
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = "Province"
+                    placeholder = "Province",
+                    label = "Province",
+                    textFieldValue = mutableStateOf(userAddress.value.province?:""),
+                    onValueChange = {
+                        userAddress.value = userAddress.value.copy(province = it)
+                    }
                 )
                 ExposedDropdownInputField(
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = "District"
+                    placeholder = "District",
+                    label = "District",
+                    textFieldValue = mutableStateOf(userAddress.value.district?:""),
+                    onValueChange = {
+                        userAddress.value = userAddress.value.copy(district = it)
+                    }
                 )
                 ExposedDropdownInputField(
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = "Ward"
+                    placeholder = "Ward",
+                    label = "Ward",
+                    textFieldValue = mutableStateOf(userAddress.value.ward?:""),
+                    onValueChange = {
+                        userAddress.value = userAddress.value.copy(ward = it)
+                    }
                 )
-
             }
         }
     )
@@ -578,9 +685,9 @@ suspend fun handlerGetUserByAccountId(
     currentUser: MutableState<User>,
     showLoadingOverlay: MutableState<Boolean>,
     showErrorDialog: MutableState<Boolean>,
-    alertType: MutableState<AlertType>
-) {
-    val userViewModel = UserViewModel(UserRepository(UserApi()))
+    alertType: MutableState<AlertType>,
+    userViewModel: UserViewModel,
+    ) {
     executeSuspendFunction(
         showLoadingOverlay = showLoadingOverlay,
         function = {
@@ -598,18 +705,78 @@ suspend fun handlerGetUserByAccountId(
     )
 }
 
-suspend fun handlerUpdateUserByAccountId(
+suspend fun handlerUpdateUser(
     currentUser: MutableState<User>,
     showLoadingOverlay: MutableState<Boolean>,
     showErrorDialog: MutableState<Boolean>,
-    alertType: MutableState<AlertType>
-) {
-    val userViewModel = UserViewModel(UserRepository(UserApi()))
+    alertType: MutableState<AlertType>,
+    userViewModel: UserViewModel,
+    ) {
     executeSuspendFunction(
         showLoadingOverlay = showLoadingOverlay,
         function = {
             userViewModel.updateUser(currentUser.value.id ?: 0, currentUser.value)
+            if(userViewModel.updatedUser.value!=null) {
+                SessionData.setCurrenUser(userViewModel.updatedUser.value)
+            }
+        }
+    )
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = userViewModel.operationStatus,
+    )
+}
 
+suspend fun handlerGetUserAddressByUserId(
+    addressViewModel:UserAddressViewModel,
+    userViewModel: UserViewModel,
+    currentUser: MutableState<User>,
+    userAddressList: MutableState<List<UserAddress>>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            currentUser.value.id?.let { addressViewModel.getUserAddresssByUserId(0, it) }
+            userAddressList.value = addressViewModel.userAddresssList.value
+        }
+    )
+    checkError(
+        alertType = alertType,
+        showErrorDialog = showErrorDialog,
+        operationStatus = userViewModel.operationStatus,
+    )
+}
+
+suspend fun handlerAddUserAddressByUserId(
+    addressViewModel:UserAddressViewModel,
+    userViewModel: UserViewModel,
+    currentUser: MutableState<User>,
+    userAddress: MutableState<UserAddress>,
+    userAddressList: MutableState<List<UserAddress>>,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>
+) {
+    executeSuspendFunction(
+        showLoadingOverlay = showLoadingOverlay,
+        function = {
+            handlerGetUserAddressByUserId(
+                addressViewModel = addressViewModel,
+                userViewModel = userViewModel,
+                currentUser = currentUser,
+                userAddressList = userAddressList,
+                showLoadingOverlay = showLoadingOverlay,
+                showErrorDialog = showErrorDialog,
+                alertType = alertType
+            )
+            if(userAddressList.value.size<20) {
+                addressViewModel.createUserAddress(userAddress.value)
+                userAddressList.value = addressViewModel.userAddresssList.value
+            }
         }
     )
     checkError(

@@ -557,7 +557,7 @@ fun ColumnScope.ProductCardGrid(
                 )
             }
             ProductItem(
-                modifier = Modifier.wrapContentSize()
+                modifier = Modifier.wrapContentSize().fillMaxRowHeight()
                     .clickable(
                         enabled = true,
                         onClick = {

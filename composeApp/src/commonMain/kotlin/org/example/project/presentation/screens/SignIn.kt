@@ -22,8 +22,10 @@ import org.example.project.core.enums.AccountStatusType
 import org.example.project.core.enums.AlertType
 import org.example.project.data.api.AccountApi
 import org.example.project.data.api.FirebaseEmailAuthApi
+import org.example.project.data.api.UserApi
 import org.example.project.data.repository.AccountRepository
 import org.example.project.data.repository.FirebaseEmailAuthRepository
+import org.example.project.data.repository.UserRepository
 import org.example.project.domain.model.FirebaseEmailAuthRequest
 import org.example.project.domain.model.User
 import org.example.project.presentation.components.ColumnBackground
@@ -36,6 +38,7 @@ import org.example.project.presentation.components.input.InputField
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.viewmodel.AccountViewModel
 import org.example.project.presentation.viewmodel.FirebaseEmailAuthViewModel
+import org.example.project.presentation.viewmodel.UserViewModel
 
 
 class SignIn() : Screen {
@@ -56,7 +59,7 @@ class SignIn() : Screen {
         val viewModel = AccountViewModel(accountRepository = AccountRepository(AccountApi()))
         val firebaseEmailAuthViewModel = FirebaseEmailAuthViewModel(FirebaseEmailAuthRepository(FirebaseEmailAuthApi()))
         val alertType = mutableStateOf(AlertType.Default)
-
+        val userViewModel = UserViewModel(UserRepository(UserApi()))
         val email = remember { mutableStateOf(value = "") }
         val password = remember { mutableStateOf(value = "") }
 
@@ -151,7 +154,8 @@ class SignIn() : Screen {
                                         currentUser = mutableStateOf(User()),
                                         showLoadingOverlay = showLoadingOverlay,
                                         showErrorDialog = showErrorDialog,
-                                        alertType = alertType
+                                        alertType = alertType,
+                                        userViewModel = userViewModel
                                     )
                                 }
                             } else {

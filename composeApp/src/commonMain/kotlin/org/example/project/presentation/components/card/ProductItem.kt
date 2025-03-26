@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -33,7 +34,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.vectorResource
 
-@OptIn(ExperimentalResourceApi::class)
+@OptIn(ExperimentalResourceApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun ProductItem(
     modifier: Modifier = Modifier.wrapContentSize(),
@@ -47,6 +48,9 @@ fun ProductItem(
     onEdit: () -> Unit,
     onDelete: () -> Unit,
 ) {
+    Box(
+        modifier = Modifier.wrapContentSize()
+    ) {
     Column(
         modifier = modifier.clip(shape = CustomRoundedCorner())
             .background(color = color.defaultBackground!!)
@@ -61,18 +65,15 @@ fun ProductItem(
             model = if(productImage.value.url.isNullOrEmpty()) Res.getUri("composeResources/drawable/Image.png") else productImage.value.url,
             contentDescription = null,
         )*/
-        AsyncImage(
-            contentScale = ContentScale.FillWidth,
-            modifier = Modifier.fillMaxWidth().aspectRatio(1f),
-            model =  productImage.value.url,
-            error = painterResource(Res.drawable.Image),
-            placeholder = painterResource(Res.drawable.Image),
-            contentDescription = null,
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+
+            AsyncImage(
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier.fillMaxWidth().aspectRatio(1f),
+                model =  productImage.value.url,
+                error = painterResource(Res.drawable.Image),
+                placeholder = painterResource(Res.drawable.Image),
+                contentDescription = null,
+            )
             Column(
                 verticalArrangement = Arrangement.spacedBy(Size.Space.S200)
             ) {
@@ -84,13 +85,14 @@ fun ProductItem(
                     style = Typography.Style.BodyStrong
                 )
             }
-            if (SessionData.getCurrentAccount()?.accountRole?.name == AccountRoleType.Administrator.name) {
-                ExposedDropdownMenuButton(
-                    icon = vectorResource(Res.drawable.ic_dots_vertical),
-                    onEdit = onEdit,
-                    onDelete = onDelete
-                )
-            }
+        }
+        if (SessionData.getCurrentAccount()?.accountRole?.name == AccountRoleType.Administrator.name) {
+            ExposedDropdownMenuButton(
+                modifier = Modifier.align(Alignment.TopEnd).padding(8.dp),
+                icon = vectorResource(Res.drawable.ic_dots_vertical),
+                onEdit = onEdit,
+                onDelete = onDelete
+            )
         }
     }
 }

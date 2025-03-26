@@ -321,9 +321,9 @@ fun UserOrderProduct(
     FlowRow(
         modifier = Modifier.clickable {
             if (item.product != null) {
-                /*pushWithLimitScreen(
-                    navigator = navigator, ProductDetail(item.product)
-                )*/
+                pushWithLimitScreen(
+                    navigator = navigator, ProductDetail(item.product, productImage.value)
+                )
             } else {
                 alertType.value = AlertType.ProductNotFound
             }

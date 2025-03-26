@@ -10,7 +10,7 @@ const val WEB_REDIRECT_URL = "http://localhost:8080/"
 val ANDROID_REDIRECT_URL = ""
 const val LOCALHOST_URL = "http://localhost:10000"
 const val RENDER_URL = "https://electroniccomponentretailserver-latest.onrender.com"
-const val BASE_URL = LOCALHOST_URL
+const val BASE_URL = RENDER_URL
 val NOT_INCLUDE_ORDER_STATUS_FOR_ADMIN = listOf("Delivered", "Pending")
 
 fun getGoogleAuthUrl(redirectUri: String): String {

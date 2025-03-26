@@ -138,15 +138,6 @@ class ProductList : Screen {
                             alertType = alertType,
                             product = newProduct
                         )
-                        handlerGetAllProducts(
-                            totalPage = totalPage,
-                            currentPage = currentPage,
-                            productViewModel = productViewModel,
-                            productList = productList,
-                            showLoadingOverlay = showLoadingOverlay,
-                            showErrorDialog = showErrorDialog,
-                            alertType = alertType
-                        )
 
                         addProductImage(
                             product = newProduct,
@@ -158,6 +149,17 @@ class ProductList : Screen {
                             alertType = alertType,
                             imageByteArray = imageByteArray
                         )
+                        handlerGetAllProducts(
+                            totalPage = totalPage,
+                            currentPage = currentPage,
+                            productViewModel = productViewModel,
+                            productList = productList,
+                            showLoadingOverlay = showLoadingOverlay,
+                            showErrorDialog = showErrorDialog,
+                            alertType = alertType
+                        )
+
+
                         updateProductImage.value = ProductImage()
                         newProduct.value = Product()
                     }
@@ -194,15 +196,7 @@ class ProductList : Screen {
                             alertType = alertType,
                             product = updateProduct
                         )
-                        handlerGetAllProducts(
-                            totalPage = totalPage,
-                            currentPage = currentPage,
-                            productViewModel = productViewModel,
-                            productList = productList,
-                            showLoadingOverlay = showLoadingOverlay,
-                            showErrorDialog = showErrorDialog,
-                            alertType = alertType
-                        )
+
                         updatedProductImage(
                             product = updateProduct,
                             productImageViewModel = productImageViewModel,
@@ -212,6 +206,15 @@ class ProductList : Screen {
                             showErrorDialog = showErrorDialog,
                             alertType = alertType,
                             imageByteArray = imageByteArray
+                        )
+                        handlerGetAllProducts(
+                            totalPage = totalPage,
+                            currentPage = currentPage,
+                            productViewModel = productViewModel,
+                            productList = productList,
+                            showLoadingOverlay = showLoadingOverlay,
+                            showErrorDialog = showErrorDialog,
+                            alertType = alertType
                         )
                         updateProduct.value = Product()
                         updateProductImage.value = ProductImage()

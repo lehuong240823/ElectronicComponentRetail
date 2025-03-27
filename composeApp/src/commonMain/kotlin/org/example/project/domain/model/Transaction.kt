@@ -7,7 +7,6 @@ import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import org.example.project.core.BigDecimalSerializer
 
 @Serializable
-@JsonIgnoreUnknownKeys
 data class Transaction(
     val id: Int? = null,
     val order: Order? = null,

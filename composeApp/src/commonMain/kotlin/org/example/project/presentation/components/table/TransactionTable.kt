@@ -32,34 +32,9 @@ import org.example.project.presentation.theme.Typography
 fun TransactionTable(
     headers: List<String> = listOf("Transaction ID", "Order ID", "Payment Method", "Amount", "Status", "Transaction Time"),
     weights: List<Float> = listOf(1f, 1f, 1.5f, 1.5f, 1.5f, 1.5f),
-    transactionList: MutableState<List<Transaction>> = mutableStateOf(listOf(Transaction()))
+    transactionList: MutableState<List<Transaction>>
 ) {
-    var test = Transaction(
-        id = 1,
-        order = Order(
-            id = 2,
-            amount = 123.toBigDecimal()
-        ),
-        paymentMethod = PaymentMethod(
-            id = 1,
-            name = "Cash"
-        ),
-        paymentMethodName = "Cash",
-        transactionStatus = TransactionStatus(
-            id = 1,
-            name = "Completed"
-        ),
-        transactionTime = Clock.System.now()
-    )
-    transactionList.value = listOf(
-        test,
-        test.copy(paymentMethodName = "VNPay",),
-        test.copy(transactionStatus  = TransactionStatus(
-            id = 1,
-            name = "Failed"
-        )
-        )
-    )
+
     val format = DateTimeComponents.Format {
         date(LocalDate.Formats.ISO);
         char(' ');

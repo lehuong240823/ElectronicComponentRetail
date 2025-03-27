@@ -40,6 +40,7 @@ fun Navigator(
 fun ScrollableNavigator(
     tabTitles: List<String> = listOf(),
     selectedTabIndex: MutableState<Int>,
+    currentPage: MutableState<Int> = mutableStateOf(0),
     color: ButtonColor = Themes.Light.tab
 ) {
     ScrollableTabRow(
@@ -53,7 +54,8 @@ fun ScrollableNavigator(
                 selected = selectedTabIndex.value == index,
                 selectedContentColor = color.primaryText!!,
                 unselectedContentColor = color.secondaryText!!,
-                onClick = { selectedTabIndex.value = index }
+                onClick = { selectedTabIndex.value = index
+                    currentPage.value = 0 }
             )
         }
     }

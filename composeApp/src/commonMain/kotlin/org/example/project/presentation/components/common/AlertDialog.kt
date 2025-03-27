@@ -20,6 +20,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import org.example.project.SessionData
 import org.example.project.core.enums.AlertType
 import org.example.project.presentation.components.Form
+import org.example.project.presentation.screens.ProductList
 import org.example.project.presentation.screens.SignIn
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
@@ -114,6 +115,26 @@ fun AlertDialog(
             _title.value = "Product Availability Not Set"
             _message.value = "Please specify if the product is available before proceeding."
         }
+        AlertType.CartSelectedNull -> {
+            _title.value = "No Product Selected"
+            _message.value = "Please select a product in your cart before proceeding."
+        }
+        AlertType.MissingPersonalInfo -> {
+            _title.value = "Missing name or phone number"
+            _message.value = "Please enter your name and phone number before proceeding."
+        }
+        AlertType.PlaceOrderSuccessful -> {
+            _title.value = "Order Placed Successfully"
+            _message.value = "Your order has been placed successfully. Thank you for shopping with us!"
+        }
+        AlertType.AddressNull -> {
+            _title.value = "Missing Address"
+            _message.value = "Please enter your shipping address before placing your order."
+        }
+        AlertType.PaymentNull -> {
+            _title.value = "Payment Method Required"
+            _message.value = "Please select a payment method before placing your order."
+        }
     }
 
     if (showDialog.value) {
@@ -148,7 +169,9 @@ fun AlertDialog(
                                             SessionData.setTokenExpire(null)
                                             pushWithLimitScreen(navigator = navigator, screen = SignIn())
                                         }
-
+                                        AlertType.PlaceOrderSuccessful -> {
+                                            pushWithLimitScreen(navigator = navigator, screen = ProductList())
+                                        }
                                         else -> {
                                             onDismissRequest()
                                         }
@@ -165,6 +188,9 @@ fun AlertDialog(
                                             SessionData.setToken(null)
                                             SessionData.setTokenExpire(null)
                                             pushWithLimitScreen(navigator = navigator, screen = SignIn())
+                                        }
+                                        AlertType.PlaceOrderSuccessful -> {
+                                            pushWithLimitScreen(navigator = navigator, screen = ProductList())
                                         }
 
                                         else -> {

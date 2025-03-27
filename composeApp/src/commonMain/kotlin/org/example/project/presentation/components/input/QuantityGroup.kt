@@ -1,6 +1,8 @@
 package org.example.project.presentation.components.input
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -19,8 +21,9 @@ import org.example.project.presentation.theme.Themes
 fun QuantityGroup(
     modifier: Modifier = Modifier,
     quantity: MutableState<Int> = mutableStateOf(1),
-    size: Dp = 40.dp,
-    color: ButtonColor = Themes.Light.quantityButton
+    size: Dp = 36.dp,
+    color: ButtonColor = Themes.Light.quantityButton,
+    onValueChange: (Int) -> Unit = {},
 ) {
     Row(
         modifier = modifier,
@@ -33,7 +36,10 @@ fun QuantityGroup(
             contentPadding = PaddingValues(Size.Space.S200),
             text = "-",
             onClick = {
-                if (quantity.value > 1) quantity.value--
+                if (quantity.value > 0) {
+                    quantity.value--
+                    onValueChange(quantity.value)
+                }
             },
         )
         InputField(
@@ -44,6 +50,7 @@ fun QuantityGroup(
                     quantity.value = it.filter {
                         it.isDigit()
                     }.toInt()
+                    onValueChange(quantity.value)
                 }
             },
             maxWidth = size,
@@ -59,6 +66,7 @@ fun QuantityGroup(
             text = "+",
             onClick = {
                 quantity.value++
+                onValueChange(quantity.value)
             },
         )
     }

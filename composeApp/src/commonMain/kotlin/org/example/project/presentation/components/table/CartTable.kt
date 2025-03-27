@@ -15,24 +15,39 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.ionspin.kotlin.bignum.decimal.toBigDecimal
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import org.example.project.core.enums.AlertType
 import org.example.project.domain.model.Cart
-import org.example.project.domain.model.Product
+import org.example.project.domain.model.User
 import org.example.project.presentation.components.common.BodyText
 import org.example.project.presentation.components.common.Checkbox
 import org.example.project.presentation.components.input.QuantityGroup
+import org.example.project.presentation.screens.handlerAddToCart
+import org.example.project.presentation.screens.handlerDeleteCart
+import org.example.project.presentation.screens.handlerGetAllCartsByUserId
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Typography
+import org.example.project.presentation.viewmodel.CartViewModel
 
 @Composable
 fun CartTable(
-    headers: List<String> = listOf("Product", "Unit Price", "Quantity", "Amount", "Actions"),
+    headers: List<String> = listOf("Product", "Unit Price", "Quantity", "Total", "Actions"),
     weights: List<Float> = listOf(4f, 1f, 2f, 1f, 1f),
     textAligns: List<TextAlign> = listOf(TextAlign.Left, TextAlign.Right, TextAlign.Center, TextAlign.Right, TextAlign.Center),
-    cartList: MutableState<List<Cart>> = mutableStateOf(listOf(Cart())),
-    showSelectAllCheckBox: Boolean = true,
+    cartList: MutableState<List<Cart>>,
+    showSelectAllCheckBox: Boolean = false,
     selectAllChecked: MutableState<Boolean> = remember { mutableStateOf(false) },
     onselectAllCheckedChange: (Boolean) -> Unit = {},
+    cartViewModel: CartViewModel,
+    showLoadingOverlay: MutableState<Boolean>,
+    showErrorDialog: MutableState<Boolean>,
+    alertType: MutableState<AlertType>,
+    scope: CoroutineScope,
+    totalPage: MutableState<Int>,
+    currentPage: MutableState<Int>,
+    user: MutableState<User>,
+    selectedProduct: MutableList<Cart>,
 ) {
     Table(
         headers = headers,
@@ -48,29 +63,95 @@ fun CartTable(
             )
         },
         tableRowsContent = {
-            CartRow(
-                weights = weights,
-                Cart(
-                    product = Product(name = "Product",
-                        price = 1234.toBigDecimal())
+            cartList.value.forEach { cart ->
+                val _cart = mutableStateOf(cart)
+                CartRow(
+                    weights = weights,
+                    cart = _cart,
+                    onDelete = {
+                        scope.launch {
+                            handlerDeleteCart(
+                                cartViewModel = cartViewModel,
+                                cart = _cart,
+                                showLoadingOverlay = showLoadingOverlay,
+                                showErrorDialog = showErrorDialog,
+                                alertType = alertType
+                            )
+                            handlerGetAllCartsByUserId(
+                                totalPage = totalPage,
+                                currentPage = currentPage,
+                                cartViewModel = cartViewModel,
+                                cartList = cartList,
+                                user = user,
+                                showLoadingOverlay = showLoadingOverlay,
+                                showErrorDialog = showErrorDialog,
+                                alertType = alertType
+                            )
+                        }
+                    },
+                    onCartChange = { change ->
+                        scope.launch {
+                            if (change == cart.quantity!!) {
+                                handlerDeleteCart(
+                                    cartViewModel = cartViewModel,
+                                    cart = _cart,
+                                    showLoadingOverlay = showLoadingOverlay,
+                                    showErrorDialog = showErrorDialog,
+                                    alertType = alertType
+                                )
+                            } else {
+                                _cart.value = _cart.value.copy(
+                                    quantity = (change - cart.quantity)
+                                )
+                                handlerAddToCart(
+                                    cartViewModel = cartViewModel,
+                                    cart = _cart,
+                                    showLoadingOverlay = showLoadingOverlay,
+                                    showErrorDialog = showErrorDialog,
+                                    alertType = alertType
+                                )
+                            }
+                            handlerGetAllCartsByUserId(
+                                totalPage = totalPage,
+                                currentPage = currentPage,
+                                cartViewModel = cartViewModel,
+                                cartList = cartList,
+                                user = user,
+                                showLoadingOverlay = showLoadingOverlay,
+                                showErrorDialog = showErrorDialog,
+                                alertType = alertType
+                            )
+                        }
+                    },
+                    selectedProduct = selectedProduct
                 )
-            )
+            }
         }
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CartRow(
     weights: List<Float>,
-    cart: Cart
+    cart: MutableState<Cart>,
+    onDelete: () -> Unit,
+    onCartChange: (Int) -> Unit,
+    selectedProduct: MutableList<Cart>,
 ) {
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
             checked = remember { mutableStateOf(false) },
+            onCheckedChange = {
+                if (it) {
+                    if(selectedProduct.size<20) selectedProduct.add(cart.value)
+                } else {
+                    selectedProduct.remove(cart.value)
+                }
+            }
         )
         Row(
             modifier = Modifier
@@ -84,15 +165,14 @@ fun CartRow(
                 contentDescription = null,
             )
             BodyText(
-                text = cart.product?.name?: "",
+                text = cart.value.product?.name ?: "",
                 style = Typography.Style.BodyText,
-                //textAlign = if (!textAligns.isEmpty() && textAligns[idx] != null) textAligns[idx] else TextAlign.Left
             )
         }
 
         BodyText(
             modifier = Modifier.weight(weights[1]),
-            text = cart.product?.price?.doubleValue().toString(),
+            text = cart.value.product?.price?.doubleValue().toString(),
             style = Typography.Style.BodyText,
             textAlign = TextAlign.Right
         )
@@ -100,13 +180,15 @@ fun CartRow(
         Box( Modifier.weight(weights[2]))
         {
             QuantityGroup(
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.align(Alignment.Center),
+                quantity = mutableStateOf(cart.value.quantity ?: 1),
+                onValueChange = onCartChange
             )
         }
 
         BodyText(
             modifier = Modifier.weight(weights[3]),
-            text = cart.product?.price?.doubleValue().toString(),
+            text = cart.value.quantity?.let { cart.value.product?.price?.doubleValue()?.times(it) }.toString(),
             style = Typography.Style.BodyText,
             textAlign = TextAlign.Right
         )
@@ -114,7 +196,7 @@ fun CartRow(
         IconButton(
             modifier = Modifier
                 .weight(weights[4]),
-            onClick = {}
+            onClick = onDelete
         ) {
             Icon(
                 imageVector = Icons.Outlined.DeleteOutline,

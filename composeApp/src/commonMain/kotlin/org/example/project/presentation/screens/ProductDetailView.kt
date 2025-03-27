@@ -20,13 +20,15 @@ import electroniccomponentretail.composeapp.generated.resources.blank_profile
 import electroniccomponentretail.composeapp.generated.resources.ic_dots_vertical
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import org.example.project.CURRENCY
+import org.example.project.SessionData
 import org.example.project.checkError
+import org.example.project.core.enums.AccountRoleType
 import org.example.project.core.enums.AlertType
-import org.example.project.domain.model.OrderItem
-import org.example.project.domain.model.Product
-import org.example.project.domain.model.ProductImage
-import org.example.project.domain.model.Review
+import org.example.project.data.api.CartApi
+import org.example.project.data.repository.CartRepository
+import org.example.project.domain.model.*
 import org.example.project.executeSuspendFunction
 import org.example.project.presentation.components.ColumnBackground
 import org.example.project.presentation.components.card.ReviewCard
@@ -39,6 +41,7 @@ import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 import org.example.project.presentation.theme.Typography
 import org.example.project.presentation.theme.Typography.Primitive
+import org.example.project.presentation.viewmodel.CartViewModel
 import org.example.project.presentation.viewmodel.ReviewViewModel
 import org.jetbrains.compose.resources.painterResource
 
@@ -56,6 +59,8 @@ class ProductDetail(
         var color: ButtonColor = Themes.Light.primaryLayout
         val quantity = remember { mutableStateOf(1) }
         val scope = rememberCoroutineScope { Dispatchers.Default }
+        val cartViewModel = CartViewModel(CartRepository(CartApi()))
+        val alertType = mutableStateOf(AlertType.Default)
 
         ColumnBackground(
             rootMaxWidth = rootMaxWidth,
@@ -94,7 +99,32 @@ class ProductDetail(
                         modifier = Modifier.wrapContentHeight()
                             .weight(1f),
                         quantity = quantity,
-                        product = product
+                        product = product,
+                        onAddToCart = {
+                            when (SessionData.getCurrentAccount()?.accountRole?.name) {
+                                AccountRoleType.User.name -> {
+                                    scope.launch {
+                                        handlerAddToCart(
+                                            cartViewModel = cartViewModel,
+                                            cart = mutableStateOf(
+                                                Cart(
+                                                    user = SessionData.getCurrentUser(),
+                                                    product = product,
+                                                    quantity = quantity.value,
+                                                    addedAt = Clock.System.now()
+                                                )
+                                            ),
+                                            showLoadingOverlay = showLoadingOverlay,
+                                            showErrorDialog = showErrorDialog,
+                                            alertType = alertType
+                                        )
+                                    }
+                                }
+                            }
+                        },
+                        onBuyNow = {
+
+                        }
                     )
                     ProductDescriptionColumn(
                         modifier = Modifier.weight(1f),
@@ -114,7 +144,9 @@ class ProductDetail(
 fun ProductInfoColumn(
     modifier: Modifier = Modifier,
     quantity: MutableState<Int>,
-    product: Product
+    product: Product,
+    onAddToCart: () -> Unit,
+    onBuyNow: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -144,8 +176,15 @@ fun ProductInfoColumn(
                 )
             }
         }
-        QuantityGroup(quantity = quantity)
-        ProductDetailButtonRow()
+        when (SessionData.getCurrentAccount()?.accountRole?.name) {
+            AccountRoleType.User.name -> {
+                QuantityGroup(quantity = quantity)
+                ProductDetailButtonRow(
+                    onAddToCart = onAddToCart,
+                    onBuyNow = onBuyNow
+                )
+            }
+        }
     }
 }
 
@@ -277,7 +316,9 @@ fun AvatarBlock(
 
 @Composable
 fun ProductDetailButtonRow(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onAddToCart: () -> Unit,
+    onBuyNow: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -287,12 +328,12 @@ fun ProductDetailButtonRow(
             modifier = Modifier.weight(1f),
             text = "Add to Cart",
             color = Themes.Light.neutralButton,
-            onClick = {}
+            onClick = onAddToCart
         )
         CustomButton(
             modifier = Modifier.weight(1f),
             text = "Buy Now",
-            onClick = {}
+            onClick = onBuyNow
         )
     }
 }

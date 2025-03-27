@@ -16,5 +16,10 @@ enum class AlertType() {
     ProductNameNull(),
     ProductStockNull(),
     ProductPriceNull(),
-    ProductAvailableNull()
+    ProductAvailableNull(),
+    CartSelectedNull(),
+    MissingPersonalInfo(),
+    PlaceOrderSuccessful(),
+    AddressNull(),
+    PaymentNull()
 }

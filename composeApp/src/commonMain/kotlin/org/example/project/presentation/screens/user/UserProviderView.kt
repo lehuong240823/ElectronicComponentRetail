@@ -16,6 +16,7 @@ import org.example.project.data.repository.ProviderRepository
 import org.example.project.domain.model.Provider
 import org.example.project.presentation.components.ColumnBackground
 import org.example.project.presentation.components.card.CategoryCard
+import org.example.project.presentation.components.card.ProviderCard
 import org.example.project.presentation.components.common.AlertDialog
 import org.example.project.presentation.components.common.Pagination
 import org.example.project.presentation.screens.administrator.handlerGetAllProviders
@@ -75,7 +76,10 @@ class UserProviderView: Screen {
                     overflow = FlowRowOverflow.Visible
                 ) {
                     providerList.value.forEach { provider ->
-                        CategoryCard()
+                        ProviderCard(
+                            modifier = Modifier.fillMaxRowHeight(),
+                            provider = provider
+                        )
                     }
                 }
                 if(totalPage.value > 0) {

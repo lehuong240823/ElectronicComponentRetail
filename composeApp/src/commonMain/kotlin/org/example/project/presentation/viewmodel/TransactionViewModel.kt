@@ -96,6 +96,29 @@ class TransactionViewModel(private val transactionRepository: TransactionReposit
         }
     }
 
+    suspend fun getTransactionsByTransactionStatusIdAndUserId(currentPage: Int, user: Int, transactionStatus: Byte) {
+        val result = transactionRepository.getTransactionsByTransactionStatusIdAndUserId(currentPage, user, transactionStatus)
+        if (result != null) {
+            _transactionsList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "Successfully"
+        } else {
+            _operationStatus.value = "Failed"
+        }
+    }
+
+    suspend fun getTransactionsByUserId(currentPage: Int, user: Int) {
+        val result = transactionRepository.getTransactionsByUserId(currentPage, user)
+        if (result != null) {
+            _transactionsList.value = result.content
+            _totalPage.value = result.totalPages
+            _operationStatus.value = "Transaction Get All Successfully"
+        } else {
+            _operationStatus.value = "Failed"
+        }
+    }
+
+
     suspend fun getTransactionsByOrderId(currentPage: Int, order: Int) {
         val result = transactionRepository.getTransactionsByOrderId(currentPage, order)
         if (result != null) {

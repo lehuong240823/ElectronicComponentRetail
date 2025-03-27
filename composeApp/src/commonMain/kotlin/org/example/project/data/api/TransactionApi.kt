@@ -10,6 +10,7 @@ import io.ktor.http.contentType
 import org.example.project.getPageSize
 import org.example.project.core.HttpClient
 import org.example.project.BASE_URL
+import org.example.project.domain.model.Order
 import org.example.project.domain.model.PaginatedResponse
 import org.example.project.domain.model.Transaction
 
@@ -58,5 +59,18 @@ class TransactionApi {
 
     suspend fun getTransactionsByOrderId(currentPage: Int, order: Int): PaginatedResponse<Transaction> {
         return HttpClient.client.get("$BASE_URL${endPoint}/order/id/${order}?size=${getPageSize()}&page=${currentPage}").body()
+    }
+
+    suspend fun getTransactionsByTransactionStatusIdAndUserId(
+        currentPage: Int,
+        user: Int,
+        transactionStatus: Byte
+    ): PaginatedResponse<Transaction> {
+        return HttpClient.client.get("$BASE_URL${endPoint}/user?userId=${user}&transactionStatusId=${transactionStatus}&size=${getPageSize()}&page=${currentPage}")
+            .body()
+    }
+
+    suspend fun getTransactionsByUserId(currentPage: Int, user: Int): PaginatedResponse<Transaction> {
+        return HttpClient.client.get("$BASE_URL${endPoint}/user/id/${user}?size=${getPageSize()}&page=${currentPage}").body()
     }
 }

@@ -65,7 +65,7 @@ class AdministratorRegister : Screen {
         AlertDialog(
             showDialog = showErrorDialog,
             alertType = alertType,
-            rootMaxWidth = mutableStateOf(0)
+            rootMaxWidth = rootMaxWidth
         )
 
         CreateAccountSuccessAlertDialog(

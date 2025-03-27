@@ -53,7 +53,7 @@ class OrderApi {
         user: Int,
         orderStatus: Byte
     ): PaginatedResponse<Order> {
-        return HttpClient.client.get("$BASE_URL${endPoint}/user?userId=${user}&orderStatusId=${orderStatus}size=${getPageSize()}&page=${currentPage}")
+        return HttpClient.client.get("$BASE_URL${endPoint}/user?userId=${user}&orderStatusId=${orderStatus}&size=${getPageSize()}&page=${currentPage}")
             .body()
     }
 

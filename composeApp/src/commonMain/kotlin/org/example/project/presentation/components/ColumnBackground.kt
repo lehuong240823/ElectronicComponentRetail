@@ -3,16 +3,15 @@ package org.example.project.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.unit.dp
+import org.example.project.presentation.components.common.CustomButton
+import org.example.project.presentation.isExpanded
 import org.example.project.presentation.theme.ButtonColor
+import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 
 @Composable
@@ -23,6 +22,8 @@ fun ColumnBackground(
     color: ButtonColor = Themes.Light.secondaryLayout,
     showLoadingOverlay: MutableState<Boolean> = mutableStateOf(false),
     showHeaderAndFooter: Boolean = true,
+    showBuyButton: Boolean = false,
+    onBuyButtonClick: () -> Unit = {},
     content: @Composable () -> Unit
 ) {
     val isExpanded = remember { mutableStateOf(false) }
@@ -33,7 +34,7 @@ fun ColumnBackground(
         }
     ) {
         LazyColumn(
-            modifier = modifier.background(color = color.defaultBackground!!).fillMaxWidth(),
+            modifier = modifier.background(color = color.defaultBackground!!).fillMaxWidth().fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
             //verticalArrangement = Arrangement.spacedBy(Size.Space.S800),
             //contentPadding = PaddingValues(start = sideMenuMaxWidth.dp)
@@ -50,17 +51,32 @@ fun ColumnBackground(
                 }
             }
             item {
-                Footer()
+                if (rootMaxWidth.value.isExpanded()) {
+                    Footer()
+                }
             }
         }
-        Box(
-            modifier = Modifier
 
-                .padding(100.dp)
-        ) {
-            /*SideMenu(
-                isExpanded = isExpanded,
-            )*/
+        if (showBuyButton) {
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = Size.Space.S600)
+                    .align(Alignment.BottomCenter),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .background(color = Color.White)
+                        .fillMaxWidth()
+                        .padding(horizontal = Size.Space.S600)
+                ) {
+                    Spacer(Modifier.weight(1f))
+                    CustomButton(
+                        text = "Buy now",
+                        onClick = onBuyButtonClick
+                    )
+                }
+
+            }
         }
 
         if (showLoadingOverlay.value) {

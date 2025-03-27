@@ -95,7 +95,8 @@ class OrderView : Screen {
                 } else {
                     ScrollableNavigator(
                         tabTitles = tabTitles.value,
-                        selectedTabIndex = selectedTabIndex
+                        selectedTabIndex = selectedTabIndex,
+                        currentPage = currentPage
                     )
                 }
                 fetchByAccountRoleAndTab(
@@ -401,30 +402,6 @@ fun fetchByAccountRoleAndTab(
                     currentAccount = currentAccount
                 )
             }
-            /*orderList.value.forEach { order ->
-                val orderItemList = mutableStateOf(emptyList<OrderItem>())
-                val orderItemViewModel = OrderItemViewModel(OrderItemRepository(OrderItemApi()))
-
-                scope.launch {
-                    handlerGetAllOrderItemsByOrderId(
-                        orderItemViewModel = orderItemViewModel,
-                        orderItemList = orderItemList,
-                        order = order,
-                        showLoadingOverlay = showLoadingOverlay,
-                        showErrorDialog = showErrorDialog,
-                        alertType = alertType
-                    )
-                }
-                UserOrderItem(
-                    order = order,
-                    orderStatusList = orderStatusList,
-                    showLoadingOverlay = showLoadingOverlay,
-                    showErrorDialog = showErrorDialog,
-                    alertType = alertType,
-                    orderItemList = orderItemList,
-                    rootMaxWidth = rootMaxWidth,
-                )
-            }*/
         }
 
         else -> {
@@ -441,31 +418,6 @@ fun fetchByAccountRoleAndTab(
                     currentAccount = currentAccount
                 )
             }
-
-            /*orderList.value.forEach { order ->
-                val orderItemList = mutableStateOf(emptyList<OrderItem>())
-                val orderItemViewModel = OrderItemViewModel(OrderItemRepository(OrderItemApi()))
-
-                scope.launch {
-                    handlerGetAllOrderItemsByOrderId(
-                        orderItemViewModel = orderItemViewModel,
-                        orderItemList = orderItemList,
-                        order = order,
-                        showLoadingOverlay = showLoadingOverlay,
-                        showErrorDialog = showErrorDialog,
-                        alertType = alertType
-                    )
-                }
-                UserOrderItem(
-                    order = order,
-                    orderStatusList = orderStatusList,
-                    showLoadingOverlay = showLoadingOverlay,
-                    showErrorDialog = showErrorDialog,
-                    alertType = alertType,
-                    orderItemList = orderItemList,
-                    rootMaxWidth = rootMaxWidth,
-                )
-            }*/
         }
     }
 }

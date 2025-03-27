@@ -3,6 +3,7 @@ package org.example.project.data.repository
 import org.example.project.domain.model.Transaction
 import org.example.project.domain.model.PaginatedResponse
 import org.example.project.data.api.TransactionApi
+import org.example.project.domain.model.Order
 
 class TransactionRepository(private val transactionApi: TransactionApi) {
 
@@ -72,6 +73,28 @@ class TransactionRepository(private val transactionApi: TransactionApi) {
     suspend fun getTransactionsByOrderId(currentPage: Int, order: Int): PaginatedResponse<Transaction>? {
         return try {
             transactionApi.getTransactionsByOrderId(currentPage, order)
+        } catch (e: Exception) {
+            println("Error fetching transactions: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getTransactionsByTransactionStatusIdAndUserId(
+        currentPage: Int,
+        user: Int,
+        transactionStatus: Byte
+    ): PaginatedResponse<Transaction>? {
+        return try {
+            transactionApi.getTransactionsByTransactionStatusIdAndUserId(currentPage, user, transactionStatus)
+        } catch (e: Exception) {
+            println("Error fetching transactions: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun getTransactionsByUserId(currentPage: Int, user: Int): PaginatedResponse<Transaction>? {
+        return try {
+            transactionApi.getTransactionsByUserId(currentPage, user)
         } catch (e: Exception) {
             println("Error fetching transactions: ${e.message}")
             null

@@ -12,7 +12,7 @@ object SessionData {
     private var _currentAccount: Account? =
         Account(
             id = 15,
-            accountRole = AccountRole(name = AccountRoleType.Administrator.name))
+            accountRole = AccountRole(name = AccountRoleType.User.name))
     private var _currentAdmin: Administrator? = null
     private var _currentUser: User? = User(id = 3)
     private var _token: String? = null

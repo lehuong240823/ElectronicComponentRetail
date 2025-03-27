@@ -9,12 +9,9 @@ import org.example.project.domain.model.Administrator
 import org.example.project.domain.model.User
 
 object SessionData {
-    private var _currentAccount: Account? =
-        Account(
-            id = 15,
-            accountRole = AccountRole(name = AccountRoleType.User.name))
+    private var _currentAccount: Account? = null
     private var _currentAdmin: Administrator? = null
-    private var _currentUser: User? = User(id = 3)
+    private var _currentUser: User? = null
     private var _token: String? = null
     private var _tokenExpire: String? = null
     private var _loginTime: Instant? = null

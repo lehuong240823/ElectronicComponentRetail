@@ -17,12 +17,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.example.project.CURRENCY
 import org.example.project.core.enums.AlertType
 import org.example.project.domain.model.Cart
 import org.example.project.domain.model.User
 import org.example.project.presentation.components.common.BodyText
 import org.example.project.presentation.components.common.Checkbox
 import org.example.project.presentation.components.input.QuantityGroup
+import org.example.project.presentation.isExpanded
 import org.example.project.presentation.screens.handlerAddToCart
 import org.example.project.presentation.screens.handlerDeleteCart
 import org.example.project.presentation.screens.handlerGetAllCartsByUserId
@@ -33,7 +35,7 @@ import org.example.project.presentation.viewmodel.CartViewModel
 @Composable
 fun CartTable(
     headers: List<String> = listOf("Product", "Unit Price", "Quantity", "Total", "Actions"),
-    weights: List<Float> = listOf(4f, 1f, 2f, 1f, 1f),
+    weights: List<Float> = listOf(3f, 2f, 2f, 1f, 1f),
     textAligns: List<TextAlign> = listOf(TextAlign.Left, TextAlign.Right, TextAlign.Center, TextAlign.Right, TextAlign.Center),
     cartList: MutableState<List<Cart>>,
     showSelectAllCheckBox: Boolean = false,
@@ -48,13 +50,14 @@ fun CartTable(
     currentPage: MutableState<Int>,
     user: MutableState<User>,
     selectedProduct: MutableList<Cart>,
-) {
+    rootMaxWidth: MutableState<Int>,
+    ) {
     Table(
         headers = headers,
         weights = weights,
         tableHeader = {
             TableHeader(
-                headers = headers,
+                headers = if(rootMaxWidth.value.isExpanded()) headers else listOf("Product", "Quantity"),
                 weights = weights,
                 textAligns = textAligns,
                 showSelectAllCheckBox = showSelectAllCheckBox,
@@ -123,7 +126,8 @@ fun CartTable(
                             )
                         }
                     },
-                    selectedProduct = selectedProduct
+                    selectedProduct = selectedProduct,
+                    rootMaxWidth = rootMaxWidth
                 )
             }
         }
@@ -138,7 +142,8 @@ fun CartRow(
     onDelete: () -> Unit,
     onCartChange: (Int) -> Unit,
     selectedProduct: MutableList<Cart>,
-) {
+    rootMaxWidth: MutableState<Int>,
+    ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -164,44 +169,77 @@ fun CartRow(
                 imageVector = Icons.Outlined.Image,
                 contentDescription = null,
             )
+            if(rootMaxWidth.value.isExpanded()) {
+                BodyText(
+                    text = cart.value.product?.name ?: "",
+                    style = Typography.Style.BodyText,
+                )
+            } else {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(Size.Space.S200)
+                ) {
+                    BodyText(
+                        text = cart.value.product?.name ?: "",
+                        style = Typography.Style.BodyText,
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        BodyText(
+                            //modifier = Modifier.weight(weights[1]),
+                            text = CURRENCY.plus(cart.value.product?.price?.doubleValue().toString()),
+                            style = Typography.Style.BodyText,
+                            textAlign = TextAlign.Right
+                        )
+
+                        Box()
+                        {
+                            QuantityGroup(
+                                modifier = Modifier.align(Alignment.Center),
+                                quantity = mutableStateOf(cart.value.quantity ?: 1),
+                                onValueChange = onCartChange
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        if(rootMaxWidth.value.isExpanded()) {
             BodyText(
-                text = cart.value.product?.name ?: "",
+                modifier = Modifier.weight(weights[1]),
+                text = cart.value.product?.price?.doubleValue().toString(),
                 style = Typography.Style.BodyText,
+                textAlign = TextAlign.Right
             )
+
+            Box(Modifier.weight(weights[2]))
+            {
+                QuantityGroup(
+                    modifier = Modifier.align(Alignment.Center),
+                    quantity = mutableStateOf(cart.value.quantity ?: 1),
+                    onValueChange = onCartChange
+                )
+            }
         }
-
-        BodyText(
-            modifier = Modifier.weight(weights[1]),
-            text = cart.value.product?.price?.doubleValue().toString(),
-            style = Typography.Style.BodyText,
-            textAlign = TextAlign.Right
-        )
-
-        Box( Modifier.weight(weights[2]))
-        {
-            QuantityGroup(
-                modifier = Modifier.align(Alignment.Center),
-                quantity = mutableStateOf(cart.value.quantity ?: 1),
-                onValueChange = onCartChange
+        if (rootMaxWidth.value.isExpanded()) {
+            BodyText(
+                modifier = Modifier.weight(weights[3]),
+                text = cart.value.quantity?.let { cart.value.product?.price?.doubleValue()?.times(it) }.toString(),
+                style = Typography.Style.BodyText,
+                textAlign = TextAlign.Right
             )
-        }
 
-        BodyText(
-            modifier = Modifier.weight(weights[3]),
-            text = cart.value.quantity?.let { cart.value.product?.price?.doubleValue()?.times(it) }.toString(),
-            style = Typography.Style.BodyText,
-            textAlign = TextAlign.Right
-        )
-
-        IconButton(
-            modifier = Modifier
-                .weight(weights[4]),
-            onClick = onDelete
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.DeleteOutline,
-                contentDescription = null
-            )
+            IconButton(
+                modifier = Modifier
+                    .weight(weights[4]),
+                onClick = onDelete
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.DeleteOutline,
+                    contentDescription = null
+                )
+            }
         }
     }
 }

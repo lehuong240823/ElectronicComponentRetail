@@ -457,13 +457,23 @@ fun ColumnScope.UserMenuItems(
     )
 
     DropdownMenuItem(
-        content = { BodyText(text = "Support") },
+        content = { BodyText(text = "Cart") },
         onClick = {
             pushWithLimitScreen(
-                navigator = navigator, UserVoucherView()
+                navigator = navigator, CartView()
             )
         },
     )
+
+    DropdownMenuItem(
+        content = { BodyText(text = "Profile") },
+        onClick = {
+            pushWithLimitScreen(
+                navigator = navigator, AccountView()
+            )
+        },
+    )
+
     if(currentAccount == null) {
         CustomButton(
             text = "Register",

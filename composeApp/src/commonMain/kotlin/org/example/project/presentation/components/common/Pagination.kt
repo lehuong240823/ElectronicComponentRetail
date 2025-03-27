@@ -21,6 +21,7 @@ import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
 import org.jetbrains.compose.resources.vectorResource
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun Pagination(
     modifier: Modifier = Modifier,
@@ -28,10 +29,12 @@ fun Pagination(
     currentPage: MutableState<Int>,
     onCurrentPageChange: () -> Unit
 ) {
-    Row(
+    FlowRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(Size.Space.S200),
-        verticalAlignment = Alignment.CenterVertically
+        //verticalAlignment = Alignment.CenterVertically
+        verticalArrangement = Arrangement.Center,
+        overflow = FlowRowOverflow.Visible
     ) {
         var combinedRanges = mutableListOf(
             0..3,

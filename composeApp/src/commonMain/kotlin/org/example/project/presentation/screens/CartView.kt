@@ -97,6 +97,7 @@ class CartView: Screen {
                     currentPage = currentPage,
                     user = currentUser,
                     selectedProduct = selectedProduct,
+                    rootMaxWidth = rootMaxWidth,
                 )
                 if(totalPage.value > 0) {
                     Pagination(

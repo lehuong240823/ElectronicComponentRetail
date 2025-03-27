@@ -6,8 +6,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.unit.dp
 import org.example.project.presentation.components.common.CustomButton
 import org.example.project.presentation.isExpanded
 import org.example.project.presentation.theme.ButtonColor
@@ -60,14 +63,15 @@ fun ColumnBackground(
         if (showBuyButton) {
             Row(
                 modifier = Modifier
-                    .padding(horizontal = Size.Space.S600)
+                    .shadow(8.dp, shape = RectangleShape)
+                    //.padding(horizontal = Size.Space.S600)
                     .align(Alignment.BottomCenter),
             ) {
                 Row(
                     modifier = Modifier
                         .background(color = Color.White)
                         .fillMaxWidth()
-                        .padding(horizontal = Size.Space.S600)
+                        .padding(Size.Space.S200)
                 ) {
                     Spacer(Modifier.weight(1f))
                     CustomButton(

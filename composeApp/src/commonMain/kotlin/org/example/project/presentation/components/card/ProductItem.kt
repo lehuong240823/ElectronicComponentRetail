@@ -26,6 +26,7 @@ import org.example.project.domain.model.ProductImage
 import org.example.project.presentation.components.common.BodyText
 import org.example.project.presentation.components.common.CustomRoundedCorner
 import org.example.project.presentation.components.dropdown.ExposedDropdownMenuButton
+import org.example.project.presentation.isExpanded
 import org.example.project.presentation.theme.ButtonColor
 import org.example.project.presentation.theme.Size
 import org.example.project.presentation.theme.Themes
@@ -47,6 +48,7 @@ fun ProductItem(
     productImage: MutableState<ProductImage>,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
+    rootMaxWidth: MutableState<Int>
 ) {
     Box(
         modifier = Modifier.wrapContentSize()
@@ -56,7 +58,7 @@ fun ProductItem(
             .background(color = color.defaultBackground!!)
             .border(width = Size.Stroke.Border, color = color.border!!, shape = CustomRoundedCorner())
             .padding(padding)
-            .widthIn(min = 120.dp, max = 230.dp),
+            .widthIn(min = 120.dp, max = if(rootMaxWidth.value.isExpanded()) 230.dp else 100.dp),
         verticalArrangement = Arrangement.spacedBy(space),
     ) {
         /*AsyncImage(

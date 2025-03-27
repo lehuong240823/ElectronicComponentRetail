@@ -260,10 +260,10 @@ class ProductList : Screen {
                     horizontalArrangement = Arrangement.spacedBy(Size.Space.S1600)
                 ) {
                     if (rootMaxWidth.value.isExpanded()) {
-                        FilterMenu(
+                        /*FilterMenu(
                             priceRange = priceRange,
                             rating = rating
-                        )
+                        )*/
                     }
                     SectionProductGrid(
                         navigator = navigator,
@@ -298,7 +298,8 @@ class ProductList : Screen {
                         showErrorDialog = showErrorDialog,
                         alertType = alertType,
                         productViewModel = productViewModel,
-                        productImageViewModel = productImageViewModel
+                        productImageViewModel = productImageViewModel,
+                        rootMaxWidth =rootMaxWidth
                     )
                 }
             }
@@ -390,7 +391,8 @@ fun SectionProductGrid(
     showErrorDialog: MutableState<Boolean>,
     alertType: MutableState<AlertType>,
     productViewModel: ProductViewModel,
-    productImageViewModel: ProductImageViewModel
+    productImageViewModel: ProductImageViewModel,
+    rootMaxWidth: MutableState<Int>
     ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(Size.Space.S1200)
@@ -418,7 +420,8 @@ fun SectionProductGrid(
             showErrorDialog = showErrorDialog,
             alertType = alertType,
             productViewModel = productViewModel,
-            productImageViewModel = productImageViewModel
+            productImageViewModel = productImageViewModel,
+            rootMaxWidth = rootMaxWidth
         )
     }
 }
@@ -482,10 +485,13 @@ fun FilterBar(
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(space = Size.Space.S800, alignment = Alignment.CenterVertically),
-        horizontalArrangement = Arrangement.spacedBy(space = Size.Space.S800)
+        //horizontalArrangement = Arrangement.spacedBy(space = Size.Space.S800)
+        horizontalArrangement = Arrangement.spacedBy(space = Size.Space.S800, alignment = Alignment.CenterHorizontally)
+
     ) {
         SearchBar(
-            modifier = Modifier.weight(0.5f).fillMaxRowHeight(),
+            //modifier = Modifier.weight(0.5f).fillMaxRowHeight(),
+            modifier = Modifier.widthIn(max = 600.dp).fillMaxRowHeight(),
             searchKeyword = searchKeyword,
             onClick = onSearchBarClick
         )
@@ -494,7 +500,7 @@ fun FilterBar(
             verticalArrangement = Arrangement.Center,
             horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-            Row(
+            /*Row(
                 horizontalArrangement = Arrangement.spacedBy(Size.Space.S200),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -512,7 +518,7 @@ fun FilterBar(
                     falseIcon = Res.drawable.ic_sort_descending,
                     onValueChange = onRateValueChange
                 )
-            }
+            }*/
 
             AddProductButton(
                 showAddNewProductDialog = showAddNewProductDialog,
@@ -553,6 +559,7 @@ fun ColumnScope.ProductCardGrid(
     alertType: MutableState<AlertType>,
     productViewModel: ProductViewModel,
     productImageViewModel: ProductImageViewModel,
+    rootMaxWidth: MutableState<Int>,
     ) {
     FlowRow(
         modifier = Modifier,
@@ -577,10 +584,12 @@ fun ColumnScope.ProductCardGrid(
                     .clickable(
                         enabled = true,
                         onClick = {
-                            pushWithLimitScreen(navigator, ProductDetail(
-                                product = product,
-                                productImage = productImage.value,
-                            ))
+                            pushWithLimitScreen(
+                                navigator, ProductDetail(
+                                    product = product,
+                                    productImage = productImage.value,
+                                )
+                            )
                         },
                         role = Role.Button,
                         indication = ripple(bounded = true),
@@ -605,7 +614,8 @@ fun ColumnScope.ProductCardGrid(
                             alertType = alertType
                         )
                     }
-                }
+                },
+                rootMaxWidth = rootMaxWidth
             )
         }
     }

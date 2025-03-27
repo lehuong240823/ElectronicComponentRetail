@@ -263,9 +263,9 @@ fun ProductReviewColumn(
             horizontalArrangement = Arrangement.spacedBy(Size.Space.S300),
             verticalArrangement = Arrangement.spacedBy(Size.Space.S300)
         ) {
-            ReviewCard(
+            /*ReviewCard(
                 modifier = Modifier.weight(1f)
-            )
+            )*/
 
         }
     }

@@ -21,5 +21,9 @@ enum class AlertType() {
     MissingPersonalInfo(),
     PlaceOrderSuccessful(),
     AddressNull(),
-    PaymentNull()
+    PaymentNull(),
+    VoucherCodeNull(),
+    VoucherDiscountNull(),
+    VoucherMaxUseNull(),
+    VoucherActiveNull(),
 }

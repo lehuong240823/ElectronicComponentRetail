@@ -13,6 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.CurrentScreen
+import org.example.project.CURRENCY
 import org.example.project.domain.model.Voucher
 import org.example.project.presentation.components.common.CustomRoundedCorner
 import org.example.project.presentation.components.common.CustomButton
@@ -48,27 +50,28 @@ fun VoucherItem(
             verticalArrangement = Arrangement.spacedBy(Size.Space.S200),
         ) {
             Text(
-                text = "VOUCHERCODE1234",
+                text = voucher?.code?:"",
                 style = Typography.Style.BodyStrong.copy(color = color.primaryText!!)
             )
+            var discount = if(voucher?.voucherType?.name == "PERCENTAGE") "${voucher.discountValue}%" else "${CURRENCY}${voucher?.discountValue}"
             Text(
-                text = "20% off, up to \$10",
+                text = "Get ${discount} off",
                 style = Typography.Style.BodyText.copy(color = color.primaryText!!)
             )
             Text(
-                text = "Expires: 2024-12-12",
+                text = "Expires: ".plus(voucher?.validUntil?: "None"),
                 style = Typography.Style.BodyText.copy(color = color.secondaryText!!)
             )
             Text(
-                text = "Remaining Uses: 20",
+                text = "Remaining Uses: ".plus(voucher?.maxUses?.minus(voucher.usedCount?:0)),
                 style = Typography.Style.BodyText.copy(color = color.secondaryText!!)
             )
         }
         Spacer(Modifier.weight(1f))
-            CustomButton(
+            /*CustomButton(
                 text = "Use",
                 onClick = onClick
-            )
+            )*/
 
     }
 }

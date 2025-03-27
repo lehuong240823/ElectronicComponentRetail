@@ -135,6 +135,26 @@ fun AlertDialog(
             _title.value = "Payment Method Required"
             _message.value = "Please select a payment method before placing your order."
         }
+        AlertType.VoucherCodeNull -> {
+            _title.value = "Voucher Code Missing"
+            _message.value = "Please enter a valid voucher code before proceeding."
+        }
+
+        AlertType.VoucherDiscountNull -> {
+            _title.value = "Voucher Discount Invalid"
+            _message.value = "The voucher does not have a valid discount. Please check and try again."
+        }
+        AlertType.VoucherMaxUseNull -> {
+            _title.value = "Voucher Usage Limit Invalid"
+            _message.value = "The voucher does not have a valid usage limit. Please check and try again."
+        }
+
+        AlertType.VoucherActiveNull -> {
+            _title.value = "Voucher Inactive"
+            _message.value = "This voucher does not have a valid active state. Please check and try again."
+        }
+
+
     }
 
     if (showDialog.value) {

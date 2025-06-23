@@ -16,3 +16,10 @@ class CloudinaryStorageRepository(private val cloudinaryStorageApi: CloudinarySt
         }
     }
 }
+
+sealed class ApiResult<out T> {
+    data class Success<out T>(val data: T) : ApiResult<T>()
+    data class Error(val code: Int, val message: String?, val responseBody: String? = null) : ApiResult<Nothing>()
+    object NetworkError : ApiResult<Nothing>()
+    object UnknownError : ApiResult<Nothing>()
+}

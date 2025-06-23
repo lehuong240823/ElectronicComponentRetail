@@ -7,7 +7,6 @@ import kotlinx.serialization.Serializable
 import org.example.project.*
 import org.example.project.core.HttpClient
 
-//https://res.cloudinary.com/{cloud_name}/image/upload/{public_id}.{format}
 class CloudinaryStorageApi {
     suspend fun uploadImage(imageData: ByteArray): CloudinaryUploadResponse {
         val endPoint = "https://api.cloudinary.com/v1_1/$CLOUDINARY_CLOUD_NAME/image/upload?api_key=$CLOUDINARY_API_KEY&upload_preset=unsigned-preset"
@@ -15,7 +14,7 @@ class CloudinaryStorageApi {
             url = endPoint,
             formData = formData {
                 append("file", imageData, Headers.build {
-                    append(HttpHeaders.ContentType, "image/jpeg")  // ✅ Set Content-Type
+                    append(HttpHeaders.ContentType, "image/jpeg")
                     append(HttpHeaders.ContentDisposition, "form-data; name=\"file\"; filename=\"random\"")
                 })
 

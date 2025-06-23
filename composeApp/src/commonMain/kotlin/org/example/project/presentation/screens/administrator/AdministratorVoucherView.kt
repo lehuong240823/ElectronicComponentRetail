@@ -72,22 +72,22 @@ class AdministratorVoucherView: Screen {
             alertType = alertType,
             onConfirmation = {
                 when {
-                    newVoucher.value.code != null -> {
+                    newVoucher.value.code == null -> {
                         alertType.value = AlertType.VoucherCodeNull
                         showErrorDialog.value = true
                     }
 
-                    newVoucher.value.discountValue != null -> {
+                    newVoucher.value.discountValue == null -> {
                         alertType.value = AlertType.VoucherDiscountNull
                         showErrorDialog.value = true
                     }
 
-                    newVoucher.value.maxUses != null -> {
+                    newVoucher.value.maxUses == null -> {
                         alertType.value = AlertType.VoucherMaxUseNull
                         showErrorDialog.value = true
                     }
 
-                    newVoucher.value.isActive != null -> {
+                    newVoucher.value.isActive == null -> {
                         alertType.value = AlertType.VoucherCodeNull
                         showErrorDialog.value = true
                     }
